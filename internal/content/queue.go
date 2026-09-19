@@ -7,6 +7,8 @@ import (
 
 // queueNames maps Riot's queue strings to display names. valorant-api.com
 // returns queueID: null on every game mode, so there is nothing to join on.
+// Some IDs are Riot's internal codenames rather than the mode's name, so the
+// only reliable source is a capture from a client sitting in that queue.
 var queueNames = map[string]string{
 	"competitive": "Competitive",
 	"unrated":     "Unrated",
@@ -19,6 +21,7 @@ var queueNames = map[string]string{
 	"newmap":      "New Map",
 	"snowball":    "Snowball Fight",
 	"premier":     "Premier",
+	"fortcollins": "Retake", // captured 2026-09-19, a Riot codename
 }
 
 // QueueName is the display name for a queue ID. One the table does not know
