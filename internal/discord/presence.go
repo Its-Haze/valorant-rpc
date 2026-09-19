@@ -22,6 +22,11 @@ const customLabel = "Custom game"
 // competitiveQueue is the one queue whose rank emblem replaces the app icon.
 const competitiveQueue = "competitive"
 
+// deathmatchQueue is the only queue where the ally score belongs to the
+// player alone. Team Deathmatch and Escalation also score in points, but
+// theirs is the team's, so gameScoreType is not enough to tell them apart.
+const deathmatchQueue = "deathmatch"
+
 // The two words the availability token renders, mirroring league-rpc's own
 // chat availability line.
 const (
@@ -126,7 +131,7 @@ func resolve(st *state.State, cfg *config.Config, cat *content.Catalogue) view {
 	// The range has no rounds, so whatever the score fields still hold there
 	// is left over from the last real match.
 	if cfg.Display.Default.ShowStats && !st.IsRange() {
-		addScoreTokens(v.tokens, st)
+		addScoreTokens(v.tokens, st, cfg.Display.Default.ShowKills)
 	}
 	return v
 }
@@ -157,19 +162,21 @@ func addPartyTokens(tokens map[string]string, st *state.State) {
 // A deathmatch scores in points, where the ally field is the player's own
 // kills and the enemy field is whoever is leading. Someone else's lead is
 // not worth a presence line, so score renders the kills alone there.
-func addScoreTokens(tokens map[string]string, st *state.State) {
+func addScoreTokens(tokens map[string]string, st *state.State, showKills bool) {
 	if st.ScoreAlly <= 0 && st.ScoreEnemy <= 0 {
 		return
 	}
 
-	// A deathmatch scores in points, where the ally field is the player's own
-	// kills. score is deliberately left unset there: Riot republishes the
-	// presence every 60 to 90 seconds, measured, which is three updates in a
-	// deathmatch. A count that lands 0, 4, 11 is wrong far more often than it
-	// is right, and a stale number reads worse than no number. The kills
-	// token stays for anyone who wants it anyway.
-	if st.GameScoreType == types.ScoreTypePoints {
+	// Deathmatch is the one mode with no teams, so its ally score is the
+	// player's own kills. It is off by default: Riot republishes the presence
+	// every 60 to 90 seconds, measured, which is three updates across a whole
+	// deathmatch, so the count is usually behind the scoreboard.
+	if st.GameScoreType == types.ScoreTypePoints && string(st.QueueID) == deathmatchQueue {
+		if !showKills {
+			return
+		}
 		tokens["kills"] = pluralKills(st.ScoreAlly)
+		tokens["score"] = pluralKills(st.ScoreAlly)
 		tokens["score_ally"] = fmt.Sprintf("%d", st.ScoreAlly)
 		tokens["score_enemy"] = fmt.Sprintf("%d", st.ScoreEnemy)
 		return

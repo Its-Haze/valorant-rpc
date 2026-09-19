@@ -9,7 +9,7 @@ export function DefaultConfig(): Config {
     theme: "system",
     onboarding_complete: false,
     display: {
-      default: { show_rank: true, show_stats: true, match_image: "agent" },
+      default: { show_rank: true, show_stats: true, show_kills: false, match_image: "agent" },
       locale: "auto",
     },
     presence: {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { GetDisplayPreview } from "../../../bindings/github.com/its-haze/valorant-rpc/cmd/valorant-rpc-gui/guiservice";
 import type { Config, TemplatePair } from "../../../bindings/github.com/its-haze/valorant-rpc/internal/config/models";
-import { withShowRank, withShowStats } from "../../lib/displayPatch";
+import { withMatchImage, withShowKills, withShowRank, withShowStats } from "../../lib/displayPatch";
+import { MATCH_IMAGE_OPTIONS } from "../../lib/matchImage";
 import { DiscordPresenceCard } from "../DiscordPresenceCard";
-import { Field, Toggle } from "../ui";
+import { Field, Select, Toggle } from "../ui";
 
 export interface SettingsStepProps {
   cfg: Config;
@@ -19,16 +20,18 @@ interface Preview {
 
 const EMPTY_PREVIEW: Preview = { details: "", state: "" };
 
-// Onboarding's settings screen. Two preview cards, not one: rank and match
-// detail read differently in a match than they do sitting in the client.
+// Onboarding's settings screen. Two preview cards, not one: the art and the
+// match detail read differently in a match than they do in the client.
 export function SettingsStep({ cfg, applyPatch }: SettingsStepProps) {
   const showRank = cfg.display.default.show_rank;
   const showStats = cfg.display.default.show_stats;
   const inMatchTemplate = cfg.presence.templates?.["in-match"] ?? { details: "", state: "" };
   const inClientTemplate = cfg.presence.templates?.["in-client"] ?? { details: "", state: "" };
 
-  const inMatch = usePreview("in-match", inMatchTemplate, showRank, showStats);
-  const inClient = usePreview("in-client", inClientTemplate, showRank, showStats);
+  const matchImage = cfg.display.default.match_image;
+
+  const inMatch = usePreview("in-match", inMatchTemplate, showRank, showStats, matchImage);
+  const inClient = usePreview("in-client", inClientTemplate, showRank, showStats, matchImage);
 
   return (
     <div className="flex flex-col gap-4">
@@ -59,6 +62,30 @@ export function SettingsStep({ cfg, applyPatch }: SettingsStepProps) {
             label="Show match detail"
           />
         </Field>
+        <Field
+          id="onboarding-show-kills"
+          label="Show kills in deathmatch"
+          hint="Riot only refreshes the count every minute or so, so it runs behind the scoreboard"
+        >
+          <Toggle
+            id="onboarding-show-kills"
+            checked={cfg.display.default.show_kills}
+            onCheckedChange={(v) => void applyPatch(withShowKills(cfg, v))}
+            label="Show kills in deathmatch"
+          />
+        </Field>
+        <Field
+          id="onboarding-match-image"
+          label="Picture during a match"
+          hint="Your card is used anyway if the agent can't be read"
+        >
+          <Select
+            value={cfg.display.default.match_image}
+            onValueChange={(v) => void applyPatch(withMatchImage(cfg, v))}
+            options={MATCH_IMAGE_OPTIONS}
+            aria-label="Picture during a match"
+          />
+        </Field>
       </section>
 
       <div className="border-border flex flex-col gap-3 border-t pt-4">
@@ -87,7 +114,13 @@ export function SettingsStep({ cfg, applyPatch }: SettingsStepProps) {
 
 // Renders one context through the same backend call the Display screen uses,
 // so this walkthrough shows a real presence rather than a mock-up of one.
-function usePreview(ctx: string, tmpl: TemplatePair, showRank: boolean, showStats: boolean): Preview {
+function usePreview(
+  ctx: string,
+  tmpl: TemplatePair,
+  showRank: boolean,
+  showStats: boolean,
+  matchImage: string,
+): Preview {
   const [preview, setPreview] = useState<Preview>(EMPTY_PREVIEW);
   // Depend on the two lines, not the pair: a context missing from the config
   // yields a fresh fallback object per render, which would refetch forever.
@@ -95,7 +128,7 @@ function usePreview(ctx: string, tmpl: TemplatePair, showRank: boolean, showStat
 
   useEffect(() => {
     let cancelled = false;
-    GetDisplayPreview(ctx, { details, state }, showRank, showStats)
+    GetDisplayPreview(ctx, { details, state }, showRank, showStats, matchImage)
       .then((p) => {
         if (!cancelled) {
           setPreview({
@@ -110,7 +143,7 @@ function usePreview(ctx: string, tmpl: TemplatePair, showRank: boolean, showStat
     return () => {
       cancelled = true;
     };
-  }, [ctx, details, state, showRank, showStats]);
+  }, [ctx, details, state, showRank, showStats, matchImage]);
 
   return preview;
 }

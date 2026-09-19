@@ -52,7 +52,9 @@ func init() {
 	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{party}"}
 	// The agent is the large image and its hover text, so naming it again in
 	// the state line is a third copy of the same fact.
-	defaults[ContextInMatch] = [2]string{"{mode}" + mid + "{map}", "In a match" + mid + "{score}"}
+	// The map is a token, not a default: the agent art already carries the
+	// match and the mode names it.
+	defaults[ContextInMatch] = [2]string{"{mode}", "In a match" + mid + "{score}"}
 
 	// Sample values for the settings-screen preview. agent is left out on
 	// purpose: v0.1 never resolves one, and a preview should not promise it.

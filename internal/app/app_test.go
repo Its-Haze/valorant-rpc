@@ -158,7 +158,7 @@ func TestApp_RenderTemplatePreview_UsesSampleDataAndDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RenderTemplatePreview: %v", err)
 	}
-	if got.Details != "Competitive · Ascent" || got.State != "In a match · 7-5" {
+	if got.Details != "Competitive" || got.State != "In a match · 7-5" {
 		t.Fatalf("preview = %+v, want the sample-data render", got)
 	}
 	if len(got.Warnings) != 0 {
@@ -199,7 +199,7 @@ func TestApp_RenderTemplatePreview_BlankLineMatchesRuntimeDefault(t *testing.T) 
 	if err != nil {
 		t.Fatalf("RenderTemplatePreview: %v", err)
 	}
-	if got.Details != "Competitive · Ascent" {
+	if got.Details != "Competitive" {
 		t.Fatalf("blank Details previewed as %q, want the built-in default", got.Details)
 	}
 	if got.State != "custom state" {
@@ -224,7 +224,7 @@ func TestApp_RenderTemplatePreview_EmptyMapUsesSampleData(t *testing.T) {
 func TestApp_GetDisplayPreview_ShowsScoreWhenStatsEnabled(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
-	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true)
+	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
@@ -236,7 +236,7 @@ func TestApp_GetDisplayPreview_ShowsScoreWhenStatsEnabled(t *testing.T) {
 func TestApp_GetDisplayPreview_HidesScoreWhenStatsDisabled(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
-	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, false)
+	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, false, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
@@ -248,7 +248,7 @@ func TestApp_GetDisplayPreview_HidesScoreWhenStatsDisabled(t *testing.T) {
 func TestApp_GetDisplayPreview_HidesRankWhenDisabled(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
-	got, err := a.GetDisplayPreview("in-client", config.TemplatePair{}, false, true)
+	got, err := a.GetDisplayPreview("in-client", config.TemplatePair{}, false, true, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
@@ -259,7 +259,7 @@ func TestApp_GetDisplayPreview_HidesRankWhenDisabled(t *testing.T) {
 
 func TestApp_GetDisplayPreview_RejectsUnknownContext(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
-	if _, err := a.GetDisplayPreview("bogus", config.TemplatePair{}, true, true); err == nil {
+	if _, err := a.GetDisplayPreview("bogus", config.TemplatePair{}, true, true, config.MatchImageAgent); err == nil {
 		t.Fatal("accepted an unknown presence context")
 	}
 }
@@ -269,7 +269,7 @@ func TestApp_GetDisplayPreview_RejectsUnknownContext(t *testing.T) {
 func TestApp_GetDisplayPreview_FallsBackToTheAppIcon(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
-	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true)
+	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
@@ -293,7 +293,7 @@ func TestApp_GetDisplayPreview_UsesTheRankEmblemWhereRankedSendsWould(t *testing
 		"in-client": false, "in-queue": true, "custom-game": false,
 		"agent-select": true, "in-match": true,
 	} {
-		got, err := a.GetDisplayPreview(ctx, config.TemplatePair{}, true, true)
+		got, err := a.GetDisplayPreview(ctx, config.TemplatePair{}, true, true, config.MatchImageAgent)
 		if err != nil {
 			t.Fatalf("GetDisplayPreview(%s): %v", ctx, err)
 		}
@@ -311,7 +311,7 @@ func TestApp_GetDisplayPreview_UsesTheRankEmblemWhereRankedSendsWould(t *testing
 func TestApp_GetDisplayPreview_DropsTheEmblemWithTheRank(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{}, WithCatalogue(fakeCatalogue{testCatalogue(t)}))
 
-	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, false, true)
+	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, false, true, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
@@ -436,15 +436,47 @@ func TestApp_PauseDelegatesToPauser(t *testing.T) {
 func TestApp_GetDisplayPreview_ToggleOffDoesNotLeakIntoTheNextCall(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
-	if _, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, false, false); err != nil {
+	if _, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, false, false, config.MatchImageAgent); err != nil {
 		t.Fatalf("GetDisplayPreview with the toggles off: %v", err)
 	}
 
-	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true)
+	got, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true, config.MatchImageAgent)
 	if err != nil {
 		t.Fatalf("GetDisplayPreview with the toggles on: %v", err)
 	}
 	if !strings.Contains(got.State, "7-5") {
 		t.Fatalf("State = %q, want the score back once stats are on again", got.State)
+	}
+}
+
+// The preview art is pinned rather than picked from whatever sorts first, so
+// it cannot change under the user or land on whatever sorts first.
+func TestPreviewArtIsPinned(t *testing.T) {
+	if previewCard == "" || previewAgent == "" {
+		t.Fatal("preview art is unpinned")
+	}
+	// "Agents on Leave: Seoul", chosen by Haze after two rounds of options.
+	const chosen = "305a3cdf-43eb-ada2-f747-a080710c9605"
+	if previewCard != chosen {
+		t.Errorf("previewCard = %q, want the card that was picked", previewCard)
+	}
+}
+
+// The preview has to follow the match-image setting, not the stored config,
+// or the picture does not change until the screen is reopened.
+func TestGetDisplayPreview_FollowsTheMatchImageArgument(t *testing.T) {
+	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{}, WithCatalogue(fakeCatalogue{testCatalogue(t)}))
+
+	agent, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true, config.MatchImageAgent)
+	if err != nil {
+		t.Fatalf("GetDisplayPreview: %v", err)
+	}
+	card, err := a.GetDisplayPreview("in-match", config.TemplatePair{}, true, true, config.MatchImageCard)
+	if err != nil {
+		t.Fatalf("GetDisplayPreview: %v", err)
+	}
+
+	if agent.LargeImage == card.LargeImage {
+		t.Errorf("both settings previewed %q, want different art", agent.LargeImage)
 	}
 }

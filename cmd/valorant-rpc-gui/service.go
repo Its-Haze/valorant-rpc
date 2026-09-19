@@ -80,8 +80,8 @@ func (s *guiService) RenderTemplatePreview(ctx string, tmpl config.TemplatePair,
 // GetDisplayPreview renders ctx's template with the display toggles honored,
 // for the Display screen's live preview of the current settings. The art it
 // returns is picked the same way a real send picks it.
-func (s *guiService) GetDisplayPreview(ctx string, tmpl config.TemplatePair, showRank bool, showStats bool) (app.TemplatePreview, error) {
-	return s.app.GetDisplayPreview(ctx, tmpl, showRank, showStats)
+func (s *guiService) GetDisplayPreview(ctx string, tmpl config.TemplatePair, showRank bool, showStats bool, matchImage string) (app.TemplatePreview, error) {
+	return s.app.GetDisplayPreview(ctx, tmpl, showRank, showStats, matchImage)
 }
 
 // GetStatus returns the current status snapshot for the frontend.

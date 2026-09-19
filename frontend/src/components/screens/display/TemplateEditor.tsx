@@ -31,6 +31,8 @@ export interface TemplateEditorProps {
    * way a real send would, in both the text and the art. */
   showRank: boolean;
   showStats: boolean;
+  /** The match-image setting, so the preview's art follows it live. */
+  matchImage: string;
   /** The built-in details/state pair for ctx, for the per-line reset button.
    * Undefined while defaults haven't loaded yet, which just hides the button. */
   defaultValue?: TemplatePair;
@@ -38,7 +40,7 @@ export interface TemplateEditorProps {
 
 // One presence context's editor: details/state text fields, a live preview
 // rendered through the real template engine, and a token reference.
-export function TemplateEditor({ ctx, value, onChange, showRank, showStats, defaultValue }: TemplateEditorProps) {
+export function TemplateEditor({ ctx, value, onChange, showRank, showStats, matchImage, defaultValue }: TemplateEditorProps) {
   const [tokens, setTokens] = useState<string[]>([]);
   const [preview, setPreview] = useState<PreviewState>({ details: "", state: "", warnings: [] });
 
@@ -94,7 +96,7 @@ export function TemplateEditor({ ctx, value, onChange, showRank, showStats, defa
 
   useEffect(() => {
     let cancelled = false;
-    GetDisplayPreview(ctx, debouncedDraft, showRank, showStats)
+    GetDisplayPreview(ctx, debouncedDraft, showRank, showStats, matchImage)
       .then((p) => {
         if (!cancelled) {
           setPreview({
@@ -110,7 +112,7 @@ export function TemplateEditor({ ctx, value, onChange, showRank, showStats, defa
     return () => {
       cancelled = true;
     };
-  }, [ctx, debouncedDraft, showRank, showStats]);
+  }, [ctx, debouncedDraft, showRank, showStats, matchImage]);
 
   return (
     <div className="flex flex-col gap-4">

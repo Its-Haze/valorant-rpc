@@ -573,14 +573,17 @@ func TestDeathmatchShowsNoScoreByDefault(t *testing.T) {
 	}
 }
 
-// The count is still available to anyone who opts into it by name.
+// The count is available once the setting is on, for anyone who wants it
+// despite the lag.
 func TestDeathmatchKillsTokenStaysAvailable(t *testing.T) {
 	cat := testCatalogue(t)
 
 	cfg := presenceConfig()
+	cfg.Display.Default.ShowKills = true
 	cfg.Presence.Templates["in-match"] = config.TemplatePair{Details: "{mode}", State: "{kills}"}
 
 	st := inMatchState()
+	st.QueueID = "deathmatch"
 	st.GameScoreType = types.ScoreTypePoints
 	st.ScoreAlly, st.ScoreEnemy = 19, 39
 
@@ -593,9 +596,11 @@ func TestKillsTokenIsSingularForOneKill(t *testing.T) {
 	cat := testCatalogue(t)
 
 	cfg := presenceConfig()
+	cfg.Display.Default.ShowKills = true
 	cfg.Presence.Templates["in-match"] = config.TemplatePair{Details: "{mode}", State: "{kills}"}
 
 	st := inMatchState()
+	st.QueueID = "deathmatch"
 	st.GameScoreType = types.ScoreTypePoints
 	st.ScoreAlly, st.ScoreEnemy = 1, 12
 
@@ -613,5 +618,67 @@ func TestRoundScoreStillRendersBothTeams(t *testing.T) {
 	rpc := MapStateToPresence(st, presenceConfig(), testCatalogue(t))
 	if !strings.Contains(rpc.State, "7-5") {
 		t.Errorf("state = %q, want the round score", rpc.State)
+	}
+}
+
+// Without the setting a deathmatch shows no count at all, whatever the
+// template asks for.
+func TestDeathmatchKillsStayHiddenWhileTheSettingIsOff(t *testing.T) {
+	cat := testCatalogue(t)
+
+	cfg := presenceConfig()
+	cfg.Display.Default.ShowKills = false
+	cfg.Presence.Templates["in-match"] = config.TemplatePair{Details: "{mode}", State: "In a match · {kills}"}
+
+	st := inMatchState()
+	st.QueueID = "deathmatch"
+	st.GameScoreType = types.ScoreTypePoints
+	st.ScoreAlly, st.ScoreEnemy = 19, 39
+
+	rpc := MapStateToPresence(st, cfg, cat)
+	if strings.Contains(rpc.State, "19") || strings.Contains(rpc.State, "kill") {
+		t.Errorf("state = %q, want no count while the setting is off", rpc.State)
+	}
+	if !strings.Contains(rpc.State, "In a match") {
+		t.Errorf("state = %q, want the rest of the line intact", rpc.State)
+	}
+}
+
+// Round scores are unaffected by the kills setting.
+func TestRoundScoreIgnoresTheKillsSetting(t *testing.T) {
+	cfg := presenceConfig()
+	cfg.Display.Default.ShowKills = false
+
+	st := inMatchState()
+	st.GameScoreType = types.ScoreTypeRounds
+	st.ScoreAlly, st.ScoreEnemy = 7, 5
+
+	if rpc := MapStateToPresence(st, cfg, testCatalogue(t)); !strings.Contains(rpc.State, "7-5") {
+		t.Errorf("state = %q, want the round score", rpc.State)
+	}
+}
+
+// Team Deathmatch and Escalation also score in points, but theirs is a team
+// score. Reading it as personal kills would put someone else's work in this
+// player's presence.
+func TestTeamPointsModesAreNotReadAsKills(t *testing.T) {
+	cat := testCatalogue(t)
+
+	cfg := presenceConfig()
+	cfg.Display.Default.ShowKills = true
+
+	for _, queue := range []string{"hurm", "ggteam"} {
+		st := inMatchState()
+		st.QueueID = types.QueueID(queue)
+		st.GameScoreType = types.ScoreTypePoints
+		st.ScoreAlly, st.ScoreEnemy = 19, 31
+
+		rpc := MapStateToPresence(st, cfg, cat)
+		if strings.Contains(rpc.State, "kill") {
+			t.Errorf("%s state = %q, want a team score not kills", queue, rpc.State)
+		}
+		if !strings.Contains(rpc.State, "19-31") {
+			t.Errorf("%s state = %q, want both team scores", queue, rpc.State)
+		}
 	}
 }

@@ -40,6 +40,11 @@ type DisplayDefaults struct {
 	ShowRank  bool `json:"show_rank"`  // rank emblem and tier name
 	ShowStats bool `json:"show_stats"` // match detail such as the round score
 
+	// ShowKills adds the deathmatch kill count. Off by default: Riot
+	// republishes the presence every 60 to 90 seconds, so the number is
+	// usually behind the scoreboard.
+	ShowKills bool `json:"show_kills"`
+
 	// MatchImage picks the large art during a match: the agent being played,
 	// or the player card kept from the menus. See MatchImageAgent.
 	MatchImage string `json:"match_image"`
@@ -83,7 +88,7 @@ func DefaultConfig() *Config {
 		Theme:              ThemeSystem,
 		OnboardingComplete: false,
 		Display: DisplayConfig{
-			Default: DisplayDefaults{ShowRank: true, ShowStats: true, MatchImage: MatchImageAgent},
+			Default: DisplayDefaults{ShowRank: true, ShowStats: true, ShowKills: false, MatchImage: MatchImageAgent},
 			Locale:  types.LocaleAuto,
 		},
 		Presence: PresenceConfig{

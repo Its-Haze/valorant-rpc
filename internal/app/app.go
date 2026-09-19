@@ -322,7 +322,7 @@ func (a *App) RenderTemplatePreview(ctx string, tmpl config.TemplatePair, sample
 
 // GetDisplayPreview renders ctx's template against sample data with the
 // display toggles honored, and picks the art a real send would hang on it.
-func (a *App) GetDisplayPreview(ctx string, tmpl config.TemplatePair, showRank, showStats bool) (TemplatePreview, error) {
+func (a *App) GetDisplayPreview(ctx string, tmpl config.TemplatePair, showRank, showStats bool, matchImage string) (TemplatePreview, error) {
 	tctx := template.Context(ctx)
 	if !template.IsContext(tctx) {
 		return TemplatePreview{}, fmt.Errorf("unknown presence context %q", ctx)
@@ -337,8 +337,10 @@ func (a *App) GetDisplayPreview(ctx string, tmpl config.TemplatePair, showRank, 
 		sample["score_enemy"] = ""
 	}
 
+	a.addPreviewAgent(sample)
+
 	preview := renderTemplatePair(tctx, tmpl, sample)
-	preview.LargeImage, preview.SmallImage = a.previewImages(tctx, showRank)
+	preview.LargeImage, preview.SmallImage = a.previewImages(tctx, showRank, matchImage)
 	return preview, nil
 }
 
@@ -354,20 +356,81 @@ var rankedPreviewContexts = map[template.Context]bool{
 // data renders, so the emblem and the text agree.
 const previewSampleTier = 25
 
-// previewImages mirrors the choices in internal/discord/presence.go for
-// sample data that carries no player card, agent or map: the app's own icon
-// large, and the rank emblem small wherever a real ranked send would show it.
-func (a *App) previewImages(ctx template.Context, showRank bool) (large, small string) {
-	large, small = discord.ValorantLogoURL(), discord.ValorantLogoSmallURL()
-	if !showRank || !rankedPreviewContexts[ctx] || a.catalogue == nil {
-		return large, small
+// addPreviewAgent names the agent the art shows, so the text and the picture
+// agree. It is left alone when the catalogue has not loaded, which renders
+// the token empty rather than naming an agent the art does not show.
+func (a *App) addPreviewAgent(sample map[string]string) {
+	if a.catalogue == nil {
+		return
 	}
 	cat := a.catalogue.Snapshot()
-	tier, ok := cat.Tier(previewSampleTier, types.ResolveLocale(a.store.Load().Display.Locale, ""))
+	uuid, ok := cat.AgentUUIDByDeveloperName(previewAgent)
+	if !ok {
+		return
+	}
+	if agent, found := cat.Agent(uuid, types.ResolveLocale(a.store.Load().Display.Locale, "")); found {
+		sample["agent"] = agent.Name
+	}
+}
+
+// previewAgent is the agent the in-match preview shows, by Riot's internal
+// codename. Any agent would do; a fixed one keeps the preview from changing
+// under the user as they type.
+const previewAgent = "Wushu"
+
+// previewCard is "Agents on Leave: Seoul", Haze's pick. Falls back to the
+// first card in the catalogue if Riot ever retires it.
+const previewCard = "305a3cdf-43eb-ada2-f747-a080710c9605"
+
+// previewImages mirrors the choices in internal/discord/presence.go: the
+// agent in a match, the player's card everywhere else, and the rank emblem
+// small wherever a real ranked send would show it. Each falls back to the
+// app's own icon if the catalogue has not loaded.
+func (a *App) previewImages(ctx template.Context, showRank bool, matchImage string) (large, small string) {
+	large, small = discord.ValorantLogoURL(), discord.ValorantLogoSmallURL()
+	if a.catalogue == nil {
+		return large, small
+	}
+
+	cat := a.catalogue.Snapshot()
+	locale := types.ResolveLocale(a.store.Load().Display.Locale, "")
+
+	if art, ok := a.previewLargeImage(cat, ctx, locale, matchImage); ok {
+		large = art
+	}
+
+	if !showRank || !rankedPreviewContexts[ctx] {
+		return large, small
+	}
+	tier, ok := cat.Tier(previewSampleTier, locale)
 	if ok && tier.LargeIcon != "" {
 		small = tier.LargeIcon
 	}
 	return large, small
+}
+
+// previewLargeImage picks the art a real send would hang on this context.
+func (a *App) previewLargeImage(cat *content.Catalogue, ctx template.Context, locale, matchImage string) (string, bool) {
+	// Taken as an argument rather than read from the store, so the preview is
+	// a function of what the screen is showing and refreshes when it changes.
+	wantsAgent := ctx == template.ContextInMatch && matchImage != config.MatchImageCard
+
+	if wantsAgent {
+		if uuid, ok := cat.AgentUUIDByDeveloperName(previewAgent); ok {
+			if agent, found := cat.Agent(uuid, locale); found && agent.Icon != "" {
+				return agent.Icon, true
+			}
+		}
+	}
+
+	if card, ok := cat.PlayerCard(previewCard); ok && card.Icon != "" {
+		return card.Icon, true
+	}
+	// Cards are ordered by UUID, so the first is stable across refreshes.
+	if cards := cat.PlayerCards(); len(cards) > 0 && cards[0].Icon != "" {
+		return cards[0].Icon, true
+	}
+	return "", false
 }
 
 // renderTemplatePair renders tmpl for tctx against sample and collects any

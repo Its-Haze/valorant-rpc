@@ -4,7 +4,14 @@ import { useDefaultConfig } from "../../hooks/useDefaultConfig";
 import { useLocales } from "../../hooks/useLocales";
 import { useSettings } from "../../hooks/useSettings";
 import { useStatus } from "../../hooks/useStatus";
-import { withLocale, withMatchImage, withShowInClient, withShowRank, withShowStats } from "../../lib/displayPatch";
+import {
+  withLocale,
+  withMatchImage,
+  withShowInClient,
+  withShowKills,
+  withShowRank,
+  withShowStats,
+} from "../../lib/displayPatch";
 import { MATCH_IMAGE_OPTIONS } from "../../lib/matchImage";
 import { LOCALE_AUTO, autoLocaleLabel } from "../../lib/locales";
 import { PRESENCE_CONTEXT_LABELS, PRESENCE_CONTEXTS } from "../../lib/presenceContexts";
@@ -70,6 +77,20 @@ export function DisplayScreen() {
             checked={cfg.display.default.show_stats}
             onCheckedChange={(v) => void applyPatch(withShowStats(cfg, v))}
             label="Show match detail"
+          />
+        </Field>
+        <Field
+          id="show-kills"
+          label="Show kills in deathmatch"
+          hint="Riot only refreshes the count every minute or so, so it runs behind the scoreboard"
+          onReset={defaults ? () => void applyPatch(withShowKills(cfg, defaults.display.default.show_kills)) : undefined}
+          isDefault={!defaults || cfg.display.default.show_kills === defaults.display.default.show_kills}
+        >
+          <Toggle
+            id="show-kills"
+            checked={cfg.display.default.show_kills}
+            onCheckedChange={(v) => void applyPatch(withShowKills(cfg, v))}
+            label="Show kills in deathmatch"
           />
         </Field>
         <Field
@@ -145,6 +166,7 @@ export function DisplayScreen() {
                   value={pair}
                   onChange={(next) => setTemplate(ctx, next)}
                   showRank={cfg.display.default.show_rank}
+                  matchImage={cfg.display.default.match_image}
                   showStats={cfg.display.default.show_stats}
                   defaultValue={defaults?.presence.templates?.[ctx]}
                 />

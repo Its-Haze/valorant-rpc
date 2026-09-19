@@ -209,3 +209,11 @@ func TestClamp_RepairsTheMatchImageSetting(t *testing.T) {
 		t.Error("clamp overwrote a deliberate card choice")
 	}
 }
+
+// The kills toggle defaults off, because Riot's 60-to-90-second republish
+// leaves the count behind the scoreboard more often than not.
+func TestDefaultConfig_KillsAreOffByDefault(t *testing.T) {
+	if DefaultConfig().Display.Default.ShowKills {
+		t.Error("show_kills defaults on, want off")
+	}
+}
