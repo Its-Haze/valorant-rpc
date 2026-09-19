@@ -73,7 +73,7 @@ export function AboutScreen() {
           <p className="pt-1 text-sm leading-relaxed">
             Valorant RPC reads the Riot Client's own local API on your PC and turns what it finds
             into a Discord status. It never writes anything back to Riot, nothing is injected, no
-            files are modified, and everything it knows is already on your own screen.
+            files are modified, and the only match it ever reads is your own.
           </p>
         </SettingsCard>
 
