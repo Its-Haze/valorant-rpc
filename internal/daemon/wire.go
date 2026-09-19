@@ -4,6 +4,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/its-haze/valorant-rpc/internal/config"
+	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/discord"
 	"github.com/its-haze/valorant-rpc/internal/process"
 	"github.com/its-haze/valorant-rpc/internal/riotchat"
@@ -18,6 +19,7 @@ func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
 	discordClient := discord.NewClient(store, logger)
 	updater := discord.NewUpdater(discordClient, store, logger)
 	checker := process.NewChecker()
+	catalogue := content.New(content.Options{Logger: logger})
 
 	riotClient := riotclient.New(riotclient.Options{Logger: logger})
 	source := NewRiotSource(riotClient, stateMgr, logger, func(onUpdate func(riotchat.Presence)) presenceWatcher {
@@ -28,5 +30,6 @@ func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
 	discordSup := NewDiscordSupervisor(discordClient, checker, riotSup)
 
 	return New(discordSup, riotSup, updater, stateMgr, logger,
-		DefaultPresencePollInterval, DefaultPlaceholderInterval)
+		DefaultPresencePollInterval, DefaultPlaceholderInterval,
+		WithCatalogue(catalogue))
 }

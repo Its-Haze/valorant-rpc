@@ -37,6 +37,12 @@ type riotRunner interface {
 	PresenceStalled() bool
 }
 
+// CatalogueRefresher keeps the content catalogue warm for the duration of a
+// run. *content.Cache satisfies it.
+type CatalogueRefresher interface {
+	Run(ctx context.Context)
+}
+
 // AgentLookup resolves which agent the player is on. It fires once per entry
 // into agent select or a match, and v0.1 wires nothing into it.
 type AgentLookup interface {
@@ -56,6 +62,11 @@ const (
 // DaemonOption configures a Daemon.
 type DaemonOption func(*Daemon)
 
+// WithCatalogue wires the content catalogue's refresh loop into Run.
+func WithCatalogue(c CatalogueRefresher) DaemonOption {
+	return func(d *Daemon) { d.catalogue = c }
+}
+
 // WithAgentLookup wires the v0.2 agent lookup into the context-entry hook.
 func WithAgentLookup(a AgentLookup) DaemonOption {
 	return func(d *Daemon) { d.agents = a }
@@ -70,6 +81,10 @@ type Daemon struct {
 	state   *state.Manager
 	agents  AgentLookup
 	logger  zerolog.Logger
+
+	// catalogue is optional: a Daemon without one still drives presence,
+	// with every content lookup missing.
+	catalogue CatalogueRefresher
 
 	presencePollInterval time.Duration
 	placeholderInterval  time.Duration
@@ -144,6 +159,14 @@ func (d *Daemon) SubscribeState() <-chan *state.State { return d.state.Subscribe
 func (d *Daemon) Run(ctx context.Context) {
 	var wg sync.WaitGroup
 	wg.Add(4)
+
+	if d.catalogue != nil {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			d.catalogue.Run(ctx)
+		}()
+	}
 
 	go func() {
 		defer wg.Done()

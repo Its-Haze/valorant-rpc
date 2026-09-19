@@ -1,0 +1,551 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "7eaecc1b-4337-bbf6-6ab9-04b8f06b3319",
+   "displayName": {
+    "en-US": "Ascent",
+    "de-DE": "Ascent",
+    "ja-JP": "アセント"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Ascent/Ascent_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Ascent/Ascent",
+   "xMultiplier": 7e-05,
+   "yMultiplier": -7e-05,
+   "xScalarToAdd": 0.813895,
+   "yScalarToAdd": 0.573242
+  },
+  {
+   "uuid": "d960549e-485c-e861-8d71-aa9d1aed12a2",
+   "displayName": {
+    "en-US": "Split",
+    "de-DE": "Split",
+    "ja-JP": "スプリット"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/d960549e-485c-e861-8d71-aa9d1aed12a2/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Bonsai/Bonsai_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Bonsai/Bonsai",
+   "xMultiplier": 7.8e-05,
+   "yMultiplier": -7.8e-05,
+   "xScalarToAdd": 0.842188,
+   "yScalarToAdd": 0.697578
+  },
+  {
+   "uuid": "b529448b-4d60-346e-e89e-00a4c527a405",
+   "displayName": {
+    "en-US": "Fracture",
+    "de-DE": "Fracture",
+    "ja-JP": "フラクチャー"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/b529448b-4d60-346e-e89e-00a4c527a405/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Canyon/Canyon_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Canyon/Canyon",
+   "xMultiplier": 7.8e-05,
+   "yMultiplier": -7.8e-05,
+   "xScalarToAdd": 0.556952,
+   "yScalarToAdd": 1.155886
+  },
+  {
+   "uuid": "2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba",
+   "displayName": {
+    "en-US": "Bind",
+    "de-DE": "Bind",
+    "ja-JP": "バインド"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Duality/Duality_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duality/Duality",
+   "xMultiplier": 5.9e-05,
+   "yMultiplier": -5.9e-05,
+   "xScalarToAdd": 0.576941,
+   "yScalarToAdd": 0.967566
+  },
+  {
+   "uuid": "a9009649-421f-d5d5-f80c-0cbe02c125bb",
+   "displayName": {
+    "en-US": "Skirmish A",
+    "de-DE": "Skirmish A",
+    "ja-JP": "スカーミッシュ A"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/a9009649-421f-d5d5-f80c-0cbe02c125bb/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/a9009649-421f-d5d5-f80c-0cbe02c125bb/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/a9009649-421f-d5d5-f80c-0cbe02c125bb/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/a9009649-421f-d5d5-f80c-0cbe02c125bb/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Duel/Duel_1/Skirmish_1_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duel/Duel_1/Skirmish_A",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "a38a3f9a-4042-844c-8970-a3ac2f7ce93d",
+   "displayName": {
+    "en-US": "Skirmish B",
+    "de-DE": "Skirmish B",
+    "ja-JP": "スカーミッシュ B"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/a38a3f9a-4042-844c-8970-a3ac2f7ce93d/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/a38a3f9a-4042-844c-8970-a3ac2f7ce93d/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/a38a3f9a-4042-844c-8970-a3ac2f7ce93d/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/a38a3f9a-4042-844c-8970-a3ac2f7ce93d/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Duel/Duel_2/Skirmish_2_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duel/Duel_2/Skirmish_B",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "a264de0f-4a04-9c78-c97a-a6b192ce6e86",
+   "displayName": {
+    "en-US": "Skirmish C",
+    "de-DE": "Skirmish C",
+    "ja-JP": "スカーミッシュ C"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/a264de0f-4a04-9c78-c97a-a6b192ce6e86/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/a264de0f-4a04-9c78-c97a-a6b192ce6e86/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/a264de0f-4a04-9c78-c97a-a6b192ce6e86/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/a264de0f-4a04-9c78-c97a-a6b192ce6e86/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Duel/Duel_3/Skirmish_3_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duel/Duel_3/Skirmish_C",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "4490f1d6-4818-bf5f-9b3a-9c9a8dbb52ed",
+   "displayName": {
+    "en-US": "Skirmish E",
+    "de-DE": "Skirmish E",
+    "ja-JP": "スカーミッシュ E"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/4490f1d6-4818-bf5f-9b3a-9c9a8dbb52ed/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/4490f1d6-4818-bf5f-9b3a-9c9a8dbb52ed/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/4490f1d6-4818-bf5f-9b3a-9c9a8dbb52ed/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/4490f1d6-4818-bf5f-9b3a-9c9a8dbb52ed/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Duel/Duel_Heady/Duel_Heady_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duel/Duel_Heady/Skirmish_E",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "1c7555fc-4bc6-3b98-9674-789d47ef6c50",
+   "displayName": {
+    "en-US": "Skirmish D",
+    "de-DE": "Skirmish D",
+    "ja-JP": "スカーミッシュ D"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/1c7555fc-4bc6-3b98-9674-789d47ef6c50/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/1c7555fc-4bc6-3b98-9674-789d47ef6c50/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/1c7555fc-4bc6-3b98-9674-789d47ef6c50/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/1c7555fc-4bc6-3b98-9674-789d47ef6c50/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Duel/Duel_platform/Skirmish_D_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Duel/Duel_Platform/Skirmish_D",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "2fb9a4fd-47b8-4e7d-a969-74b4046ebd53",
+   "displayName": {
+    "en-US": "Breeze",
+    "de-DE": "Breeze",
+    "ja-JP": "ブリーズ"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/2fb9a4fd-47b8-4e7d-a969-74b4046ebd53/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/FoxTrot/Foxtrot_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Foxtrot/Foxtrot",
+   "xMultiplier": 7e-05,
+   "yMultiplier": -7e-05,
+   "xScalarToAdd": 0.465123,
+   "yScalarToAdd": 0.833078
+  },
+  {
+   "uuid": "690b3ed2-4dff-945b-8223-6da834e30d24",
+   "displayName": {
+    "en-US": "District",
+    "de-DE": "District",
+    "ja-JP": "ディストリクト"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/690b3ed2-4dff-945b-8223-6da834e30d24/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_Alley/HURM_Alley_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_Alley/HURM_Alley",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "12452a9d-48c3-0b02-e7eb-0381c3520404",
+   "displayName": {
+    "en-US": "Kasbah",
+    "de-DE": "Kasbah",
+    "ja-JP": "カスバ"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/12452a9d-48c3-0b02-e7eb-0381c3520404/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/12452a9d-48c3-0b02-e7eb-0381c3520404/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/12452a9d-48c3-0b02-e7eb-0381c3520404/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/12452a9d-48c3-0b02-e7eb-0381c3520404/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/12452a9d-48c3-0b02-e7eb-0381c3520404/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_Bowl/HURM_Bowl_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_Bowl/HURM_Bowl",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "2c09d728-42d5-30d8-43dc-96a05cc7ee9d",
+   "displayName": {
+    "en-US": "Drift",
+    "de-DE": "Drift",
+    "ja-JP": "ドリフト"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/2c09d728-42d5-30d8-43dc-96a05cc7ee9d/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/2c09d728-42d5-30d8-43dc-96a05cc7ee9d/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/2c09d728-42d5-30d8-43dc-96a05cc7ee9d/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/2c09d728-42d5-30d8-43dc-96a05cc7ee9d/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/2c09d728-42d5-30d8-43dc-96a05cc7ee9d/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_Helix/HURM_Helix_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_Helix/HURM_Helix",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "d6336a5a-428f-c591-98db-c8a291159134",
+   "displayName": {
+    "en-US": "Glitch",
+    "de-DE": "Glitch",
+    "ja-JP": "グリッチ"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/d6336a5a-428f-c591-98db-c8a291159134/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/d6336a5a-428f-c591-98db-c8a291159134/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/d6336a5a-428f-c591-98db-c8a291159134/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/d6336a5a-428f-c591-98db-c8a291159134/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/d6336a5a-428f-c591-98db-c8a291159134/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_HighTide/HURM_HighTide_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_HighTide/HURM_HighTide",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "de28aa9b-4cbe-1003-320e-6cb3ec309557",
+   "displayName": {
+    "en-US": "Piazza",
+    "de-DE": "Piazza",
+    "ja-JP": "ピアッツァ"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/de28aa9b-4cbe-1003-320e-6cb3ec309557/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/de28aa9b-4cbe-1003-320e-6cb3ec309557/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/de28aa9b-4cbe-1003-320e-6cb3ec309557/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/de28aa9b-4cbe-1003-320e-6cb3ec309557/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/de28aa9b-4cbe-1003-320e-6cb3ec309557/stylizedbackgroundimage.png",
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/HURM/HURM_Yard/HURM_Yard_PrimaryAsset",
+   "mapUrl": "/Game/Maps/HURM/HURM_Yard/HURM_Yard",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "224b0a95-48b9-f703-1bd8-67aca101a61f",
+   "displayName": {
+    "en-US": "Abyss",
+    "de-DE": "Abyss",
+    "ja-JP": "アビス"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/224b0a95-48b9-f703-1bd8-67aca101a61f/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Infinity/Infinity_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Infinity/Infinity",
+   "xMultiplier": 8.1e-05,
+   "yMultiplier": -8.1e-05,
+   "xScalarToAdd": 0.5,
+   "yScalarToAdd": 0.5
+  },
+  {
+   "uuid": "2fe4ed3a-450a-948b-6d6b-e89a78e680a9",
+   "displayName": {
+    "en-US": "Lotus",
+    "de-DE": "Lotus",
+    "ja-JP": "ロータス"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/2fe4ed3a-450a-948b-6d6b-e89a78e680a9/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Jam/Jam_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Jam/Jam",
+   "xMultiplier": 7.2e-05,
+   "yMultiplier": -7.2e-05,
+   "xScalarToAdd": 0.454789,
+   "yScalarToAdd": 0.917752
+  },
+  {
+   "uuid": "92584fbe-486a-b1b2-9faa-39b0f486b498",
+   "displayName": {
+    "en-US": "Sunset",
+    "de-DE": "Sunset",
+    "ja-JP": "サンセット"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/92584fbe-486a-b1b2-9faa-39b0f486b498/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Juliett/Juliett_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Juliett/Juliett",
+   "xMultiplier": 7.8e-05,
+   "yMultiplier": -7.8e-05,
+   "xScalarToAdd": 0.5,
+   "yScalarToAdd": 0.515625
+  },
+  {
+   "uuid": "1f10dab3-4294-3827-fa35-c2aa00213cf3",
+   "displayName": {
+    "en-US": "Basic Training",
+    "de-DE": "Grundausbildung",
+    "ja-JP": "基本トレーニング"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/1f10dab3-4294-3827-fa35-c2aa00213cf3/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/1f10dab3-4294-3827-fa35-c2aa00213cf3/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/1f10dab3-4294-3827-fa35-c2aa00213cf3/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": null,
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/NPEV2/NPEV2_PrimaryAsset",
+   "mapUrl": "/Game/Maps/NPEV2/NPEV2",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "fd267378-4d1d-484f-ff52-77821ed10dc2",
+   "displayName": {
+    "en-US": "Pearl",
+    "de-DE": "Pearl",
+    "ja-JP": "パール"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/fd267378-4d1d-484f-ff52-77821ed10dc2/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Pitt/Pitt_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Pitt/Pitt",
+   "xMultiplier": 7.8e-05,
+   "yMultiplier": -7.8e-05,
+   "xScalarToAdd": 0.480469,
+   "yScalarToAdd": 0.916016
+  },
+  {
+   "uuid": "756da597-416b-c0f2-f47b-afbdf28670bc",
+   "displayName": {
+    "en-US": "Summit",
+    "de-DE": "Summit",
+    "ja-JP": "サミット"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/756da597-416b-c0f2-f47b-afbdf28670bc/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Plummet/Plummet_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Plummet/Plummet",
+   "xMultiplier": 7.5e-05,
+   "yMultiplier": -7.5e-05,
+   "xScalarToAdd": 0.047401,
+   "yScalarToAdd": 0.978891
+  },
+  {
+   "uuid": "e2ad5c54-4114-a870-9641-8ea21279579a",
+   "displayName": {
+    "en-US": "Icebox",
+    "de-DE": "Icebox",
+    "ja-JP": "アイスボックス"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/e2ad5c54-4114-a870-9641-8ea21279579a/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Port/Port_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Port/Port",
+   "xMultiplier": 7.2e-05,
+   "yMultiplier": -7.2e-05,
+   "xScalarToAdd": 0.460214,
+   "yScalarToAdd": 0.304687
+  },
+  {
+   "uuid": "ee613ee9-28b7-4beb-9666-08db13bb2244",
+   "displayName": {
+    "en-US": "The Range",
+    "de-DE": "The Range",
+    "ja-JP": "射撃場"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/ee613ee9-28b7-4beb-9666-08db13bb2244/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": null,
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/Poveglia/Poveglia_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Poveglia/Range",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "5914d1e0-40c4-cfdd-6b88-eba06347686c",
+   "displayName": {
+    "en-US": "The Range",
+    "de-DE": "The Range",
+    "ja-JP": "射撃場"
+   },
+   "displayIcon": null,
+   "listViewIcon": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/5914d1e0-40c4-cfdd-6b88-eba06347686c/splash.png",
+   "backgroundImage": null,
+   "stylizedBackgroundImage": null,
+   "premierBackgroundImage": null,
+   "assetPath": "ShooterGame/Content/Maps/PovegliaV2/PovegliaV2_PrimaryAsset",
+   "mapUrl": "/Game/Maps/PovegliaV2/RangeV2",
+   "xMultiplier": 0,
+   "yMultiplier": 0,
+   "xScalarToAdd": 0,
+   "yScalarToAdd": 0
+  },
+  {
+   "uuid": "1c18ab1f-420d-0d8b-71d0-77ad3c439115",
+   "displayName": {
+    "en-US": "Corrode",
+    "de-DE": "Corrode",
+    "ja-JP": "カロード"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/1c18ab1f-420d-0d8b-71d0-77ad3c439115/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Rook/Rook_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Rook/Rook",
+   "xMultiplier": 7e-05,
+   "yMultiplier": -7e-05,
+   "xScalarToAdd": 0.526158,
+   "yScalarToAdd": 0.5
+  },
+  {
+   "uuid": "2bee0dc9-4ffe-519b-1cbd-7fbe763a6047",
+   "displayName": {
+    "en-US": "Haven",
+    "de-DE": "Haven",
+    "ja-JP": "ヘイヴン"
+   },
+   "displayIcon": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/displayicon.png",
+   "listViewIcon": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/listviewicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/listviewicontall.png",
+   "splash": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/splash.png",
+   "backgroundImage": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/backgroundimage.png",
+   "stylizedBackgroundImage": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/stylizedbackgroundimage.png",
+   "premierBackgroundImage": "https://media.valorant-api.com/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/premierbackgroundimage.png",
+   "assetPath": "ShooterGame/Content/Maps/Triad/Triad_PrimaryAsset",
+   "mapUrl": "/Game/Maps/Triad/Triad",
+   "xMultiplier": 7.5e-05,
+   "yMultiplier": -7.5e-05,
+   "xScalarToAdd": 1.09345,
+   "yScalarToAdd": 0.642728
+  }
+ ]
+}

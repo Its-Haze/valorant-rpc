@@ -1,0 +1,777 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "1cd8901f-47af-49cb-d758-e2afd0eb2a39",
+   "displayName": {
+    "en-US": "All Random One Site",
+    "de-DE": "Alle Zufällig, Ein Areal",
+    "ja-JP": "オールランダム ワンサイト"
+   },
+   "duration": {
+    "en-US": "10-15 MINS",
+    "de-DE": "10 BIS 15 MIN.",
+    "ja-JP": "10-15 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::EquippableCacheRecycling",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AssignRandomAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::SkipPregame",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AllowUnownedAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::UseAllAbilityCooldowns",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/1cd8901f-47af-49cb-d758-e2afd0eb2a39/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/1cd8901f-47af-49cb-d758-e2afd0eb2a39/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/AROS/AROS_GameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "96bd3920-4f36-d026-2b28-c683eb0bcac5",
+   "displayName": {
+    "en-US": "Standard",
+    "de-DE": "Standard",
+    "ja-JP": "スタンダード"
+   },
+   "duration": {
+    "en-US": "30-40 MINS",
+    "de-DE": "30 BIS 40 MIN.",
+    "ja-JP": "30-40 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": true,
+   "allowsCustomGameReplays": true,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AccoladesEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Bomb/BombGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "a8790ec5-4237-f2f0-e93b-08a8e89865b2",
+   "displayName": {
+    "en-US": "Deathmatch",
+    "de-DE": "Deathmatch",
+    "ja-JP": "デスマッチ"
+   },
+   "duration": {
+    "en-US": "7-9 MINS",
+    "de-DE": "7 BIS 9 MIN.",
+    "ja-JP": "7-9 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": false,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": [
+    "EAresTeamRole::FreeForAll"
+   ],
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::AllowShoppingWhileDead",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AssignRandomAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::SkipPregame",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/a8790ec5-4237-f2f0-e93b-08a8e89865b2/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/a8790ec5-4237-f2f0-e93b-08a8e89865b2/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Deathmatch/DeathmatchGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "1a4a3fd5-4966-62cb-7fe4-15b0317f5c80",
+   "displayName": {
+    "en-US": "Knockout",
+    "de-DE": "Knockout",
+    "ja-JP": "ノックアウト"
+   },
+   "duration": {
+    "en-US": "10-15 MINS",
+    "de-DE": "10 BIS 15 MIN.",
+    "ja-JP": "10-15分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": true,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::DisableFogOfWar",
+     "state": true
+    },
+    {
+     "featureName": "EGameFeatureToggleName::AllowShoppingWhileDead",
+     "state": true
+    },
+    {
+     "featureName": "EGameFeatureToggleName::EquippableCacheRecycling",
+     "state": true
+    },
+    {
+     "featureName": "EGameFeatureToggleName::EnableGamepadVotingUI",
+     "state": false
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::DestroyAbilitiesOnDeath",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": false
+    },
+    {
+     "ruleName": "EGameRuleBoolName::PreventAbilityRecharge",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::UseAllAbilityCooldowns",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::DownedCharactersCanGiveUp",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AllowAutomaticRemakeVote",
+     "state": false
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/1a4a3fd5-4966-62cb-7fe4-15b0317f5c80/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/1a4a3fd5-4966-62cb-7fe4-15b0317f5c80/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Dodgeball/Dodgeball_GameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "d2d0f229-4514-517a-b10a-aaa0ef0d4a67",
+   "displayName": {
+    "en-US": "Bot Match",
+    "de-DE": "Bot-Match",
+    "ja-JP": "ボットマッチ"
+   },
+   "duration": null,
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 4,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::FillWithBots",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::ContextAwareModuleEnabled",
+     "state": false
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AllowDropOut",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/d2d0f229-4514-517a-b10a-aaa0ef0d4a67/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/d2d0f229-4514-517a-b10a-aaa0ef0d4a67/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/ExamplePlayerTestBot/BotTrainingMatch_GameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "75b7b658-472c-0264-cbe6-049abf14f54b",
+   "displayName": {
+    "en-US": "Retake",
+    "de-DE": "Rückeroberung",
+    "ja-JP": "リテイク"
+   },
+   "duration": {
+    "en-US": "8-12 MINS",
+    "de-DE": "8 BIS 12 MIN.",
+    "ja-JP": "8-12 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::FootIK",
+     "state": false
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::IsOvertimeWinByTwo",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/75b7b658-472c-0264-cbe6-049abf14f54b/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/75b7b658-472c-0264-cbe6-049abf14f54b/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/FortCollins/FortCollins_PrimaryAsset"
+  },
+  {
+   "uuid": "a4ed6518-4741-6dcb-35bd-f884aecdc859",
+   "displayName": {
+    "en-US": "Escalation",
+    "de-DE": "Eskalation",
+    "ja-JP": "エスカレーション"
+   },
+   "duration": {
+    "en-US": "7-9 MINS",
+    "de-DE": "7 BIS 9 MIN.",
+    "ja-JP": "7-9 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": {
+    "en-US": "You’ve reached the checkpoint",
+    "de-DE": "Du hast den Checkpunkt erreicht.",
+    "ja-JP": "チェックポイントに到達"
+   },
+   "customDefeatMessage": {
+    "en-US": "Enemies reached the checkpoint",
+    "de-DE": "Gegner haben den Checkpunkt erreicht.",
+    "ja-JP": "敵がチェックポイントに到達"
+   },
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::DeathmatchEncourageFarSpawning",
+     "state": false
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AssignRandomAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::SkipPregame",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/a4ed6518-4741-6dcb-35bd-f884aecdc859/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/a4ed6518-4741-6dcb-35bd-f884aecdc859/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/GunGame/GunGameTeamsGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "e086db66-47fd-e791-ca81-06a645ac7661",
+   "displayName": {
+    "en-US": "Team Deathmatch",
+    "de-DE": "Team-Deathmatch",
+    "ja-JP": "チームデスマッチ"
+   },
+   "duration": {
+    "en-US": "8-10 MINS",
+    "de-DE": "8 BIS 10 MIN.",
+    "ja-JP": "8-10 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::AllowShoppingWhileDead",
+     "state": true
+    },
+    {
+     "featureName": "EGameFeatureToggleName::EquippableCacheRecycling",
+     "state": true
+    },
+    {
+     "featureName": "EGameFeatureToggleName::DisableFogOfWar",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::DestroyAbilitiesOnDeath",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::PipAbilityCasting",
+     "state": false
+    },
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::PreventAbilityRecharge",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::UseAllAbilityCooldowns",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::DownedCharactersCanGiveUp",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::UseInDevWeapons",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AccoladesEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/e086db66-47fd-e791-ca81-06a645ac7661/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/e086db66-47fd-e791-ca81-06a645ac7661/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/HURM/HURM_PrimaryAsset"
+  },
+  {
+   "uuid": "2b470a47-40e0-ad02-73b4-7f8585fa108c",
+   "displayName": {
+    "en-US": "Basic Training",
+    "de-DE": "Grundausbildung",
+    "ja-JP": "基本トレーニング"
+   },
+   "duration": null,
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": true,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::RemoveDeletedFXCsFromPool",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::SkipPregame",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AssignRandomAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::DisableShopSelling",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": true
+    }
+   ],
+   "displayIcon": null,
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/2b470a47-40e0-ad02-73b4-7f8585fa108c/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/NPEV2/NPEV2_GameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "d2b4e425-4cab-8d95-eb26-bb9b444551dc",
+   "displayName": {
+    "en-US": "Onboarding",
+    "de-DE": "Einführung",
+    "ja-JP": "オリエンテーション"
+   },
+   "duration": null,
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": true,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": null,
+   "displayIcon": null,
+   "listViewIconTall": null,
+   "assetPath": "ShooterGame/Content/GameModes/NewPlayerExperience/NPEGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "4744698a-4513-dc96-9c22-a9aa437e4a58",
+   "displayName": {
+    "en-US": "Replication",
+    "de-DE": "Klonprogramm",
+    "ja-JP": "レプリケーション"
+   },
+   "duration": {
+    "en-US": "10-15 MINS",
+    "de-DE": "10 BIS 15 MIN.",
+    "ja-JP": "10-15 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 4,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::MajorityVoteAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::IsOvertimeWinByTwo",
+     "state": false
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/4744698a-4513-dc96-9c22-a9aa437e4a58/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/4744698a-4513-dc96-9c22-a9aa437e4a58/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/OneForAll/OneForAll_GameMode_DataAsset_Desktop"
+  },
+  {
+   "uuid": "e921d1e6-416b-c31f-1291-74930c330b7b",
+   "displayName": {
+    "en-US": "Spike Rush",
+    "de-DE": "Spike-Ansturm",
+    "ja-JP": "スパイクラッシュ"
+   },
+   "duration": {
+    "en-US": "8-12 MINS",
+    "de-DE": "8 BIS 12 MIN.",
+    "ja-JP": "8-12 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 3,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AccoladesEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/e921d1e6-416b-c31f-1291-74930c330b7b/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/e921d1e6-416b-c31f-1291-74930c330b7b/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/QuickBomb/QuickBombGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "e2dc3878-4fe5-d132-28f8-3d8c259efcc6",
+   "displayName": {
+    "en-US": "The Range",
+    "de-DE": "The Range",
+    "ja-JP": "射撃場"
+   },
+   "duration": null,
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": true,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::ContextAwareModuleEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/e2dc3878-4fe5-d132-28f8-3d8c259efcc6/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/e2dc3878-4fe5-d132-28f8-3d8c259efcc6/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/ShootingRange/ShootingRangeGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "0e9805d8-4af6-5ffb-f467-55806a6bc484",
+   "displayName": {
+    "en-US": "Skirmish",
+    "de-DE": "Skirmish",
+    "ja-JP": "スカーミッシュ"
+   },
+   "duration": {
+    "en-US": "5-10 MINS",
+    "de-DE": "5 BIS 10 MIN.",
+    "ja-JP": "5-10 分"
+   },
+   "customTimerLabel": {
+    "en-US": "OVERTIME",
+    "de-DE": "VERLÄNGERUNG",
+    "ja-JP": "OVERTIME"
+   },
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 0,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::AllowShoppingWhileDead",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::SkipUltimateAbilityReadyVO",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/0e9805d8-4af6-5ffb-f467-55806a6bc484/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/0e9805d8-4af6-5ffb-f467-55806a6bc484/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/Skirmish/SkirmishGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "d08c45fe-4415-edcf-65a3-45885cc4349b",
+   "displayName": {
+    "en-US": "Skirmish: Ascension",
+    "de-DE": "Skirmish: Ascension",
+    "ja-JP": "スカーミッシュ: Ascension"
+   },
+   "duration": {
+    "en-US": "5-10 MINS",
+    "de-DE": "5 BIS 10 MIN.",
+    "ja-JP": "5-10 分"
+   },
+   "customTimerLabel": {
+    "en-US": "OVERTIME",
+    "de-DE": "VERLÄNGERUNG",
+    "ja-JP": "OVERTIME"
+   },
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": "EEconomyTypes::Other",
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 0,
+   "teamRoles": null,
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::AllowShoppingWhileDead",
+     "state": true
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::RoundOvertimeEnabled",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::SkipUltimateAbilityReadyVO",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::EnablePregameAgentAllowList",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AllowUnownedAgents",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/d08c45fe-4415-edcf-65a3-45885cc4349b/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/d08c45fe-4415-edcf-65a3-45885cc4349b/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/SkirmishAscension/SkirmishAscensionGameModePrimaryAsset"
+  },
+  {
+   "uuid": "57038d6d-49b1-3a74-c5ef-3395d9f23a97",
+   "displayName": {
+    "en-US": "Snowball Fight",
+    "de-DE": "Schneeballschlacht",
+    "ja-JP": "スノーボールファイト"
+   },
+   "duration": {
+    "en-US": "5-7 MINS",
+    "de-DE": "5 BIS 7 MIN.",
+    "ja-JP": "5-7 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": false,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": -1,
+   "teamRoles": [
+    "EAresTeamRole::Attacker",
+    "EAresTeamRole::Defender"
+   ],
+   "gameFeatureOverrides": [
+    {
+     "featureName": "EGameFeatureToggleName::DeathmatchEncourageFarSpawning",
+     "state": false
+    }
+   ],
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::AssignRandomAgents",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::SkipPregame",
+     "state": true
+    },
+    {
+     "ruleName": "EGameRuleBoolName::CombatReportOnlyShowLastLife",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/57038d6d-49b1-3a74-c5ef-3395d9f23a97/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/57038d6d-49b1-3a74-c5ef-3395d9f23a97/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/SnowballFight/SnowballFightGameMode_PrimaryAsset"
+  },
+  {
+   "uuid": "5d0f264b-4ebe-cc63-c147-809e1374484b",
+   "displayName": {
+    "en-US": "Swiftplay",
+    "de-DE": "Schnelles Spiel",
+    "ja-JP": "スイフトプレイ"
+   },
+   "duration": {
+    "en-US": "10-15 MIN",
+    "de-DE": "10 BIS 15 MIN.",
+    "ja-JP": "10～15 分"
+   },
+   "customTimerLabel": null,
+   "customVictoryMessage": null,
+   "customDefeatMessage": null,
+   "economyType": null,
+   "allowsMatchTimeouts": false,
+   "allowsCustomGameReplays": true,
+   "isTeamVoiceAllowed": true,
+   "isMinimapHidden": false,
+   "orbCount": 1,
+   "roundsPerHalf": 4,
+   "teamRoles": null,
+   "gameFeatureOverrides": null,
+   "gameRuleBoolOverrides": [
+    {
+     "ruleName": "EGameRuleBoolName::IsOvertimeWinByTwo",
+     "state": false
+    },
+    {
+     "ruleName": "EGameRuleBoolName::AccoladesEnabled",
+     "state": true
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/gamemodes/5d0f264b-4ebe-cc63-c147-809e1374484b/displayicon.png",
+   "listViewIconTall": "https://media.valorant-api.com/gamemodes/5d0f264b-4ebe-cc63-c147-809e1374484b/listviewicontall.png",
+   "assetPath": "ShooterGame/Content/GameModes/_Development/Swiftplay_EndOfRoundCredits/SwiftPlay_GameMode_PrimaryAsset"
+  }
+ ]
+}

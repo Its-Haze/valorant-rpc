@@ -544,3 +544,39 @@ func TestDaemon_ResendsPresenceOnceDiscordConnectsAfterTheRiotClient(t *testing.
 		return last != nil && last.State == "In the client"
 	})
 }
+
+// The content catalogue is optional, so Run has to both start it when it is
+// wired and wait for it before returning.
+func TestDaemon_RunStartsAndWaitsForTheCatalogue(t *testing.T) {
+	catalogue := &fakeRunner{}
+	d, _, _, _, _ := newTestDaemon(t, defaultTestConfig(), WithCatalogue(catalogue))
+
+	ctx, cancel := context.WithCancel(t.Context())
+	done := make(chan struct{})
+	go func() {
+		d.Run(ctx)
+		close(done)
+	}()
+
+	waitFor(t, testTimeout, func() bool { return catalogue.started.Load() })
+
+	cancel()
+	select {
+	case <-done:
+	case <-time.After(testTimeout):
+		t.Fatal("Run did not return after cancel")
+	}
+	if !catalogue.stopped.Load() {
+		t.Error("Run returned before the catalogue loop finished")
+	}
+}
+
+func TestDaemon_RunWithoutACatalogueStillStarts(t *testing.T) {
+	d, discordRunner, _, _, _ := newTestDaemon(t, defaultTestConfig())
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go d.Run(ctx)
+
+	waitFor(t, testTimeout, func() bool { return discordRunner.started.Load() })
+}

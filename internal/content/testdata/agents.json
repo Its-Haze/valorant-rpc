@@ -1,0 +1,615 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "e370fa57-4757-3604-3648-499e1f642d3f",
+   "displayName": {
+    "en-US": "Gekko",
+    "de-DE": "Gekko",
+    "ja-JP": "ゲッコー"
+   },
+   "description": {
+    "en-US": "Gekko the Angeleno leads a tight-knit crew of calamitous creatures. His buddies bound forward, scattering enemies out of the way, with Gekko chasing them down to regroup and go again.",
+    "de-DE": "Gekko der Angeleno führt eine eingeschworene Truppe verrückter Kreaturen. Seine Freunde springen voran und vertreiben Gegner, während Gekko ihnen folgt, um sie einzusammeln und von vorne anzufangen.",
+    "ja-JP": "ロサンゼルス出身のゲッコーは、固い絆で結ばれた暴れん坊のクリーチャーたちを率いている。敵を蹴散らしながら進むクリーチャーをゲッコーが追い、集め、力を合わせて戦い続ける。"
+   },
+   "developerName": "Aggrobot",
+   "releaseDate": "1970-01-01T00:00:00Z",
+   "characterTags": null,
+   "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/displayicon.png",
+   "displayIconSmall": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/displayicon.png",
+   "bustPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/fullportrait.png",
+   "fullPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/fullportrait.png",
+   "fullPortraitV2": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/fullportrait.png",
+   "killfeedPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/killfeedportrait.png",
+   "minimapPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/minimapportrait.png",
+   "homeScreenPromoTileImage": null,
+   "background": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/background.png",
+   "backgroundGradientColors": [
+    "371c5cff",
+    "0f1923ff",
+    "3a2656ff",
+    "0f192300"
+   ],
+   "assetPath": "ShooterGame/Content/Characters/AggroBot/AggroBot_PrimaryAsset",
+   "isFullPortraitRightFacing": false,
+   "isPlayableCharacter": true,
+   "isAvailableForTest": false,
+   "isBaseContent": false,
+   "role": {
+    "uuid": "1b47567f-8f7b-444b-aae3-b0c634622d10",
+    "displayName": {
+     "en-US": "Initiator",
+     "de-DE": "Initiator",
+     "ja-JP": "イニシエーター"
+    },
+    "description": {
+     "en-US": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
+     "de-DE": "Initiatoren eröffnen neue Perspektiven und ermöglichen ihrem Team, umkämpftes Gelände zu betreten und die Verteidiger zu verdrängen.",
+     "ja-JP": "戦闘エリアで交戦するメンバーをサポートすることで様々な戦局に対処していく。"
+    },
+    "displayIcon": "https://media.valorant-api.com/agents/roles/1b47567f-8f7b-444b-aae3-b0c634622d10/displayicon.png",
+    "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset"
+   },
+   "recruitmentData": null,
+   "abilities": [
+    {
+     "slot": "Ability1",
+     "displayName": {
+      "en-US": "Wingman",
+      "de-DE": "Wingman",
+      "ja-JP": "ウィングマン"
+     },
+     "description": {
+      "en-US": "EQUIP Wingman. FIRE to send Wingman forward seeking enemies. Wingman unleashes a concussive blast toward the first enemy he sees. ALT FIRE when targeting a Spike site or planted Spike to have Wingman defuse or plant the Spike. To plant, Gekko must have the Spike in his inventory. When Wingman expires he reverts into a dormant globule. INTERACT to reclaim the globule and gain another Wingman charge after a short cooldown.",
+      "de-DE": "RÜSTE Wingman AUS. FEUERE, um Wingman loszuschicken. Wingman entfesselt eine erschütternde Explosion gegen den ersten erkannten Gegner. ALT. FEUERMODUS auf ein Spike-Areal oder einen platzierten Spike, damit Wingman den Spike entschärft oder platziert. Zum Platzieren muss Gekko der Spiketräger sein. Wenn Wingman abläuft, wird er zu einer ruhenden Kugel. INTERAGIERE, um die Kugel einzusammeln und nach einer Abklingzeit einen weiteren Wingman zu erhalten.",
+      "ja-JP": "ウィングマンを構える。「発射」でウィングマンを前方に送り出し索敵させる。ウィングマンは最初に視認した敵に向かってスタンを与える爆風を放つ。スパイク設置サイトまたは設置されたスパイクに照準を合わせた状態で「オルト射撃」で、ウィングマンがスパイクの設置または解除をする。スパイクを設置させるには、ゲッコーがスパイクを所持している必要がある。ウィングマンは一定時間が経過すると、球体になって活動を停止する。「インタラクト」で球体を回収でき、短時間のクールダウン後に再使用可能になる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/abilities/ability1/displayicon.png"
+    },
+    {
+     "slot": "Ability2",
+     "displayName": {
+      "en-US": "Dizzy",
+      "de-DE": "Dizzy",
+      "ja-JP": "ディジー"
+     },
+     "description": {
+      "en-US": "EQUIP Dizzy. FIRE to send Dizzy soaring forward through the air. Dizzy charges then unleashes plasma blasts at enemies in line of sight. Enemies hit by her plasma are Blinded. When Dizzy expires she reverts into a dormant globule. INTERACT to reclaim the globule and gain another Dizzy charge after a short cooldown.",
+      "de-DE": "RÜSTE Dizzy AUS. FEUERE, um Dizzy vorwärts durch die Luft zu schicken. Dizzy fliegt vorwärts und feuert dann Plasmaschüsse auf Gegner in Sichtweite. Von ihrem Plasma getroffene Gegner werden geblendet. Wenn Dizzy abläuft, wird sie zu einer ruhenden Kugel. INTERAGIERE, um die Kugel einzusammeln und nach einer kurzen Abklingzeit eine weitere Dizzy zu erhalten.",
+      "ja-JP": "ディジーを構える。「発射」でディジーを前方に放る。 ディジーはチャージ後、視認した敵に向かってプラズマブラストを放ち、 命中した敵の視界を奪う。 ディジーは一定時間が経過すると、球体になって活動を停止する。「インタラクト」で球体を回収でき、短時間のクールダウン後に再使用可能になる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/abilities/ability2/displayicon.png"
+    },
+    {
+     "slot": "Grenade",
+     "displayName": {
+      "en-US": "Mosh Pit",
+      "de-DE": "Mosh-Pit",
+      "ja-JP": "モッシュピット"
+     },
+     "description": {
+      "en-US": "EQUIP Mosh. FIRE to throw Mosh like a grenade. ALT FIRE to lob. Upon landing Mosh duplicates across a large area that deals a small amount of damage over time then after a short delay explodes. INTERACT to reclaim the globule and gain another Mosh charge after a short cooldown.",
+      "de-DE": "RÜSTE Mosh AUS. FEUERE, um Mosh wie eine Granate zu werfen. ALT. FEUERMODUS für einen Unterhandwurf. Nach der Landung verteilt sich Mosh über einen großen Bereich, der geringen Schaden über Zeit verursacht, und explodiert nach einer kurzen Verzögerung. INTERAGIERE, um die Kugel einzusammeln und nach einer kurzen Abklingzeit einen weiteren Mosh zu erhalten.",
+      "ja-JP": "モッシュを構える。「発射」でモッシュをグレネードのように投げる。「オルト射撃」で軽く放る。モッシュは地面に触れると広範囲に分裂し、時間経過により少量のダメージを与える地帯を作り出し、少ししてから爆発する。「インタラクト」で球体を回収でき、短時間のクールダウン後に再使用可能になる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/abilities/grenade/displayicon.png"
+    },
+    {
+     "slot": "Ultimate",
+     "displayName": {
+      "en-US": "Thrash",
+      "de-DE": "Thrash",
+      "ja-JP": "スラッシュ"
+     },
+     "description": {
+      "en-US": "EQUIP Thrash. FIRE to link with Thrash’s mind and steer her through enemy territory. ACTIVATE to lunge forward and explode, Detaining any players in a small radius. When Thrash expires she reverts into a dormant globule. INTERACT to reclaim the globule and gain another Thrash charge after a short cooldown. Thrash can be reclaimed once.",
+      "de-DE": "RÜSTE Thrash AUS. FEUERE, um dich mit Thrashs Geist zu verbinden und sie durch feindliches Gebiet zu lenken. AKTIVIERE, um nach vorne zu springen und zu explodieren, um Spieler in einem kleinen Bereich zu hindern. Wenn Thrash abläuft, wird sie zu einer ruhenden Kugel. INTERAGIERE, um die Kugel aufzuheben und nach einer kurzen Abklingzeit eine weitere Thrash zu erhalten. Thrash kann einmal aufgesammelt werden.",
+      "ja-JP": "スラッシュを構える。「発射」でスラッシュの精神とリンクし、スラッシュを操作して敵陣で動き回ることができる。「発動」で前方に飛んで爆発し、小範囲内のプレイヤーをすべて拘束する。スラッシュは一定時間が経過すると球体になって活動を停止する。「インタラクト」で球体を回収でき、短時間のクールダウン後に再使用可能になる。スラッシュは一度だけ回収できる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/abilities/ultimate/displayicon.png"
+    }
+   ],
+   "voiceLine": null
+  },
+  {
+   "uuid": "1dbf2edd-4729-0984-3115-daa5eed44993",
+   "displayName": {
+    "en-US": "Clove",
+    "de-DE": "Clove",
+    "ja-JP": "クローヴ"
+   },
+   "description": {
+    "en-US": "Scottish troublemaker Clove makes mischief for enemies in both the heat of combat and the cold of death. The young immortal keeps foes guessing, even from beyond the grave, their return to the living only ever a moment away.",
+    "de-DE": "Clove aus Schottland ist gut darin, Gegner sowohl in der Hitze des Gefechts als auch angesichts der Kälte des Todes auf Trab zu halten. Clove ist unsterblich und kann selbst aus dem Grab heraus viel Unheil stiften und Gegner im Unklaren über die nächsten Schritte lassen.",
+    "ja-JP": "スコットランド出身のトラブルメーカー「クローヴ」は、激しい戦闘の最中も、冷たい死を迎えたときすらも敵に悪戯を仕掛ける。若き不死の存在であるクローヴは、死の向こう側からでさえ敵に疑念を抱かせ翻弄する。生ける世界への帰還はいつもほんの一瞬のことだから。"
+   },
+   "developerName": "Smonk",
+   "releaseDate": "1970-01-01T00:00:00Z",
+   "characterTags": null,
+   "displayIcon": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
+   "displayIconSmall": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
+   "bustPortrait": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+   "fullPortrait": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+   "fullPortraitV2": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+   "killfeedPortrait": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/killfeedportrait.png",
+   "minimapPortrait": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/minimapportrait.png",
+   "homeScreenPromoTileImage": null,
+   "background": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+   "backgroundGradientColors": [
+    "4b1d80ff",
+    "0f1923ff",
+    "c347c7ff",
+    "0f192300"
+   ],
+   "assetPath": "ShooterGame/Content/Characters/Smonk/Smonk_PrimaryAsset",
+   "isFullPortraitRightFacing": false,
+   "isPlayableCharacter": true,
+   "isAvailableForTest": true,
+   "isBaseContent": false,
+   "role": {
+    "uuid": "4ee40330-ecdd-4f2f-98a8-eb1243428373",
+    "displayName": {
+     "en-US": "Controller",
+     "de-DE": "Taktiker",
+     "ja-JP": "コントローラー"
+    },
+    "description": {
+     "en-US": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
+     "de-DE": "Taktiker analysieren das Schlachtfeld und finden so für ihr Team den besten Weg zum Ziel.",
+     "ja-JP": "危険なエリアを特定し、チームを勝利に導く戦略のエキスパート。"
+    },
+    "displayIcon": "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+    "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset"
+   },
+   "recruitmentData": {
+    "counterId": "1064ba88-4cd9-8d5b-cbe5-d784b3568820",
+    "milestoneId": "ac3d5972-4ad9-003f-3da8-5881db5a19ec",
+    "milestoneThreshold": 200000,
+    "useLevelVpCostOverride": false,
+    "levelVpCostOverride": 0,
+    "startDate": "2024-03-25T13:00:00Z",
+    "endDate": "2024-04-24T22:00:00Z"
+   },
+   "abilities": [
+    {
+     "slot": "Grenade",
+     "displayName": {
+      "en-US": "Pick-me-up",
+      "de-DE": "Stärkungsmittel",
+      "ja-JP": "ピック・ミー・アップ"
+     },
+     "description": {
+      "en-US": "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
+      "de-DE": "AKTIVIERE, um die Lebenskraft von Gegnern zu absorbieren, die durch Clove getötet oder Schaden erfahren haben. Gewährt Tempo und vorübergehendes Leben.",
+      "ja-JP": "「発動」すると、クローヴがキルまたは事前にダメージを与えていた、倒れた敵から生命力を吸収する。移動速度が増し、一時的な増加体力を得る。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
+    },
+    {
+     "slot": "Ability2",
+     "displayName": {
+      "en-US": "Ruse",
+      "de-DE": "Täuschung",
+      "ja-JP": "ルース"
+     },
+     "description": {
+      "en-US": "EQUIP a view of the battlefield. FIRE to set the locations where Clove’s clouds will settle. ALT FIRE to confirm, launching clouds that block vision in the chosen areas. Clove can use this ability after death.",
+      "de-DE": "LEGE eine Schlachtfeldansicht AN. FEUERE, um festzulegen, an welchen Positionen die Rauchwolken von Clove entstehen soll. ALT. FEUERMODUS, um die Positionen zu bestätigen und Rauchwolken abzufeuern, die die Sicht im gewählten Bereich blockieren. Clove kann die Fähigkeit nach dem Tod einsetzen.",
+      "ja-JP": "マップを表示する。「発射」でクローヴの煙幕の発生地点を指定する。「オルト射撃」で位置を確定し、煙幕を発生させる。煙幕は指定した地点の視線を遮る。クローヴはデス後もこのスキルを使用できる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/ability2/displayicon.png"
+    },
+    {
+     "slot": "Ultimate",
+     "displayName": {
+      "en-US": "Not Dead Yet",
+      "de-DE": "Noch nicht tot",
+      "ja-JP": "ノット・デッド・イェット"
+     },
+     "description": {
+      "en-US": "After dying, ACTIVATE to resurrect. Once resurrected, Clove must earn a kill or a damaging assist within a set time or they will die. REACTIVATE to cancel early.",
+      "de-DE": "Nach dem Tod AKTIVIEREN zum Wiederbeleben. Nach der Wiederbelebung muss Clove innerhalb einer bestimmten Zeit einen Kill oder Assist erzielen, oder der Tod tritt erneut ein. REAKTIVIERE zum vorzeitigen Abbrechen.",
+      "ja-JP": "倒された後に「発動」すると復活する。復活後、一定時間内にキルを奪うかダメージアシストを行わなければ、クローヴはデスする。再発動すると早めにキャンセルする。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/ultimate/displayicon.png"
+    },
+    {
+     "slot": "Ability1",
+     "displayName": {
+      "en-US": "Meddle",
+      "de-DE": "Rumpfuschen",
+      "ja-JP": "メドル"
+     },
+     "description": {
+      "en-US": "EQUIP a fragment of immortality essence. FIRE to throw the fragment, which upon landing on the floor, erupts after a short delay and temporarily Decays all targets caught inside.",
+      "de-DE": "LEGE ein Fragment der Unsterblichkeitsessenz AN. FEUERE, um das Fragment zu werfen. Nach dem Auftreffen auf dem Boden explodiert es nach einer kurzen Verzögerung und belegt sämtliche Ziele im Wirkungsradius mit „Verfall“.",
+      "ja-JP": "不死のエッセンスの欠片を構える。「発射」で欠片を投げる。欠片は床に着地後少ししてから爆発し、範囲内のすべての対象に一時的に「衰弱」効果を与える。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/ability1/displayicon.png"
+    }
+   ],
+   "voiceLine": null
+  },
+  {
+   "uuid": "569fdd95-4d10-43ab-ca70-79becc718b46",
+   "displayName": {
+    "en-US": "Sage",
+    "de-DE": "Sage",
+    "ja-JP": "セージ"
+   },
+   "description": {
+    "en-US": "The bastion of China, Sage creates safety for herself and her team wherever she goes. Able to revive fallen friends and stave off forceful assaults, she provides a calm center to a hellish battlefield.",
+    "de-DE": "Die chinesische Wächterin Sage garantiert Sicherheit für sich und ihr Team, wohin auch immer sie geht. Dank ihrer einzigartigen Fähigkeit, gefallene Verbündete wiederzuerwecken und Angriffe abzuwehren, ist sie auf dem Schlachtfeld das Auge des Sturms.",
+    "ja-JP": "中国の守り手であるセージは、どこにいる時も仲間のために安全地帯を作り出すことができる。激しい攻撃を防ぎ、力尽きた戦友たちを蘇生する彼女は、過酷な戦場に一時の安らぎをもたらす存在なのだ。"
+   },
+   "developerName": "Thorne",
+   "releaseDate": "1970-01-01T00:00:00Z",
+   "characterTags": [
+    {
+     "en-US": "Recovery",
+     "de-DE": "Erholung",
+     "ja-JP": "回復"
+    },
+    {
+     "en-US": "Stalling",
+     "de-DE": "Hinhalten",
+     "ja-JP": "時間稼ぎ"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/displayicon.png",
+   "displayIconSmall": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/displayicon.png",
+   "bustPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/fullportrait.png",
+   "fullPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/fullportrait.png",
+   "fullPortraitV2": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/fullportrait.png",
+   "killfeedPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/killfeedportrait.png",
+   "minimapPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/minimapportrait.png",
+   "homeScreenPromoTileImage": null,
+   "background": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/background.png",
+   "backgroundGradientColors": [
+    "1f5148ff",
+    "0f1923ff",
+    "102d23ff",
+    "0f192300"
+   ],
+   "assetPath": "ShooterGame/Content/Characters/Thorne/Thorne_PrimaryAsset",
+   "isFullPortraitRightFacing": true,
+   "isPlayableCharacter": true,
+   "isAvailableForTest": true,
+   "isBaseContent": true,
+   "role": {
+    "uuid": "5fc02f99-4091-4486-a531-98459a3e95e9",
+    "displayName": {
+     "en-US": "Sentinel",
+     "de-DE": "Wächter",
+     "ja-JP": "センチネル"
+    },
+    "description": {
+     "en-US": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
+     "de-DE": "Wächter sind Verteidigungsexperten, die sowohl in Angriffs- als auch in Verteidigungsrunden Bereiche absperren und Flanken bewachen können.",
+     "ja-JP": "あらゆる局面において、エリアの封鎖や側面における防衛に力を発揮する守りのエキスパート。"
+    },
+    "displayIcon": "https://media.valorant-api.com/agents/roles/5fc02f99-4091-4486-a531-98459a3e95e9/displayicon.png",
+    "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset"
+   },
+   "recruitmentData": null,
+   "abilities": [
+    {
+     "slot": "Ability1",
+     "displayName": {
+      "en-US": "Slow Orb",
+      "de-DE": "Verlangsamungs-\r\nsphäre",
+      "ja-JP": "スロウオーブ"
+     },
+     "description": {
+      "en-US": "EQUIP a slowing orb. FIRE to throw a slowing orb forward that detonates upon landing, creating a lingering field that Slows and reduces the dash speed of players caught inside of it.",
+      "de-DE": "RÜSTE eine Verlangsamungskugel AUS. FEUERE, um eine Verlangsamungskugel nach vorn zu schleudern. Sie explodiert beim Aufprall und hinterlässt ein temporäres Feld, das die darin gefangenen Spieler verlangsamt und deren Sprintgeschwindigkeit verringert.",
+      "ja-JP": "スロウオーブを構える。「発射」でオーブを投げる。このオーブは地面に触れると破裂して遅延フィールドを作り出す。遅延フィールドは長時間持続し、その中にいるプレイヤーをスロウ状態にしてダッシュの速度を低下させる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/abilities/ability1/displayicon.png"
+    },
+    {
+     "slot": "Ability2",
+     "displayName": {
+      "en-US": "Healing Orb",
+      "de-DE": "Heilsphäre",
+      "ja-JP": "ヒーリングオーブ"
+     },
+     "description": {
+      "en-US": "EQUIP a healing orb. FIRE with your crosshairs over a damaged ally to activate a Heal-Over-Time on them. ALT FIRE while Sage is damaged to activate a self Heal-Over-Time.",
+      "de-DE": "RÜSTE eine Heilungskugel AUS. FEUERE, während sich dein Fadenkreuz über einem verwundeten Verbündeten befindet, um ihm einen Heileffekt über Zeit zu verleihen. FEUERE IM ALTERNATIVEN MODUS, wenn Sage verwundet ist, um dir selbst einen Heileffekt über Zeit zu verleihen.",
+      "ja-JP": "ヒーリングオーブを構える。ダメージを受けた味方に狙いをつけてから「発射」で、その味方の HP を継続回復させる。セージ自身がダメージを受けている場合は、「オルト射撃」で自分の HP を継続回復させる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/abilities/ability2/displayicon.png"
+    },
+    {
+     "slot": "Grenade",
+     "displayName": {
+      "en-US": "Barrier Orb",
+      "de-DE": "Barrierensphäre",
+      "ja-JP": "バリアオーブ"
+     },
+     "description": {
+      "en-US": "EQUIP a barrier orb. FIRE places a wall that fortifies after a few seconds. ALT FIRE rotates the targeter.",
+      "de-DE": "RÜSTE eine Barrierensphäre AUS. FEUERE, um innerhalb weniger Sekunden eine Mauer zu errichten. Feuere im ALT. FEUERMODUS, um die Wand zu drehen.",
+      "ja-JP": "バリアオーブを構える。「発射」で数秒後に硬化する壁を生成する。「オルト射撃」で向きを変えることができる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/abilities/grenade/displayicon.png"
+    },
+    {
+     "slot": "Ultimate",
+     "displayName": {
+      "en-US": "Resurrection",
+      "de-DE": "Wiederbelebung",
+      "ja-JP": "リザレクション"
+     },
+     "description": {
+      "en-US": "EQUIP a resurrection ability. FIRE with your crosshairs placed over a dead ally to begin resurrecting them. After a brief channel, the ally will be brought back to life with full health.",
+      "de-DE": "RÜSTE deine Wiederbelebungsfähigkeit AUS. FEUERE, während sich dein Fadenkreuz über einem toten Verbündeten befindet, um ihn wiederzubeleben. Nach einer kurzen Kanalisierung wird der Verbündete mit vollem Leben wiederbelebt.",
+      "ja-JP": "蘇生能力を使えるようにする。デスした味方に狙いをつけてから「発射」で蘇生を開始する。短時間の蘇生作業の後、その味方は HP をすべて回復した状態で復活する。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/abilities/ultimate/displayicon.png"
+    }
+   ],
+   "voiceLine": null
+  },
+  {
+   "uuid": "8e253930-4c05-31dd-1b6c-968525494517",
+   "displayName": {
+    "en-US": "Omen",
+    "de-DE": "Omen",
+    "ja-JP": "オーメン"
+   },
+   "description": {
+    "en-US": "A phantom of a memory, Omen hunts in the shadows. He renders enemies blind, teleports across the field, then lets paranoia take hold as his foe scrambles to uncover where he might strike next.",
+    "de-DE": "Omen ist das Phantom einer Erinnerung und jagt in den Schatten. Er kann Gegnern die Sicht nehmen und sich über die Karte teleportieren. Wenn die Gegner dann in Panik geraten und sein nächstes Ziel herausfinden wollen, schlägt er zu.",
+    "ja-JP": "記憶の幻影、オーメンは闇に潜んで敵を狩る。敵の視界を遮り、神出鬼没にテレポートすることで、次の一手を予測しようとする敵を徐々に疑心暗鬼へと誘うのだ。"
+   },
+   "developerName": "Wraith",
+   "releaseDate": "1970-01-01T00:00:00Z",
+   "characterTags": [
+    {
+     "en-US": "Mobility",
+     "de-DE": "Beweglichkeit",
+     "ja-JP": "移動"
+    },
+    {
+     "en-US": "Vision Control",
+     "de-DE": "Sichtkontrolle",
+     "ja-JP": "視覚制御"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/displayicon.png",
+   "displayIconSmall": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/displayicon.png",
+   "bustPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/fullportrait.png",
+   "fullPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/fullportrait.png",
+   "fullPortraitV2": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/fullportrait.png",
+   "killfeedPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/killfeedportrait.png",
+   "minimapPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/minimapportrait.png",
+   "homeScreenPromoTileImage": null,
+   "background": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/background.png",
+   "backgroundGradientColors": [
+    "433178ff",
+    "0f1923ff",
+    "344673ff",
+    "0f192300"
+   ],
+   "assetPath": "ShooterGame/Content/Characters/Wraith/Wraith_PrimaryAsset",
+   "isFullPortraitRightFacing": false,
+   "isPlayableCharacter": true,
+   "isAvailableForTest": true,
+   "isBaseContent": false,
+   "role": {
+    "uuid": "4ee40330-ecdd-4f2f-98a8-eb1243428373",
+    "displayName": {
+     "en-US": "Controller",
+     "de-DE": "Taktiker",
+     "ja-JP": "コントローラー"
+    },
+    "description": {
+     "en-US": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
+     "de-DE": "Taktiker analysieren das Schlachtfeld und finden so für ihr Team den besten Weg zum Ziel.",
+     "ja-JP": "危険なエリアを特定し、チームを勝利に導く戦略のエキスパート。"
+    },
+    "displayIcon": "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+    "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset"
+   },
+   "recruitmentData": null,
+   "abilities": [
+    {
+     "slot": "Ability1",
+     "displayName": {
+      "en-US": "Paranoia",
+      "de-DE": "Paranoia",
+      "ja-JP": "パラノイア"
+     },
+     "description": {
+      "en-US": "EQUIP a blinding orb.  FIRE to throw it forward, briefly Nearsighting and Deafening all players it touches. This projectile can pass straight through walls.",
+      "de-DE": "RÜSTE eine Blendungskugel AUS. FEUERE, um sie nach vorn zu werfen. Alle Spieler, die sie berührt, haben kurzzeitig eingeschränkte Sicht und werden taub. Das Geschoss kann Mauern durchdringen.",
+      "ja-JP": "ブラインドオーブを構える。「発射」でオーブを前方に発射する。このオーブは壁を貫通し、一時的に触れたすべてのプレイヤーの聴覚を奪い、視界を悪化させる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/abilities/ability1/displayicon.png"
+    },
+    {
+     "slot": "Ability2",
+     "displayName": {
+      "en-US": "Dark Cover",
+      "de-DE": "Finsterer Schleier",
+      "ja-JP": "ダークカヴァー"
+     },
+     "description": {
+      "en-US": "EQUIP a shadow orb, entering a phased world to place and target the orbs. PRESS the ability key to throw the shadow orb to the marked location, creating a long-lasting shadow sphere that blocks vision. HOLD FIRE while targeting to move the marker further away. HOLD ALT FIRE while targeting to move the marker closer. PRESS RELOAD to toggle normal targeting view.",
+      "de-DE": "RÜSTE eine Schattenkugel AUS, um eine Dimension zum Platzieren und Anvisieren der Kugel zu betreten. DRÜCKE die Fähigkeitstaste, um die Kugel zum Zielort zu schleudern, wo eine langanhaltende, sichtblockierende Sphäre entsteht. HALTE FEUERN GEDRÜCKT, um die Markierung von dir zu entfernen. HALTE ALT. FEUERN GEDRÜCKT, um die Markierung zu dir zu bewegen. DRÜCKE NACHLADEN für den normalen Zielmodus.",
+      "ja-JP": "闇のオーブを構え、位相空間に入ってオーブを設置する。アビリティーキーを「押す」とマーカーの位置に闇のオーブを投げ、長時間視線を遮る球形の闇を作り出す。ターゲット中は「発射長押し」でマーカーが遠くに、「オルト射撃長押し」でマーカーが近くに移動する。また「リロード」キーで通常の照準視点に切り替わる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/abilities/ability2/displayicon.png"
+    },
+    {
+     "slot": "Grenade",
+     "displayName": {
+      "en-US": "Shrouded Step",
+      "de-DE": "Vernebelte Schritte",
+      "ja-JP": "シュラウドステップ"
+     },
+     "description": {
+      "en-US": "EQUIP a shrouded step ability and see its range indicator. FIRE to begin a brief channel, then teleport to the marked location.",
+      "de-DE": "RÜSTE die Vernebelte-Schritte-Fähigkeit AUS und sieh dir ihre Reichweite an. FEUERE, um kurz zu kanalisieren und dich dann an die markierte Position zu teleportieren.",
+      "ja-JP": "シュラウドステップの体勢に入り、距離マーカーを表示する。「発射」で短い詠唱の後、マークの位置にテレポートする。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/abilities/grenade/displayicon.png"
+    },
+    {
+     "slot": "Ultimate",
+     "displayName": {
+      "en-US": "From the Shadows",
+      "de-DE": "Aus den Schatten",
+      "ja-JP": "フロム・ザ・シャドウズ"
+     },
+     "description": {
+      "en-US": "EQUIP a tactical map. FIRE to begin teleporting to the selected location. While teleporting, Omen will appear as a Shade that can be destroyed by an enemy to cancel his teleport, or PRESS EQUIP for Omen to cancel his teleport.",
+      "de-DE": "ÖFFNE eine taktische Karte. FEUERE, um deine Teleportation an den Zielort zu beginnen. Während der Teleportation erscheint Omen als Schatten, der von Gegnern zerstört werden kann, um die Teleportation abzubrechen. DRÜCKE AUSRÜSTEN, um die Teleportation abzubrechen.",
+      "ja-JP": "タクティカルマップを開き、「発射」で選択した地点にテレポートを開始する。テレポート中のオーメンは影の姿となり、この状態で敵に破壊されるとテレポートに失敗する。また発動中に再度押すとテレポートをキャンセルできる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/abilities/ultimate/displayicon.png"
+    }
+   ],
+   "voiceLine": null
+  },
+  {
+   "uuid": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+   "displayName": {
+    "en-US": "Jett",
+    "de-DE": "Jett",
+    "ja-JP": "ジェット"
+   },
+   "description": {
+    "en-US": "Representing her home country of South Korea, Jett's agile and evasive fighting style lets her take risks no one else can. She runs circles around every skirmish, cutting enemies up before they even know what hit them.",
+    "de-DE": "Jett repräsentiert ihre Heimat Südkorea. Sie kämpft agil und weicht geschickt aus, weshalb sie Risiken eingehen kann wie niemand sonst. Sie umrundet Gefechte mit Leichtigkeit und schlitzt Gegner auf, bevor diese wissen, wie ihnen geschieht.",
+    "ja-JP": "韓国出身のジェットは、俊敏で捉え難い戦闘スタイルを持ち、他の誰にも真似できないような危険な行動を取ることができる。交戦地帯の周囲を走り回り、敵が何が起こったのか理解するよりも早く切り刻んでしまうのだ。"
+   },
+   "developerName": "Wushu",
+   "releaseDate": "1970-01-01T00:00:00Z",
+   "characterTags": [
+    {
+     "en-US": "Evasion",
+     "de-DE": "Ausweichen",
+     "ja-JP": "回避"
+    },
+    {
+     "en-US": "Mobility",
+     "de-DE": "Beweglichkeit",
+     "ja-JP": "移動"
+    }
+   ],
+   "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png",
+   "displayIconSmall": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png",
+   "bustPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/fullportrait.png",
+   "fullPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/fullportrait.png",
+   "fullPortraitV2": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/fullportrait.png",
+   "killfeedPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/killfeedportrait.png",
+   "minimapPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/minimapportrait.png",
+   "homeScreenPromoTileImage": null,
+   "background": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/background.png",
+   "backgroundGradientColors": [
+    "25607aff",
+    "0f1923ff",
+    "0f1923ff",
+    "25607aff"
+   ],
+   "assetPath": "ShooterGame/Content/Characters/Wushu/Wushu_PrimaryAsset",
+   "isFullPortraitRightFacing": false,
+   "isPlayableCharacter": true,
+   "isAvailableForTest": true,
+   "isBaseContent": true,
+   "role": {
+    "uuid": "dbe8757e-9e92-4ed4-b39f-9dfc589691d4",
+    "displayName": {
+     "en-US": "Duelist",
+     "de-DE": "Duellant",
+     "ja-JP": "デュエリスト"
+    },
+    "description": {
+     "en-US": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
+     "de-DE": "Duellanten sind unabhängige Fragger, die durch ihre Fähigkeiten und Fertigkeiten die ersten in ihrem Team sind, die auf Konfrontationskurs gehen und ordentlich austeilen.",
+     "ja-JP": "アビリティーやスキルを駆使しながら、敵と素早く交戦して次々とキルを重ねていく、頼れる自己完結型アタッカー。"
+    },
+    "displayIcon": "https://media.valorant-api.com/agents/roles/dbe8757e-9e92-4ed4-b39f-9dfc589691d4/displayicon.png",
+    "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset"
+   },
+   "recruitmentData": null,
+   "abilities": [
+    {
+     "slot": "Ability1",
+     "displayName": {
+      "en-US": "Updraft",
+      "de-DE": "Aufwind",
+      "ja-JP": "アップドラフト"
+     },
+     "description": {
+      "en-US": "INSTANTLY propel Jett high into the air.",
+      "de-DE": "Katapultiere Jett SOFORT hoch in die Luft.",
+      "ja-JP": "ジェットを上に向かって飛ばす。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/abilities/ability1/displayicon.png"
+    },
+    {
+     "slot": "Ability2",
+     "displayName": {
+      "en-US": "Tailwind",
+      "de-DE": "Rückenwind",
+      "ja-JP": "テイルウィンド"
+     },
+     "description": {
+      "en-US": "ACTIVATE to prepare a gust of wind for a limited time. RE-USE the wind to propel Jett in the direction she is moving. If Jett is standing still, she propels forward. Tailwind charge resets every two kills.",
+      "de-DE": "AKTIVIEREN, um kurzzeitig eine Windböe vorzubereiten. ERNEUT VERWENDEN, um Jett in die Richtung sprinten zu lassen, in die sie sich bewegt. Falls Jett stillsteht, sprintet sie nach vorn. Die Ladung von „Rückenwind“ setzt sich alle zwei Kills zurück.",
+      "ja-JP": "風を身にまとう。「再使用」することで、ジェットを現在の進行方向に向かって加速させる。立ち止まっている場合は前方に押し出す。「テイルウィンド」のチャージは2 キルごとにリセットされる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/abilities/ability2/displayicon.png"
+    },
+    {
+     "slot": "Grenade",
+     "displayName": {
+      "en-US": "Cloudburst",
+      "de-DE": "Wolkenbruch",
+      "ja-JP": "クラウドバースト"
+     },
+     "description": {
+      "en-US": "INSTANTLY throw a projectile that expands into a brief vision-blocking cloud on impact with a surface. HOLD the ability key to curve the smoke in the direction of your crosshair.",
+      "de-DE": "Schleudere SOFORT ein Projektil, das sich beim Aufprall auf einer Oberfläche zu einer Wolke ausdehnt, die kurz die Sicht versperrt. HALTE die Fähigkeiten-Taste gedrückt, um den Rauch in Richtung deines Fadenkreuzes zu biegen.",
+      "ja-JP": "煙玉を投げる。この玉は着弾すると煙を発生させ、しばらくの間視線を遮る。長押しでこの煙玉をクロスヘアの方向にカーブさせる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/abilities/grenade/displayicon.png"
+    },
+    {
+     "slot": "Ultimate",
+     "displayName": {
+      "en-US": "Blade Storm",
+      "de-DE": "Klingensturm",
+      "ja-JP": "ブレードストーム"
+     },
+     "description": {
+      "en-US": "EQUIP a set of highly accurate throwing knives. FIRE to throw a single knife and recharge knives on a kill. ALT FIRE to throw all remaining daggers but does not recharge on a kill.",
+      "de-DE": "RÜSTE einige hochpräzise Wurfmesser AUS. FEUERE, um ein einziges Messer auf dein Ziel zu werfen. Bei einem Kill erhältst du alle Messer zurück. ALT. FEUERMODUS, um alle verbleibenden Klingen auf dein Ziel zu werfen. Bei einem Kill erhältst du keine Messer zurück.",
+      "ja-JP": "精度の高い投げナイフを構え、「発射」で 1 本ずつ投げる。ナイフは敵をキルすると補充される。「オルト射撃」で現在残っているすべてのナイフを投げるが、敵をキルしてもナイフは補充されない。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/abilities/ultimate/displayicon.png"
+    },
+    {
+     "slot": "Passive",
+     "displayName": {
+      "en-US": "Drift",
+      "de-DE": "Gleiten",
+      "ja-JP": "ドリフト"
+     },
+     "description": {
+      "en-US": "Holding the jump button while falling allows you to glide through the air.",
+      "de-DE": "Halte die Sprungtaste gedrückt, damit du beim Fallen durch die Luft gleitest.",
+      "ja-JP": "落下中にジャンプボタン長押しで滑空することができる。"
+     },
+     "displayIcon": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/abilities/passive/displayicon.png"
+    }
+   ],
+   "voiceLine": null
+  }
+ ]
+}
