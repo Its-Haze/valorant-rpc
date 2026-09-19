@@ -1,4 +1,4 @@
-import { Bell, CircleSlash, Palette, PanelTopClose, Power } from "lucide-react";
+import { Bell, CircleSlash, Palette, PanelTopClose, Power, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   GetStatus,
@@ -11,6 +11,7 @@ import {
   withCloseAction,
   withLaunchAtStartup,
   withNotifyUpdates,
+  withShowPlaceholderPresence,
   type CloseAction,
 } from "../../lib/behaviorPatch";
 import { Select, SettingsCard, ThemePicker, Toggle, type SelectOption } from "../ui";
@@ -22,7 +23,7 @@ const CLOSE_ACTIONS: SelectOption[] = [
 ];
 
 // The Behavior section: how the app looks and behaves around the game.
-// Appearance, pausing, startup and close handling, and update notifications.
+// Appearance, pausing, the launching status, startup, close handling, updates.
 export function BehaviorScreen() {
   const { cfg, error, applyPatch } = useSettings();
   const defaults = useDefaultConfig();
@@ -81,6 +82,22 @@ export function BehaviorScreen() {
             checked={paused}
             onCheckedChange={togglePaused}
             label="Pause presence"
+          />
+        }
+      />
+
+      <SettingsCard
+        icon={Rocket}
+        title="Status while the game loads"
+        description={'Shows "Launching VALORANT…" from the moment the game starts until it reports what you are doing, which takes a few seconds. Turn it off to show nothing until then.'}
+        onReset={defaults ? () => void applyPatch(withShowPlaceholderPresence(cfg, defaults.behavior.show_placeholder_presence)) : undefined}
+        isDefault={!defaults || cfg.behavior.show_placeholder_presence === defaults.behavior.show_placeholder_presence}
+        action={
+          <Toggle
+            id="show-placeholder-presence"
+            checked={cfg.behavior.show_placeholder_presence}
+            onCheckedChange={(v) => void applyPatch(withShowPlaceholderPresence(cfg, v))}
+            label="Status while the game loads"
           />
         }
       />

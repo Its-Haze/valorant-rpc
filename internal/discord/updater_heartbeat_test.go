@@ -228,7 +228,7 @@ func TestUpdater_NoHeartbeatWhileShowingPlaceholder(t *testing.T) {
 	u, clock := newHeartbeatTestUpdater(t, sender)
 	ticker := <-clock.created
 
-	u.UpdatePlaceholder(BuildLaunchingPresence(0))
+	u.UpdatePlaceholder(BuildLaunchingPresence(0, nil))
 	if got := sender.sendCount(); got != 1 {
 		t.Fatalf("expected 1 send after UpdatePlaceholder, got %d", got)
 	}

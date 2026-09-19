@@ -72,7 +72,7 @@ func TestUpdater_LastSent_MarksClearFromHideInClient(t *testing.T) {
 func TestUpdater_LastSent_TracksPlaceholder(t *testing.T) {
 	u := newLastSentTestUpdater(newFakePresenceSender())
 
-	u.UpdatePlaceholder(BuildLaunchingPresence(0))
+	u.UpdatePlaceholder(BuildLaunchingPresence(0, nil))
 	if got := u.LastSent(); got.Cleared || got.Data == nil || got.Data.Details != "Launching VALORANT..." {
 		t.Fatalf("LastSent after placeholder = %+v", got.Data)
 	}

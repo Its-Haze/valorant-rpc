@@ -179,3 +179,9 @@ func TestClamp_FillsAnEmptyLocale(t *testing.T) {
 		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.LocaleAuto)
 	}
 }
+
+func TestDefaultConfig_ShowsTheLaunchingPlaceholder(t *testing.T) {
+	if !DefaultConfig().Behavior.ShowPlaceholderPresence {
+		t.Error("ShowPlaceholderPresence = false, want true")
+	}
+}

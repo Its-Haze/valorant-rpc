@@ -209,8 +209,8 @@ func TestRankEmblemOnlyInACompetitiveGame(t *testing.T) {
 
 	casual := inMatchState()
 	casual.QueueID = "swiftplay"
-	if got := MapStateToPresence(casual, presenceConfig(), cat).SmallImage; got != valorantLogoURL {
-		t.Errorf("swiftplay small image = %q, want the app icon", got)
+	if got := MapStateToPresence(casual, presenceConfig(), cat).SmallImage; got != valorantLogoBorderlessURL {
+		t.Errorf("swiftplay small image = %q, want the borderless mark", got)
 	}
 }
 
@@ -220,8 +220,8 @@ func TestRankEmblemHonoursTheShowRankToggle(t *testing.T) {
 	cfg.Display.Default.ShowRank = false
 
 	rpc := MapStateToPresence(inMatchState(), cfg, cat)
-	if rpc.SmallImage != valorantLogoURL {
-		t.Errorf("small image = %q, want the app icon with rank hidden", rpc.SmallImage)
+	if rpc.SmallImage != valorantLogoBorderlessURL {
+		t.Errorf("small image = %q, want the borderless mark with rank hidden", rpc.SmallImage)
 	}
 	if strings.Contains(rpc.State, "Immortal") || strings.Contains(rpc.Details, "Immortal") {
 		t.Errorf("rank leaked into the text with the toggle off: %+v", rpc)
@@ -349,7 +349,7 @@ func TestPresenceRendersWithoutACatalogue(t *testing.T) {
 	if rpc.Details == "" && rpc.State == "" {
 		t.Fatalf("a cold catalogue produced a blank presence: %+v", rpc)
 	}
-	if rpc.LargeImage != valorantLogoURL || rpc.SmallImage != valorantLogoURL {
+	if rpc.LargeImage != valorantLogoURL || rpc.SmallImage != valorantLogoBorderlessURL {
 		t.Errorf("a cold catalogue should fall back to the app icon: %+v", rpc)
 	}
 }

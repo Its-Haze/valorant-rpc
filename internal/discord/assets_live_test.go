@@ -200,6 +200,7 @@ func TestRepoHostedImagesResolve(t *testing.T) {
 
 	checkAll(t, []asset{
 		{"valorantLogoURL", valorantLogoURL},
+		{"valorantLogoBorderlessURL", valorantLogoBorderlessURL},
 		{"valorantLogoIdleURL", valorantLogoIdleURL},
 	})
 }

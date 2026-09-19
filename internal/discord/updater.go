@@ -363,6 +363,12 @@ func (u *Updater) ImmediateUpdate(st *state.State) {
 	u.startReclaimBurst()
 }
 
+// UpdateLaunchingPlaceholder sends the launching placeholder, drawing its
+// card art from the current catalogue.
+func (u *Updater) UpdateLaunchingPlaceholder(start int64) {
+	u.UpdatePlaceholder(BuildLaunchingPresence(start, u.snapshot()))
+}
+
 // UpdatePlaceholder sends rpcData as-is, bypassing MapStateToPresence, for
 // the placeholder shown before there is any state to map.
 func (u *Updater) UpdatePlaceholder(rpcData *RPCData) {

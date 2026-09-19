@@ -17,3 +17,7 @@ export type CloseAction = "ask" | "tray" | "quit";
 export function withCloseAction(cfg: Config, action: CloseAction): Partial<Config> {
   return { behavior: { ...cfg.behavior, close_action: action } };
 }
+
+export function withShowPlaceholderPresence(cfg: Config, enabled: boolean): Partial<Config> {
+  return { behavior: { ...cfg.behavior, show_placeholder_presence: enabled } };
+}

@@ -273,8 +273,8 @@ func TestApp_GetDisplayPreview_FallsBackToTheAppIcon(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
-	if got.LargeImage != discord.ValorantLogoURL() || got.SmallImage != discord.ValorantLogoURL() {
-		t.Fatalf("preview images = %q / %q, want the app icon for both", got.LargeImage, got.SmallImage)
+	if got.LargeImage != discord.ValorantLogoURL() || got.SmallImage != discord.ValorantLogoSmallURL() {
+		t.Fatalf("preview images = %q / %q, want the app icon large and the borderless mark small", got.LargeImage, got.SmallImage)
 	}
 }
 
@@ -297,7 +297,7 @@ func TestApp_GetDisplayPreview_UsesTheRankEmblemWhereRankedSendsWould(t *testing
 		if err != nil {
 			t.Fatalf("GetDisplayPreview(%s): %v", ctx, err)
 		}
-		want := discord.ValorantLogoURL()
+		want := discord.ValorantLogoSmallURL()
 		if wantEmblem {
 			want = emblem.LargeIcon
 		}
@@ -315,8 +315,8 @@ func TestApp_GetDisplayPreview_DropsTheEmblemWithTheRank(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDisplayPreview: %v", err)
 	}
-	if got.SmallImage != discord.ValorantLogoURL() {
-		t.Fatalf("small image = %q, want the app icon with the rank off", got.SmallImage)
+	if got.SmallImage != discord.ValorantLogoSmallURL() {
+		t.Fatalf("small image = %q, want the borderless mark with the rank off", got.SmallImage)
 	}
 }
 

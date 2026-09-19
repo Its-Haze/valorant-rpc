@@ -296,7 +296,9 @@ func TestDaemon_ClearsPresenceWhenDisconnectedAndValorantNotRunning(t *testing.T
 }
 
 func TestDaemon_NoPlaceholderWhileTheSettingIsOff(t *testing.T) {
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, defaultTestConfig())
+	cfg := defaultTestConfig()
+	cfg.Behavior.ShowPlaceholderPresence = false
+	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
 	discordRunner.connected.Store(true)
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -378,7 +380,9 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 }
 
 func TestDaemon_StalledConnectionClearsWhenThePlaceholderIsOff(t *testing.T) {
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, defaultTestConfig())
+	cfg := defaultTestConfig()
+	cfg.Behavior.ShowPlaceholderPresence = false
+	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
 	discordRunner.connected.Store(true)
 
 	ctx, cancel := context.WithCancel(t.Context())

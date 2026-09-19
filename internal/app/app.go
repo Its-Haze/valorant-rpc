@@ -358,7 +358,7 @@ const previewSampleTier = 25
 // sample data that carries no player card, agent or map: the app's own icon
 // large, and the rank emblem small wherever a real ranked send would show it.
 func (a *App) previewImages(ctx template.Context, showRank bool) (large, small string) {
-	large, small = discord.ValorantLogoURL(), discord.ValorantLogoURL()
+	large, small = discord.ValorantLogoURL(), discord.ValorantLogoSmallURL()
 	if !showRank || !rankedPreviewContexts[ctx] || a.catalogue == nil {
 		return large, small
 	}

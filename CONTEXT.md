@@ -68,4 +68,4 @@ _Avoid_: RPCUpdater, presence manager
 The in-app self-update flow, which is a different thing from **Updater** above despite the name collision inherited from league-rpc. App Update downloads a signed release binary and swaps it; Updater sends Discord presence. When both appear in one sentence, say "App Update" and "the presence Updater".
 
 **Placeholder presence**:
-An idle card shown while Valorant is running but no presence has been read yet. Off by default (`Behavior.ShowPlaceholderPresence`), because a second Discord RPC tool may already be showing something and two cards fighting is worse than none.
+The "Launching VALORANT..." card shown while Valorant is running but no presence has been read yet, wearing a random player card as its art and a new one on every rotation. On by default, behind `Behavior.ShowPlaceholderPresence` for anyone who would rather show nothing until the game reports something.

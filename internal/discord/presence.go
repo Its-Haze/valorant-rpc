@@ -177,7 +177,7 @@ func buildInMatch(v view) *RPCData {
 // cardImage is the player's equipped card, the art the game itself shows
 // beside their name.
 func (v view) cardImage() string {
-	if v.hasCard {
+	if v.hasCard && v.card.Icon != "" {
 		return v.card.Icon
 	}
 	return valorantLogoURL
@@ -193,7 +193,7 @@ func (v view) smallImage() string {
 	if v.cfg.Display.Default.ShowRank && v.hasTier && v.isRanked() {
 		return v.tier.LargeIcon
 	}
-	return valorantLogoURL
+	return valorantLogoBorderlessURL
 }
 
 // isRanked reports the competitive queue, the only one with a rank worth

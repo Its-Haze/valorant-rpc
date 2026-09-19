@@ -60,8 +60,8 @@ type BehaviorConfig struct {
 	CloseAction     string `json:"close_action"`      // ask | tray | quit
 	NotifyUpdates   bool   `json:"notify_updates"`    // show system notifications when update available
 
-	// ShowPlaceholderPresence allows a placeholder while Valorant is starting
-	// and no presence has been read yet. Off by default; see ticket 10.
+	// ShowPlaceholderPresence covers the gap between Valorant starting and its
+	// first presence arriving, which would otherwise show nothing at all.
 	ShowPlaceholderPresence bool `json:"show_placeholder_presence"`
 }
 
@@ -90,7 +90,7 @@ func DefaultConfig() *Config {
 			LaunchAtStartup:         true,
 			CloseAction:             CloseAsk,
 			NotifyUpdates:           true,
-			ShowPlaceholderPresence: false,
+			ShowPlaceholderPresence: true,
 		},
 		Advanced: AdvancedConfig{
 			UpdateInterval: 1500,

@@ -219,7 +219,7 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 		if !d.discord.Connected() {
 			return
 		}
-		d.updater.UpdatePlaceholder(discord.BuildLaunchingPresence(placeholderStart))
+		d.updater.UpdateLaunchingPlaceholder(placeholderStart)
 	}
 
 	// The agent lookup fires on entry into agent select or a match, and
@@ -240,8 +240,8 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 		}
 	}
 
-	// placeholderAllowed keeps the launching presence behind its setting, so
-	// a user running league-rpc too is not fighting it over the activity.
+	// placeholderAllowed keeps the launching presence behind its setting, for
+	// users who would rather show nothing until the game reports something.
 	placeholderAllowed := func() bool {
 		return d.updater.Config().Behavior.ShowPlaceholderPresence
 	}
