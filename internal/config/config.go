@@ -30,8 +30,8 @@ type Config struct {
 type DisplayConfig struct {
 	Default DisplayDefaults `json:"default"`
 
-	// Locale picks the language agent, map and rank names render in. The
-	// catalogue holds every language at once, so switching costs no refetch.
+	// Locale picks the language agent, map and rank names render in, or
+	// types.LocaleAuto to follow whatever the Riot Client is running in.
 	Locale string `json:"locale"`
 }
 
@@ -81,7 +81,7 @@ func DefaultConfig() *Config {
 		OnboardingComplete: false,
 		Display: DisplayConfig{
 			Default: DisplayDefaults{ShowRank: true, ShowStats: true},
-			Locale:  types.DefaultLocale,
+			Locale:  types.LocaleAuto,
 		},
 		Presence: PresenceConfig{
 			ShowEmojis:   true,
@@ -138,6 +138,12 @@ const (
 	CloseQuit = "quit"
 )
 
+// validLocaleSetting accepts the auto sentinel alongside a real tag. Only
+// this field takes the sentinel; the catalogue itself never sees it.
+func validLocaleSetting(l string) bool {
+	return l == types.LocaleAuto || types.ValidLocale(l)
+}
+
 func validCloseAction(a string) bool {
 	return a == CloseAsk || a == CloseTray || a == CloseQuit
 }
@@ -159,8 +165,8 @@ func (c *Config) Validate() error {
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		errs = append(errs, fmt.Errorf("update_interval must be between %d and %d ms", MinUpdateInterval, MaxUpdateInterval))
 	}
-	if !types.ValidLocale(c.Display.Locale) {
-		errs = append(errs, fmt.Errorf("locale %q is not one valorant-api.com serves", c.Display.Locale))
+	if !validLocaleSetting(c.Display.Locale) {
+		errs = append(errs, fmt.Errorf("locale must be %q or one of the languages valorant-api.com serves, got %q", types.LocaleAuto, c.Display.Locale))
 	}
 
 	return errors.Join(errs...)
@@ -186,8 +192,8 @@ func (c *Config) clamp() {
 		c.Advanced.UpdateInterval = def.Advanced.UpdateInterval
 	}
 	// Empty here is a file written before the field existed. Either way the
-	// repair is English, never a blank name in the presence.
-	if !types.ValidLocale(c.Display.Locale) {
+	// repair is the default, never a blank name in the presence.
+	if !validLocaleSetting(c.Display.Locale) {
 		c.Display.Locale = def.Display.Locale
 	}
 	if c.Presence.Templates == nil {

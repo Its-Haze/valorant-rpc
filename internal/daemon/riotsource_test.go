@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/its-haze/valorant-rpc/internal/riotchat"
+	"github.com/its-haze/valorant-rpc/internal/riotclient"
 	"github.com/its-haze/valorant-rpc/internal/state"
 	"github.com/its-haze/valorant-rpc/pkg/types"
 )
@@ -35,6 +36,13 @@ func newTestSource(t *testing.T, connector Connector) (*RiotSource, *state.Manag
 		return watcher
 	})
 	return source, stateMgr, watcher
+}
+
+func newSourceWithLocale(t *testing.T, stateMgr *state.Manager, reader LocaleReader) *RiotSource {
+	t.Helper()
+	return NewRiotSource(&fakeConnector{}, stateMgr, zerolog.Nop(), func(func(riotchat.Presence)) presenceWatcher {
+		return &fakeWatcher{}
+	}, WithLocaleReader(reader))
 }
 
 func TestRiotSource_ConnectStartsTheWatcher(t *testing.T) {
@@ -194,5 +202,73 @@ func TestRiotSource_ReconnectRestartsTheStallWindow(t *testing.T) {
 	now.Add((presenceStallThreshold + time.Second).Nanoseconds())
 	if !source.PresenceStalled() {
 		t.Fatal("the presence read on the previous connection must not count for this one")
+	}
+}
+
+// fakeLocaleReader stands in for the Riot Client's region-locale endpoint.
+type fakeLocaleReader struct {
+	locale string
+	err    error
+	calls  atomic.Int32
+}
+
+func (r *fakeLocaleReader) RegionLocale(context.Context) (riotclient.RegionLocale, error) {
+	r.calls.Add(1)
+	if r.err != nil {
+		return riotclient.RegionLocale{}, r.err
+	}
+	return riotclient.RegionLocale{Locale: r.locale}, nil
+}
+
+func TestRiotSource_ConnectRecordsTheClientLocale(t *testing.T) {
+	stateMgr := state.NewManager(zerolog.Nop())
+	reader := &fakeLocaleReader{locale: "ja-JP"}
+	source := newSourceWithLocale(t, stateMgr, reader)
+
+	if err := source.Connect(); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+
+	if got := stateMgr.Get().ClientLocale; got != "ja-JP" {
+		t.Errorf("ClientLocale = %q, want ja-JP", got)
+	}
+}
+
+// en-GB is what the Riot Client actually serves and valorant-api does not,
+// so the mapping has to happen before the tag reaches the state.
+func TestRiotSource_ConnectMapsAnUnservedClientLocale(t *testing.T) {
+	stateMgr := state.NewManager(zerolog.Nop())
+	source := newSourceWithLocale(t, stateMgr, &fakeLocaleReader{locale: "en-GB"})
+
+	if err := source.Connect(); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+
+	if got := stateMgr.Get().ClientLocale; got != types.DefaultLocale {
+		t.Errorf("ClientLocale = %q, want %q", got, types.DefaultLocale)
+	}
+}
+
+// The locale is cosmetic, so a failed read must not fail the connection.
+func TestRiotSource_ConnectSurvivesAFailedLocaleRead(t *testing.T) {
+	stateMgr := state.NewManager(zerolog.Nop())
+	source := newSourceWithLocale(t, stateMgr, &fakeLocaleReader{err: errors.New("nope")})
+
+	if err := source.Connect(); err != nil {
+		t.Fatalf("Connect failed because of the locale read: %v", err)
+	}
+	if got := stateMgr.Get().ClientLocale; got != types.DefaultLocale {
+		t.Errorf("ClientLocale = %q, want the %q fallback", got, types.DefaultLocale)
+	}
+}
+
+func TestRiotSource_ConnectWithoutALocaleReaderStillWorks(t *testing.T) {
+	stateMgr := state.NewManager(zerolog.Nop())
+	source := NewRiotSource(&fakeConnector{}, stateMgr, zerolog.Nop(), func(func(riotchat.Presence)) presenceWatcher {
+		return &fakeWatcher{}
+	})
+
+	if err := source.Connect(); err != nil {
+		t.Fatalf("Connect: %v", err)
 	}
 }

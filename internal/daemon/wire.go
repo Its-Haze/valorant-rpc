@@ -24,7 +24,7 @@ func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
 	riotClient := riotclient.New(riotclient.Options{Logger: logger})
 	source := NewRiotSource(riotClient, stateMgr, logger, func(onUpdate func(riotchat.Presence)) presenceWatcher {
 		return riotchat.NewWatcher(riotClient, logger, onUpdate)
-	})
+	}, WithLocaleReader(riotClient))
 
 	riotSup := NewProductionRiotSupervisor(source, checker)
 	discordSup := NewDiscordSupervisor(discordClient, checker, riotSup)

@@ -8,7 +8,9 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/its-haze/valorant-rpc/internal/riotchat"
+	"github.com/its-haze/valorant-rpc/internal/riotclient"
 	"github.com/its-haze/valorant-rpc/internal/state"
+	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 // presenceStallThreshold is how long a live connection may go without a
@@ -25,6 +27,21 @@ type presenceWatcher interface {
 	Start(ctx context.Context) error
 }
 
+// LocaleReader reports the Riot Client's own language, which the auto locale
+// setting follows. *riotclient.Client satisfies it.
+type LocaleReader interface {
+	RegionLocale(ctx context.Context) (riotclient.RegionLocale, error)
+}
+
+// RiotSourceOption configures a RiotSource.
+type RiotSourceOption func(*RiotSource)
+
+// WithLocaleReader wires the client-language read into Connect. Without one,
+// the state keeps its English default.
+func WithLocaleReader(r LocaleReader) RiotSourceOption {
+	return func(s *RiotSource) { s.locales = r }
+}
+
 // RiotSource is the Connector the Riot supervisor drives: it owns the local
 // API connection and feeds every presence it reads into the state manager.
 type RiotSource struct {
@@ -32,6 +49,7 @@ type RiotSource struct {
 	watcher presenceWatcher
 	state   *state.Manager
 	logger  zerolog.Logger
+	locales LocaleReader
 
 	// now is overridden in tests to drive the stall threshold.
 	now func() time.Time
@@ -43,9 +61,12 @@ type RiotSource struct {
 
 // NewRiotSource builds a source over client. newWatcher is handed the
 // callback that every decoded presence arrives on.
-func NewRiotSource(client Connector, stateMgr *state.Manager, logger zerolog.Logger, newWatcher func(onUpdate func(riotchat.Presence)) presenceWatcher) *RiotSource {
+func NewRiotSource(client Connector, stateMgr *state.Manager, logger zerolog.Logger, newWatcher func(onUpdate func(riotchat.Presence)) presenceWatcher, opts ...RiotSourceOption) *RiotSource {
 	s := &RiotSource{client: client, state: stateMgr, logger: logger}
 	s.watcher = newWatcher(s.onPresence)
+	for _, opt := range opts {
+		opt(s)
+	}
 	return s
 }
 
@@ -60,11 +81,32 @@ func (s *RiotSource) Connect() error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), startTimeout)
 	defer cancel()
+
+	s.readClientLocale(ctx)
+
 	if err := s.watcher.Start(ctx); err != nil {
 		_ = s.client.Disconnect()
 		return err
 	}
 	return nil
+}
+
+// readClientLocale records the language the Riot Client is running in. It is
+// cosmetic, so a failure logs and leaves the English default in place.
+func (s *RiotSource) readClientLocale(ctx context.Context) {
+	if s.locales == nil {
+		return
+	}
+
+	got, err := s.locales.RegionLocale(ctx)
+	if err != nil {
+		s.logger.Warn().Err(err).Msg("could not read the Riot Client locale, presence stays in English")
+		return
+	}
+
+	locale := types.MatchLocale(got.Locale)
+	s.logger.Debug().Str("client_locale", got.Locale).Str("resolved", locale).Msg("resolved the client locale")
+	s.state.Apply(func(st *state.State) { st.ClientLocale = locale })
 }
 
 // Disconnect closes the connection and forgets the presence it was showing,

@@ -143,12 +143,29 @@ func TestValidate_AcceptsEveryLocaleTheCatalogueServes(t *testing.T) {
 	}
 }
 
+func TestValidate_AcceptsTheAutoLocale(t *testing.T) {
+	c := DefaultConfig()
+	c.Display.Locale = types.LocaleAuto
+
+	if err := c.Validate(); err != nil {
+		t.Errorf("Validate rejected the auto locale: %v", err)
+	}
+}
+
+// Following the Riot Client is the friendlier default, and the one setting a
+// user never has to find.
+func TestDefaultConfig_FollowsTheClientLocale(t *testing.T) {
+	if got := DefaultConfig().Display.Locale; got != types.LocaleAuto {
+		t.Errorf("default locale = %q, want %q", got, types.LocaleAuto)
+	}
+}
+
 func TestClamp_RepairsAnUnknownLocale(t *testing.T) {
 	c := &Config{Display: DisplayConfig{Locale: "kl-KL"}}
 	c.clamp()
 
-	if c.Display.Locale != types.DefaultLocale {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.DefaultLocale)
+	if c.Display.Locale != types.LocaleAuto {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.LocaleAuto)
 	}
 }
 
@@ -158,7 +175,7 @@ func TestClamp_FillsAnEmptyLocale(t *testing.T) {
 	c := &Config{}
 	c.clamp()
 
-	if c.Display.Locale != types.DefaultLocale {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.DefaultLocale)
+	if c.Display.Locale != types.LocaleAuto {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.LocaleAuto)
 	}
 }

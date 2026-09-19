@@ -14,6 +14,7 @@ import (
 type State struct {
 	// Player
 	Availability types.Availability `json:"availability"`
+	ClientLocale string             `json:"client_locale"` // resolved from the Riot Client
 	RiotID       string             `json:"riot_id"`
 	Tagline      string             `json:"tagline"`
 	AccountLevel int                `json:"account_level"`
@@ -50,7 +51,11 @@ type State struct {
 // particular, which is what an unconnected daemon knows. The context is
 // stamped here too: starting up already in the client is a context entry.
 func NewState() *State {
-	return &State{Availability: types.AvailabilityOnline, ContextEnteredAt: time.Now()}
+	return &State{
+		Availability:     types.AvailabilityOnline,
+		ClientLocale:     types.DefaultLocale,
+		ContextEnteredAt: time.Now(),
+	}
 }
 
 // PhaseContext derives one of the five presence contexts. Only MENUS defers
