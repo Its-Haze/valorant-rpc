@@ -10,7 +10,10 @@ import (
 	"sync"
 
 	"github.com/its-haze/valorant-rpc/frontend"
+	"github.com/its-haze/valorant-rpc/internal/app"
 	"github.com/its-haze/valorant-rpc/internal/config"
+	"github.com/its-haze/valorant-rpc/internal/daemon"
+	"github.com/its-haze/valorant-rpc/internal/discordapp"
 	"github.com/its-haze/valorant-rpc/internal/logging"
 	"github.com/its-haze/valorant-rpc/internal/startup"
 	"github.com/its-haze/valorant-rpc/internal/updates"
@@ -25,22 +28,6 @@ import (
 // singleInstanceID guards against a second daemon. It must differ from the
 // sibling app's, so a user running both gets two instances rather than one.
 const singleInstanceID = "com.its-haze.valorant-rpc"
-
-// updateChangedEvent carries an updates.Status to the frontend whenever the
-// App Update coordinator's launch or periodic check finds something new.
-const updateChangedEvent = "update:changed"
-
-// closeRequestedEvent asks the frontend to raise the close confirmation
-// dialog. Only emitted while close_action is "ask".
-const closeRequestedEvent = "window:close-requested"
-
-// navigateAboutEvent asks the frontend to switch to the About screen. Emitted
-// when the user clicks the update-available toast notification.
-const navigateAboutEvent = "navigate:about"
-
-// updateReadyNotificationID identifies the toast shown once a new version is
-// first discovered, distinguishing its click handler from future toasts.
-const updateReadyNotificationID = "update-ready"
 
 func main() {
 	// A run launched by the Run entry carries the hidden marker. Drop any
@@ -62,9 +49,7 @@ func main() {
 	defer sink.Close()
 
 	store := config.NewStore(cfg)
-
-	// Stands in for the daemon's pause flag until there is a daemon to pause.
-	pause := &localPause{}
+	d, catalogue := daemon.Wire(store, sink.Logger)
 
 	// Keep the "start with Windows" registry entry matching the setting, both
 	// now and whenever the GUI toggles it.
@@ -74,6 +59,7 @@ func main() {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
+	daemonDone := make(chan struct{})
 
 	// Assigned once the window exists; the single-instance callback reads it.
 	var mainWindow *application.WebviewWindow
@@ -92,7 +78,10 @@ func main() {
 				}
 			},
 		},
-		OnShutdown: func() { cancel() },
+		OnShutdown: func() {
+			cancel()
+			<-daemonDone
+		},
 	})
 
 	// wailsApp.Updater exists only once application.New has run, hence wiring
@@ -104,8 +93,23 @@ func main() {
 		sink.Logger.Warn().Err(err).Msg("could not initialize the app updater")
 	}
 
-	// Registered so an update-ready toast can be pushed from OnChange below;
-	// clicking it brings the window forward to the About screen.
+	logDir, err := logging.LogDir()
+	if err != nil {
+		sink.Logger.Warn().Err(err).Msg("could not resolve the logs directory")
+	}
+
+	guiApp := app.New(store, d,
+		app.WithStatus(d, d, d.SubscribeState()),
+		app.WithUpdater(updateAdapter{updateCoord}),
+		app.WithLogs(sink.Ring, logDir),
+		app.WithCatalogue(catalogue),
+		app.WithAppNameLookup(discordapp.New(discordapp.NewProductionHTTPDoer())),
+	)
+	svc := newGUIService(guiApp)
+	wailsApp.RegisterService(application.NewService(svc))
+
+	// Registered so an update-ready toast can be pushed from OnUpdateChange
+	// below; clicking it brings the window forward to the About screen.
 	notifier := notifications.New()
 	wailsApp.RegisterService(application.NewService(notifier))
 	notifier.OnNotificationResponse(func(result notifications.NotificationResult) {
@@ -134,6 +138,28 @@ func main() {
 	// Follow a debug-logging toggle immediately, not just on the next launch.
 	go watchConfigField(ctx, store, func(c *config.Config) bool { return c.Advanced.DebugMode }, logging.SetDebug)
 
+	// Start the daemon only after application.New has run the single-instance
+	// guard; a second launch exits inside New and never touches Discord.
+	go func() {
+		defer close(daemonDone)
+		d.Run(ctx)
+	}()
+
+	// Bridge config.Store changes to a frontend event so screens can react
+	// without polling. Runs until the app shuts down.
+	go svc.publishConfigChanges(ctx, wailsApp)
+
+	// Live-tail the log ring to the frontend so the Help screen's viewer
+	// doesn't have to poll. Runs until the app shuts down.
+	go svc.publishLogLines(ctx, wailsApp)
+
+	// Push status snapshots to the frontend on change, and drive the bridge
+	// that assembles them. Both run until the app shuts down.
+	guiApp.OnStatusChange(func(s app.StatusSnapshot) {
+		wailsApp.Event.Emit(statusChangedEvent, s)
+	})
+	go guiApp.RunStatus(ctx)
+
 	// A hidden launch opens straight to the tray; a manual run shows the
 	// window.
 	windowWidth, windowHeight := defaultWindowSize()
@@ -151,7 +177,7 @@ func main() {
 		Frameless: true,
 	})
 
-	tray := newTrayController(windowAdapter{mainWindow}, pause)
+	tray := newTrayController(windowAdapter{mainWindow}, d)
 	tray.closeAction = func() string { return store.Load().Behavior.CloseAction }
 	tray.quit = wailsApp.Quit
 	tray.askClose = func() {
@@ -174,13 +200,13 @@ func main() {
 		systemTray.SetTemplateIcon(icons.SystrayMacTemplate)
 	}
 	systemTray.OnClick(tray.showWindow)
-	systemTray.SetMenu(buildTrayMenu(wailsApp, tray, updateCoord))
+	systemTray.SetMenu(buildTrayMenu(wailsApp, tray, guiApp))
 
 	// Push App Update status to the frontend and the tray tooltip, and fire a
 	// one-time toast once a new version is first discovered.
 	var notifyMu sync.Mutex
 	var notifiedVersion string
-	updateCoord.OnChange(func(s updates.Status) {
+	guiApp.OnUpdateChange(func(s app.UpdateStatus) {
 		wailsApp.Event.Emit(updateChangedEvent, s)
 		if s.Available {
 			systemTray.SetTooltip(constants.AppName + " (update available)")
@@ -208,7 +234,12 @@ func main() {
 			sink.Logger.Warn().Err(err).Msg("could not show update-available notification")
 		}
 	})
-	go updateCoord.Run(ctx)
+	go guiApp.RunUpdates(ctx)
+
+	// Frontend pause toggles flow through the same path as tray toggles, so
+	// the daemon flag and the tray checkbox stay in agreement.
+	svc.pauseHook = tray.setPaused
+	svc.closeHook = tray.resolveClose
 
 	if err := wailsApp.Run(); err != nil {
 		log.Fatal(err)
@@ -238,7 +269,7 @@ func watchConfigField[T comparable](ctx context.Context, store *config.Store, ex
 
 // buildTrayMenu assembles the right-click menu: Open, Pause presence, Check
 // for updates, Quit.
-func buildTrayMenu(wailsApp *application.App, tray *trayController, updateCoord *updates.Coordinator) *application.Menu {
+func buildTrayMenu(wailsApp *application.App, tray *trayController, guiApp *app.App) *application.Menu {
 	menu := wailsApp.NewMenu()
 	menu.Add("Open").OnClick(func(*application.Context) { tray.showWindow() })
 
@@ -251,9 +282,9 @@ func buildTrayMenu(wailsApp *application.App, tray *trayController, updateCoord 
 
 	menu.AddSeparator()
 	// Fire-and-forget: the result reaches the window (and this tooltip) the
-	// same way the launch/periodic checks already do, via OnChange.
+	// same way the launch/periodic checks already do, via OnUpdateChange.
 	menu.Add("Check for updates").OnClick(func(*application.Context) {
-		go func() { _, _ = updateCoord.Check(context.Background()) }()
+		go func() { _, _ = guiApp.CheckForUpdates(context.Background()) }()
 	})
 
 	menu.AddSeparator()
@@ -268,22 +299,3 @@ type windowAdapter struct{ w *application.WebviewWindow }
 func (a windowAdapter) Show()  { a.w.Show() }
 func (a windowAdapter) Hide()  { a.w.Hide() }
 func (a windowAdapter) Focus() { a.w.Focus() }
-
-// localPause holds the pause flag while there is no daemon to hold it, and
-// goes away once the daemon owns it.
-type localPause struct {
-	mu     sync.Mutex
-	paused bool
-}
-
-func (p *localPause) SetPaused(v bool) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	p.paused = v
-}
-
-func (p *localPause) IsPaused() bool {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	return p.paused
-}

@@ -23,7 +23,7 @@ func main() {
 
 	logger := newLogger(cfg.Advanced.DebugMode)
 	store := config.NewStore(cfg)
-	d := daemon.Wire(store, logger)
+	d, _ := daemon.Wire(store, logger)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

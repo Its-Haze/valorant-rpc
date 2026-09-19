@@ -14,7 +14,9 @@ import (
 
 // Wire builds a fully connected Daemon from a config Store and logger. The
 // GUI app and the headless launcher both call this so they run the same graph.
-func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
+// The catalogue comes back alongside it because the GUI's settings preview
+// reads its art from the same snapshot the presence builders do.
+func Wire(store *config.Store, logger zerolog.Logger) (*Daemon, *content.Cache) {
 	stateMgr := state.NewManager(logger)
 	discordClient := discord.NewClient(store, logger)
 	checker := process.NewChecker()
@@ -31,5 +33,5 @@ func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
 
 	return New(discordSup, riotSup, updater, stateMgr, logger,
 		DefaultPresencePollInterval, DefaultPlaceholderInterval,
-		WithCatalogue(catalogue))
+		WithCatalogue(catalogue)), catalogue
 }

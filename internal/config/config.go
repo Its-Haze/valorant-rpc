@@ -43,7 +43,6 @@ type DisplayDefaults struct {
 
 // PresenceConfig holds presence-wide text settings.
 type PresenceConfig struct {
-	ShowEmojis   bool                    `json:"show_emojis"`    // online/away emoji
 	ShowInClient bool                    `json:"show_in_client"` // presence while sitting in the client
 	Templates    map[string]TemplatePair `json:"templates"`      // per-context text, keyed by context
 }
@@ -84,7 +83,6 @@ func DefaultConfig() *Config {
 			Locale:  types.LocaleAuto,
 		},
 		Presence: PresenceConfig{
-			ShowEmojis:   true,
 			ShowInClient: true,
 			Templates:    defaultTemplates(),
 		},
