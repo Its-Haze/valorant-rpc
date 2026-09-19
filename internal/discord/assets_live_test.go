@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -75,7 +76,7 @@ func checkAll(t *testing.T, assets []asset) {
 			gate <- struct{}{}
 			defer func() { <-gate }()
 
-			if err := probe(client, a.url); err != nil {
+			if err := probeImage(client, a.url); err != nil {
 				mu.Lock()
 				bad = append(bad, fmt.Sprintf("%s: %v", a.label, err))
 				mu.Unlock()
@@ -91,14 +92,12 @@ func checkAll(t *testing.T, assets []asset) {
 	t.Logf("checked %d assets, %d broken", len(assets), len(bad))
 }
 
-// probe HEADs a URL. The CDN answers HEAD, so nothing downloads an image.
-func probe(client *http.Client, url string) error {
-	req, err := http.NewRequest(http.MethodHead, url, nil)
-	if err != nil {
-		return err
-	}
-
-	resp, err := client.Do(req)
+// probeImage HEADs a URL and insists the answer is actually an image.
+// Checking the status alone is not enough: GitHub answers a missing file
+// under blob/...?raw=true with 200 and an HTML page, so a broken hotlink
+// would sail through a status-only check.
+func probeImage(client *http.Client, url string) error {
+	resp, err := head(client, url)
 	if err != nil {
 		return err
 	}
@@ -107,7 +106,18 @@ func probe(client *http.Client, url string) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("%s returned %d", url, resp.StatusCode)
 	}
+	if ct := resp.Header.Get("Content-Type"); !strings.HasPrefix(ct, "image/") {
+		return fmt.Errorf("%s returned %d but served %q, not an image", url, resp.StatusCode, ct)
+	}
 	return nil
+}
+
+func head(client *http.Client, url string) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodHead, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return client.Do(req)
 }
 
 // TestPresenceImagesResolve checks every valorant-api image a builder can
@@ -179,8 +189,13 @@ func TestRepoHostedImagesResolve(t *testing.T) {
 		t.Skip("network test")
 	}
 
-	if err := probe(liveClient(), repoURL); err != nil {
-		t.Skipf("%s is not readable anonymously, so its hotlinked images cannot resolve for anyone yet: %v", repoURL, err)
+	resp, err := head(liveClient(), repoURL)
+	if err != nil {
+		t.Skipf("%s is unreachable: %v", repoURL, err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Skipf("%s is not readable anonymously (%d), so its hotlinked images cannot resolve for anyone yet", repoURL, resp.StatusCode)
 	}
 
 	checkAll(t, []asset{{"valorantLogoURL", valorantLogoURL}})
