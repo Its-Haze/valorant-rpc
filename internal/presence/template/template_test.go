@@ -183,8 +183,11 @@ func TestContextsAndKnownTokens(t *testing.T) {
 	install(t, ctxOne, []string{"mode"}, "{mode}", "In Match")
 	install(t, ctxTwo, []string{"score"}, "{score}", "In Match")
 
-	if got := Contexts(); !reflect.DeepEqual(got, []Context{ctxOne, ctxTwo}) {
-		t.Fatalf("Contexts() = %v, want the two installed, in order", got)
+	// The app's own contexts are already registered, so the two installed
+	// here land at the end, in the order they were installed.
+	got := Contexts()
+	if tail := got[len(got)-2:]; !reflect.DeepEqual(tail, []Context{ctxOne, ctxTwo}) {
+		t.Fatalf("Contexts() ends %v, want the two installed, in order", tail)
 	}
 	for _, ctx := range Contexts() {
 		if !IsContext(ctx) {
@@ -207,9 +210,11 @@ func TestContextsAndKnownTokens(t *testing.T) {
 func TestContexts_ReturnsACopy(t *testing.T) {
 	install(t, ctxOne, []string{"mode"}, "{mode}", "In Match")
 
-	got := Contexts()
-	got[0] = "clobbered"
-	if Contexts()[0] != ctxOne {
+	before := Contexts()
+	clobbered := Contexts()
+	clobbered[0] = "clobbered"
+
+	if !reflect.DeepEqual(Contexts(), before) {
 		t.Fatal("Contexts() handed out the backing slice")
 	}
 }
