@@ -27,7 +27,8 @@ export function useDiscordAppName(appId: string): string | null {
         if (!cancelled) setName(n);
       })
       .catch(() => {
-        cache.set(appId, null);
+        // Deliberately not cached: a failure here is usually a network blip,
+        // and caching it would hide the name for the rest of the session.
         if (!cancelled) setName(null);
       });
     return () => {

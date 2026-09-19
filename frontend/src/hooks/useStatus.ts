@@ -9,7 +9,7 @@ const STATUS_CHANGED_EVENT = "status:changed";
 // a per-call fetch+listener would mean duplicate round trips for the same data.
 const store = createExternalStore<StatusSnapshot | null>(null, () => {
   GetStatus()
-    .then((s) => store.set(s))
+    .then((s) => store.setInitial(s))
     .catch(() => {});
 
   Events.On(STATUS_CHANGED_EVENT, (ev: { data: StatusSnapshot }) => store.set(ev.data));

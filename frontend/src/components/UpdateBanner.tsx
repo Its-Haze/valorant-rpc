@@ -25,6 +25,7 @@ export default function UpdateBanner() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [restartError, setRestartError] = useState<string | null>(null);
+  const [retryError, setRetryError] = useState<string | null>(null);
   const [changelog, setChangelog] = useState<string | null>(null);
   const [showChangelog, setShowChangelog] = useState(false);
 
@@ -43,9 +44,12 @@ export default function UpdateBanner() {
   }
 
   async function handleRetry() {
+    setRetryError(null);
     setRetrying(true);
     try {
       await RetryUpdate();
+    } catch (e) {
+      setRetryError(String(e));
     } finally {
       setRetrying(false);
     }
@@ -75,6 +79,8 @@ export default function UpdateBanner() {
           <strong>Valorant RPC {status.version}</strong> is available.
           {restartError ? (
             <span className="text-danger ml-2">restart failed: {restartError}</span>
+          ) : retryError ? (
+            <span className="text-danger ml-2">retry failed: {retryError}</span>
           ) : status.ready ? (
             <span className="text-ok ml-2">ready to install</span>
           ) : status.last_error ? (

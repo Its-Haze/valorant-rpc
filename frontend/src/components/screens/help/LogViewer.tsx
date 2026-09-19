@@ -15,18 +15,22 @@ export function LogViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
   const pendingRef = useRef<string[]>([]);
+  const historyRef = useRef(false);
 
   useEffect(() => {
+    // Lines keep buffering while this is in flight, and the flush below
+    // holds them back, so nothing written mid-fetch is overwritten.
     GetRecentLogs()
       .then((l) => setLines(l ?? []))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => (historyRef.current = true));
 
     const off = Events.On(LOG_LINE_EVENT, (ev: { data: string }) => {
       pendingRef.current.push(ev.data);
     });
 
     const flush = setInterval(() => {
-      if (pendingRef.current.length === 0) return;
+      if (!historyRef.current || pendingRef.current.length === 0) return;
       const batch = pendingRef.current;
       pendingRef.current = [];
       setLines((prev) => appendLines(prev, batch));

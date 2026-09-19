@@ -11,7 +11,7 @@ export const UPDATE_CHANGED_EVENT = "update:changed";
 // read the exact same status instead of keeping their own copies in sync.
 const store = createExternalStore<UpdateStatus | null>(null, () => {
   GetUpdateStatus()
-    .then((s) => store.set(s))
+    .then((s) => store.setInitial(s))
     .catch(() => {});
 
   Events.On(UPDATE_CHANGED_EVENT, (ev: { data: UpdateStatus }) => store.set(ev.data));

@@ -5,6 +5,7 @@ import {
   GetSettings,
 } from "../../bindings/github.com/its-haze/valorant-rpc/cmd/valorant-rpc-gui/guiservice";
 import type { Config } from "../../bindings/github.com/its-haze/valorant-rpc/internal/config/models";
+import { createSerialQueue } from "../lib/serialQueue";
 import { createExternalStore } from "./createExternalStore";
 
 const CONFIG_CHANGED_EVENT = "settings:changed";
@@ -27,11 +28,15 @@ interface SettingsState {
 // screens mounted at once could each hold a stale copy and clobber writes.
 const store = createExternalStore<SettingsState>({ cfg: null, error: null }, () => {
   GetSettings()
-    .then((c) => store.set({ ...store.get(), cfg: c }))
-    .catch((e: unknown) => store.set({ ...store.get(), error: String(e) }));
+    .then((c) => store.setInitial({ ...store.get(), cfg: c }))
+    .catch((e: unknown) => store.setInitial({ ...store.get(), error: String(e) }));
 
   Events.On(CONFIG_CHANGED_EVENT, (ev: { data: Config }) => store.set({ cfg: ev.data, error: null }));
 });
+
+// One queue for every screen, so two overlapping applies settle in call
+// order instead of by whichever response lands first.
+const applies = createSerialQueue();
 
 // The live settings tree every settings screen binds to: loaded once,
 // applied through the daemon, and kept in sync with settings:changed.
@@ -40,25 +45,29 @@ export function useSettings(): UseSettingsResult {
   const [saving, setSaving] = useState(false);
 
   async function applyPatch(patch: Partial<Config>) {
-    const current = store.get().cfg;
-    if (!current) return;
-    const next: Config = { ...current, ...patch };
-    store.set({ ...store.get(), cfg: next });
-    setSaving(true);
-    try {
-      await ApplySettings(next);
-      store.set({ ...store.get(), error: null });
-    } catch (e) {
-      // Refetch rather than revert to the pre-patch snapshot: another
-      // screen's write may have landed since, and reverting would drop it.
+    // The base tree is read inside the queue, not at call time, so this
+    // patch lands on top of whatever the previous apply just persisted.
+    await applies.run(async () => {
+      const current = store.get().cfg;
+      if (!current) return;
+      const next: Config = { ...current, ...patch };
+      store.set({ ...store.get(), cfg: next });
+      setSaving(true);
       try {
-        store.set({ cfg: await GetSettings(), error: String(e) });
-      } catch {
-        store.set({ ...store.get(), error: String(e) });
+        await ApplySettings(next);
+        store.set({ ...store.get(), error: null });
+      } catch (e) {
+        // Refetch rather than revert to the pre-patch snapshot: another
+        // screen's write may have landed since, and reverting would drop it.
+        try {
+          store.set({ cfg: await GetSettings(), error: String(e) });
+        } catch {
+          store.set({ ...store.get(), error: String(e) });
+        }
+      } finally {
+        setSaving(false);
       }
-    } finally {
-      setSaving(false);
-    }
+    });
   }
 
   return { cfg: snapshot.cfg, error: snapshot.error, saving, applyPatch };
