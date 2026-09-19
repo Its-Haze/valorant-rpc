@@ -157,7 +157,8 @@ type ProcessLister interface {
 	RiotClientProcesses() ([]ProcessInfo, error)
 }
 
-// riotClientExe is the process hosting the local API, per pkg/constants.
+// riotClientExe is the process hosting the local API. Deliberately its own
+// copy: this package stays independent of the app's constants.
 const riotClientExe = "riotclientservices.exe"
 
 type gopsutilLister struct{}

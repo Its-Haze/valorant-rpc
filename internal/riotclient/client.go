@@ -151,12 +151,14 @@ func (c *Client) Connect() error {
 	listenCtx, cancel := context.WithCancel(ctx)
 	closed := make(chan struct{})
 
+	// subMu covers publishing the socket as well as the replay: a Subscribe
+	// seeing the new connection first would send its frame twice.
+	c.subMu.Lock()
 	c.mu.Lock()
 	c.creds, c.haveCreds = creds, true
 	c.conn, c.cancel, c.closed = conn, cancel, closed
 	c.mu.Unlock()
 
-	c.subMu.Lock()
 	err = c.replaySubscriptions(listenCtx, conn)
 	c.subMu.Unlock()
 	if err != nil {
