@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/its-haze/valorant-rpc/internal/config"
+	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/state"
 	"github.com/rs/zerolog"
 )
@@ -32,8 +33,19 @@ const (
 // transmitted; Discord ignores a byte-identical SetActivity call. See ADR-0001.
 const zeroWidthSpace = "​"
 
+// catalogueSource hands out the current content snapshot. *content.Cache
+// satisfies it, and an Updater without one renders presence with no art.
+type catalogueSource interface {
+	Snapshot() *content.Catalogue
+}
+
 // UpdaterOption configures a Updater.
 type UpdaterOption func(*Updater)
+
+// WithCatalogue wires the content catalogue the presence builders read.
+func WithCatalogue(src catalogueSource) UpdaterOption {
+	return func(u *Updater) { u.catalogue = src }
+}
 
 // WithClock overrides the Clock used for the heartbeat/reclaim ticker.
 // Tests inject a fake; production uses the default real clock.
@@ -68,6 +80,7 @@ type Updater struct {
 	client          presenceSender
 	store           *config.Store
 	logger          zerolog.Logger
+	catalogue       catalogueSource
 
 	// Track previous state for comparison
 	previousState *state.State
@@ -110,6 +123,15 @@ func NewUpdater(client presenceSender, store *config.Store, logger zerolog.Logge
 	}
 	u.ticker = u.clock.NewTicker(u.heartbeatInterval)
 	return u
+}
+
+// snapshot is the current catalogue, or nil when none is wired. Every
+// lookup on a nil catalogue misses, which the builders already handle.
+func (u *Updater) snapshot() *content.Catalogue {
+	if u.catalogue == nil {
+		return nil
+	}
+	return u.catalogue.Snapshot()
 }
 
 // ConfigChanges reports when the live config changed, so the daemon can
@@ -254,7 +276,7 @@ func (u *Updater) executeUpdate(st *state.State) {
 	cfg := u.store.Load()
 
 	// Map state to RPC data
-	rpcData := MapStateToPresence(st, cfg)
+	rpcData := MapStateToPresence(st, cfg, u.snapshot())
 
 	// Check if we should clear presence instead
 	if ShouldClearPresence(st, cfg) {
@@ -307,7 +329,7 @@ func (u *Updater) ImmediateUpdate(st *state.State) {
 	cfg := u.store.Load()
 
 	// Map state to RPC data
-	rpcData := MapStateToPresence(st, cfg)
+	rpcData := MapStateToPresence(st, cfg, u.snapshot())
 
 	// Check if we should clear presence
 	if ShouldClearPresence(st, cfg) {

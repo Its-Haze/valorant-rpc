@@ -31,14 +31,14 @@ func TestUpdater_LastSent_ReflectsLastRealSend(t *testing.T) {
 	if got.Cleared {
 		t.Fatal("LastSent marked cleared after a real send")
 	}
-	if got.Data == nil || got.Data.State != "In the client" {
+	if got.Data == nil || got.Data.Details != "In the client" {
 		t.Fatalf("LastSent.Data = %+v, want the in-client payload", got.Data)
 	}
 
 	// The caller must not be able to mutate the Updater's copy.
-	got.Data.State = "tampered"
-	if again := u.LastSent(); again.Data.State != "In the client" {
-		t.Fatalf("LastSent returned a shared pointer: second read = %q", again.Data.State)
+	got.Data.Details = "tampered"
+	if again := u.LastSent(); again.Data.Details != "In the client" {
+		t.Fatalf("LastSent returned a shared pointer: second read = %q", again.Data.Details)
 	}
 }
 

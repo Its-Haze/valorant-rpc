@@ -223,7 +223,7 @@ func TestDaemon_RealPresenceOnceBothConnected(t *testing.T) {
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.State == "In the client"
+		return last != nil && last.Details == "In the client"
 	})
 }
 
@@ -355,7 +355,7 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.connected.Store(true)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.State == "In the client"
+		return last != nil && last.Details == "In the client"
 	})
 
 	// Nothing ever arrived on this connection: show the placeholder rather
@@ -373,7 +373,7 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.stalled.Store(false)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.State == "In the client"
+		return last != nil && last.Details == "In the client"
 	})
 }
 
@@ -541,7 +541,7 @@ func TestDaemon_ResendsPresenceOnceDiscordConnectsAfterTheRiotClient(t *testing.
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.State == "In the client"
+		return last != nil && last.Details == "In the client"
 	})
 }
 

@@ -17,9 +17,9 @@ import (
 func Wire(store *config.Store, logger zerolog.Logger) *Daemon {
 	stateMgr := state.NewManager(logger)
 	discordClient := discord.NewClient(store, logger)
-	updater := discord.NewUpdater(discordClient, store, logger)
 	checker := process.NewChecker()
 	catalogue := content.New(content.Options{Logger: logger})
+	updater := discord.NewUpdater(discordClient, store, logger, discord.WithCatalogue(catalogue))
 
 	riotClient := riotclient.New(riotclient.Options{Logger: logger})
 	source := NewRiotSource(riotClient, stateMgr, logger, func(onUpdate func(riotchat.Presence)) presenceWatcher {
