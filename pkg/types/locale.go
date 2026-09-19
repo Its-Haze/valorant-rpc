@@ -1,6 +1,10 @@
-package content
+package types
 
 import "slices"
+
+// DefaultLocale is the language names fall back to. valorant-api always
+// carries it, so it is the one tag guaranteed to be present in every payload.
+const DefaultLocale = "en-US"
 
 // Locale is one of the languages valorant-api serves. Name is the language's
 // own name, which is what a language picker should show.

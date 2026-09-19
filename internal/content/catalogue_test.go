@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 const (
@@ -45,7 +47,7 @@ func fixtureCatalogue(t *testing.T) *Catalogue {
 func TestAgentLookupJoinsOnUUID(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	agent, ok := cat.Agent(jettUUID, DefaultLocale)
+	agent, ok := cat.Agent(jettUUID, types.DefaultLocale)
 	if !ok {
 		t.Fatalf("Jett did not resolve")
 	}
@@ -67,11 +69,11 @@ func TestAgentLookupJoinsOnUUID(t *testing.T) {
 func TestAgentLookupIsCaseInsensitiveInBothDirections(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	upper, ok := cat.Agent(strings.ToUpper(jettUUID), DefaultLocale)
+	upper, ok := cat.Agent(strings.ToUpper(jettUUID), types.DefaultLocale)
 	if !ok {
 		t.Fatalf("an uppercase UUID did not resolve")
 	}
-	lower, ok := cat.Agent(strings.ToLower(jettUUID), DefaultLocale)
+	lower, ok := cat.Agent(strings.ToLower(jettUUID), types.DefaultLocale)
 	if !ok {
 		t.Fatalf("a lowercase UUID did not resolve")
 	}
@@ -107,7 +109,7 @@ func TestAgentNameFallsBackToEnglishForAnUnknownLocale(t *testing.T) {
 func TestUnknownAgentDoesNotResolve(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	if _, ok := cat.Agent("00000000-0000-0000-0000-000000000000", DefaultLocale); ok {
+	if _, ok := cat.Agent("00000000-0000-0000-0000-000000000000", types.DefaultLocale); ok {
 		t.Error("an unknown UUID resolved")
 	}
 }
@@ -115,7 +117,7 @@ func TestUnknownAgentDoesNotResolve(t *testing.T) {
 func TestMapLookupJoinsOnMapURL(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	m, ok := cat.Map(ascentURL, DefaultLocale)
+	m, ok := cat.Map(ascentURL, types.DefaultLocale)
 	if !ok {
 		t.Fatalf("Ascent did not resolve")
 	}
@@ -133,10 +135,10 @@ func TestMapLookupJoinsOnMapURL(t *testing.T) {
 func TestMapLookupIsCaseInsensitiveInBothDirections(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	if _, ok := cat.Map(strings.ToUpper(ascentURL), DefaultLocale); !ok {
+	if _, ok := cat.Map(strings.ToUpper(ascentURL), types.DefaultLocale); !ok {
 		t.Error("an uppercase mapUrl did not resolve")
 	}
-	if _, ok := cat.Map(strings.ToLower(ascentURL), DefaultLocale); !ok {
+	if _, ok := cat.Map(strings.ToLower(ascentURL), types.DefaultLocale); !ok {
 		t.Error("a lowercase mapUrl did not resolve")
 	}
 }
@@ -147,7 +149,7 @@ func TestBothRangeMapsResolve(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
 	for _, url := range []string{rangeURL, rangeV2URL} {
-		m, ok := cat.Map(url, DefaultLocale)
+		m, ok := cat.Map(url, types.DefaultLocale)
 		if !ok {
 			t.Fatalf("%s did not resolve", url)
 		}
@@ -162,7 +164,7 @@ func TestBothRangeMapsResolve(t *testing.T) {
 func TestSkirmishMapsResolve(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	m, ok := cat.Map("/Game/Maps/Duel/Duel_1/Skirmish_A", DefaultLocale)
+	m, ok := cat.Map("/Game/Maps/Duel/Duel_1/Skirmish_A", types.DefaultLocale)
 	if !ok {
 		t.Fatalf("Skirmish A did not resolve")
 	}
@@ -174,7 +176,7 @@ func TestSkirmishMapsResolve(t *testing.T) {
 func TestTierTableComesFromTheLastEntry(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	radiant, ok := cat.Tier(RadiantTier, DefaultLocale)
+	radiant, ok := cat.Tier(RadiantTier, types.DefaultLocale)
 	if !ok {
 		t.Fatalf("tier %d did not resolve", RadiantTier)
 	}
@@ -189,7 +191,7 @@ func TestTierTableComesFromTheLastEntry(t *testing.T) {
 func TestTierIndexingAtTheBoundaries(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	unranked, ok := cat.Tier(0, DefaultLocale)
+	unranked, ok := cat.Tier(0, types.DefaultLocale)
 	if !ok {
 		t.Fatalf("tier 0 did not resolve")
 	}
@@ -200,15 +202,15 @@ func TestTierIndexingAtTheBoundaries(t *testing.T) {
 	// Tiers 1 and 2 are "Unused" placeholders with an INVALID division. No
 	// player holds them and their names must never reach a presence.
 	for _, tier := range []int{1, 2} {
-		if got, ok := cat.Tier(tier, DefaultLocale); ok {
+		if got, ok := cat.Tier(tier, types.DefaultLocale); ok {
 			t.Errorf("tier %d resolved to %q, want no result", tier, got.Name)
 		}
 	}
 
-	if _, ok := cat.Tier(RadiantTier+1, DefaultLocale); ok {
+	if _, ok := cat.Tier(RadiantTier+1, types.DefaultLocale); ok {
 		t.Errorf("tier %d resolved, want no result", RadiantTier+1)
 	}
-	if _, ok := cat.Tier(-1, DefaultLocale); ok {
+	if _, ok := cat.Tier(-1, types.DefaultLocale); ok {
 		t.Error("tier -1 resolved, want no result")
 	}
 }
@@ -216,7 +218,7 @@ func TestTierIndexingAtTheBoundaries(t *testing.T) {
 func TestIronOneIsTheFirstRealTier(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	iron, ok := cat.Tier(3, DefaultLocale)
+	iron, ok := cat.Tier(3, types.DefaultLocale)
 	if !ok {
 		t.Fatalf("tier 3 did not resolve")
 	}
@@ -231,7 +233,7 @@ func TestIronOneIsTheFirstRealTier(t *testing.T) {
 func TestGameModeLookupJoinsOnAssetPath(t *testing.T) {
 	cat := fixtureCatalogue(t)
 
-	mode, ok := cat.GameMode(strings.ToUpper(bombMode), DefaultLocale)
+	mode, ok := cat.GameMode(strings.ToUpper(bombMode), types.DefaultLocale)
 	if !ok {
 		t.Fatalf("the Bomb game mode did not resolve")
 	}
@@ -246,16 +248,16 @@ func TestEmptyCatalogueResolvesNothing(t *testing.T) {
 	if !cat.Empty() {
 		t.Error("a zero Catalogue is not reporting empty")
 	}
-	if _, ok := cat.Agent(jettUUID, DefaultLocale); ok {
+	if _, ok := cat.Agent(jettUUID, types.DefaultLocale); ok {
 		t.Error("an empty catalogue resolved an agent")
 	}
-	if _, ok := cat.Map(ascentURL, DefaultLocale); ok {
+	if _, ok := cat.Map(ascentURL, types.DefaultLocale); ok {
 		t.Error("an empty catalogue resolved a map")
 	}
-	if _, ok := cat.Tier(RadiantTier, DefaultLocale); ok {
+	if _, ok := cat.Tier(RadiantTier, types.DefaultLocale); ok {
 		t.Error("an empty catalogue resolved a tier")
 	}
-	if _, ok := cat.GameMode(bombMode, DefaultLocale); ok {
+	if _, ok := cat.GameMode(bombMode, types.DefaultLocale); ok {
 		t.Error("an empty catalogue resolved a game mode")
 	}
 }

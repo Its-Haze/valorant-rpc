@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/its-haze/valorant-rpc/pkg/types"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -113,16 +115,16 @@ func TestRefreshPopulatesEveryTable(t *testing.T) {
 	if cat.Empty() {
 		t.Fatal("the catalogue is empty after a successful refresh")
 	}
-	if _, ok := cat.Agent(jettUUID, DefaultLocale); !ok {
+	if _, ok := cat.Agent(jettUUID, types.DefaultLocale); !ok {
 		t.Error("agents did not load")
 	}
-	if _, ok := cat.Map(ascentURL, DefaultLocale); !ok {
+	if _, ok := cat.Map(ascentURL, types.DefaultLocale); !ok {
 		t.Error("maps did not load")
 	}
-	if _, ok := cat.Tier(RadiantTier, DefaultLocale); !ok {
+	if _, ok := cat.Tier(RadiantTier, types.DefaultLocale); !ok {
 		t.Error("tiers did not load")
 	}
-	if _, ok := cat.GameMode(bombMode, DefaultLocale); !ok {
+	if _, ok := cat.GameMode(bombMode, types.DefaultLocale); !ok {
 		t.Error("game modes did not load")
 	}
 }
@@ -165,10 +167,10 @@ func TestATransportFailureKeepsThePreviousCatalogue(t *testing.T) {
 	}
 
 	cat := cache.Snapshot()
-	if _, ok := cat.Agent(jettUUID, DefaultLocale); !ok {
+	if _, ok := cat.Agent(jettUUID, types.DefaultLocale); !ok {
 		t.Error("the previous catalogue was dropped on a failed refresh")
 	}
-	if _, ok := cat.Map(ascentURL, DefaultLocale); !ok {
+	if _, ok := cat.Map(ascentURL, types.DefaultLocale); !ok {
 		t.Error("maps were emptied by a failed refresh of the maps endpoint")
 	}
 }

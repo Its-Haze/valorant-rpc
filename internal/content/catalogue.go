@@ -7,11 +7,9 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-)
 
-// DefaultLocale is the language every lookup falls back to. valorant-api
-// always carries it, so it is the one key guaranteed to be present.
-const DefaultLocale = "en-US"
+	"github.com/its-haze/valorant-rpc/pkg/types"
+)
 
 // RadiantTier is the top competitive tier. Tiers 1 and 2 are "Unused"
 // placeholders, so the ladder is 0 and 3 through 27 with gaps in between.
@@ -75,7 +73,7 @@ func (l localized) pick(locale string) string {
 	if name, ok := l[locale]; ok && name != "" {
 		return name
 	}
-	return l[DefaultLocale]
+	return l[types.DefaultLocale]
 }
 
 // Catalogue is one resolved snapshot of the four payloads. It is built once

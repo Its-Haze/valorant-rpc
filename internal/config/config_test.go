@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/presence/template"
+	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 func TestDefaultConfig_ShipsEveryPresenceTemplate(t *testing.T) {
@@ -133,7 +133,7 @@ func TestValidate_RejectsAnUnknownLocale(t *testing.T) {
 }
 
 func TestValidate_AcceptsEveryLocaleTheCatalogueServes(t *testing.T) {
-	for _, l := range content.Locales() {
+	for _, l := range types.Locales() {
 		c := DefaultConfig()
 		c.Display.Locale = l.Tag
 
@@ -147,8 +147,8 @@ func TestClamp_RepairsAnUnknownLocale(t *testing.T) {
 	c := &Config{Display: DisplayConfig{Locale: "kl-KL"}}
 	c.clamp()
 
-	if c.Display.Locale != content.DefaultLocale {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, content.DefaultLocale)
+	if c.Display.Locale != types.DefaultLocale {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.DefaultLocale)
 	}
 }
 
@@ -158,7 +158,7 @@ func TestClamp_FillsAnEmptyLocale(t *testing.T) {
 	c := &Config{}
 	c.clamp()
 
-	if c.Display.Locale != content.DefaultLocale {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, content.DefaultLocale)
+	if c.Display.Locale != types.DefaultLocale {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.DefaultLocale)
 	}
 }

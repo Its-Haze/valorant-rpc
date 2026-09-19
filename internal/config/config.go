@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/presence/template"
 	"github.com/its-haze/valorant-rpc/pkg/constants"
+	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 // CurrentSchemaVersion is the version stamped on every config the app writes.
@@ -81,7 +81,7 @@ func DefaultConfig() *Config {
 		OnboardingComplete: false,
 		Display: DisplayConfig{
 			Default: DisplayDefaults{ShowRank: true, ShowStats: true},
-			Locale:  content.DefaultLocale,
+			Locale:  types.DefaultLocale,
 		},
 		Presence: PresenceConfig{
 			ShowEmojis:   true,
@@ -159,7 +159,7 @@ func (c *Config) Validate() error {
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		errs = append(errs, fmt.Errorf("update_interval must be between %d and %d ms", MinUpdateInterval, MaxUpdateInterval))
 	}
-	if !content.ValidLocale(c.Display.Locale) {
+	if !types.ValidLocale(c.Display.Locale) {
 		errs = append(errs, fmt.Errorf("locale %q is not one valorant-api.com serves", c.Display.Locale))
 	}
 
@@ -187,7 +187,7 @@ func (c *Config) clamp() {
 	}
 	// Empty here is a file written before the field existed. Either way the
 	// repair is English, never a blank name in the presence.
-	if !content.ValidLocale(c.Display.Locale) {
+	if !types.ValidLocale(c.Display.Locale) {
 		c.Display.Locale = def.Display.Locale
 	}
 	if c.Presence.Templates == nil {
