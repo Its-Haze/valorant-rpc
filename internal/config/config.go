@@ -55,13 +55,16 @@ type BehaviorConfig struct {
 	LaunchAtStartup bool   `json:"launch_at_startup"` // start with Windows
 	CloseAction     string `json:"close_action"`      // ask | tray | quit
 	NotifyUpdates   bool   `json:"notify_updates"`    // show system notifications when update available
+
+	// ShowPlaceholderPresence allows a placeholder while Valorant is starting
+	// and no presence has been read yet. Off by default; see ticket 10.
+	ShowPlaceholderPresence bool `json:"show_placeholder_presence"`
 }
 
 // AdvancedConfig holds tuning knobs and debug options.
 type AdvancedConfig struct {
-	UpdateInterval       int  `json:"update_interval"`        // RPC update throttle, ms
-	StatsPollingInterval int  `json:"stats_polling_interval"` // in-match refresh, ms
-	DebugMode            bool `json:"debug_mode"`             // verbose logging
+	UpdateInterval int  `json:"update_interval"` // RPC update throttle, ms
+	DebugMode      bool `json:"debug_mode"`      // verbose logging
 }
 
 // DefaultConfig returns a fully populated tree at the current schema version.
@@ -80,14 +83,14 @@ func DefaultConfig() *Config {
 			Templates:    defaultTemplates(),
 		},
 		Behavior: BehaviorConfig{
-			LaunchAtStartup: true,
-			CloseAction:     CloseAsk,
-			NotifyUpdates:   true,
+			LaunchAtStartup:         true,
+			CloseAction:             CloseAsk,
+			NotifyUpdates:           true,
+			ShowPlaceholderPresence: false,
 		},
 		Advanced: AdvancedConfig{
-			UpdateInterval:       1500,
-			StatsPollingInterval: 3000,
-			DebugMode:            false,
+			UpdateInterval: 1500,
+			DebugMode:      false,
 		},
 	}
 }
@@ -106,10 +109,8 @@ func defaultTemplates() map[string]TemplatePair {
 // Bounds for the numeric settings. Shared by Validate and clamp so the
 // reject path and the load-time repair path can't drift apart.
 const (
-	MinUpdateInterval       = 500
-	MaxUpdateInterval       = 10000
-	MinStatsPollingInterval = 1000
-	MaxStatsPollingInterval = 30000
+	MinUpdateInterval = 500
+	MaxUpdateInterval = 10000
 )
 
 // Theme values.
@@ -152,9 +153,6 @@ func (c *Config) Validate() error {
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		errs = append(errs, fmt.Errorf("update_interval must be between %d and %d ms", MinUpdateInterval, MaxUpdateInterval))
 	}
-	if c.Advanced.StatsPollingInterval < MinStatsPollingInterval || c.Advanced.StatsPollingInterval > MaxStatsPollingInterval {
-		errs = append(errs, fmt.Errorf("stats_polling_interval must be between %d and %d ms", MinStatsPollingInterval, MaxStatsPollingInterval))
-	}
 
 	return errors.Join(errs...)
 }
@@ -177,12 +175,6 @@ func (c *Config) clamp() {
 	}
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		c.Advanced.UpdateInterval = def.Advanced.UpdateInterval
-	}
-	if c.Advanced.StatsPollingInterval < MinStatsPollingInterval {
-		c.Advanced.StatsPollingInterval = MinStatsPollingInterval
-	}
-	if c.Advanced.StatsPollingInterval > MaxStatsPollingInterval {
-		c.Advanced.StatsPollingInterval = MaxStatsPollingInterval
 	}
 	if c.Presence.Templates == nil {
 		c.Presence.Templates = map[string]TemplatePair{}

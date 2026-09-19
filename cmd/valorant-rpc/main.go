@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/its-haze/valorant-rpc/internal/config"
+	"github.com/its-haze/valorant-rpc/internal/daemon"
 	"github.com/its-haze/valorant-rpc/pkg/constants"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -21,13 +22,14 @@ func main() {
 	}
 
 	logger := newLogger(cfg.Advanced.DebugMode)
+	store := config.NewStore(cfg)
+	d := daemon.Wire(store, logger)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	logger.Info().Str("app", constants.AppName).Msg("starting")
-	// Nothing to run yet: this waits for a signal until the daemon exists.
-	<-ctx.Done()
+	d.Run(ctx)
 	logger.Info().Str("app", constants.AppName).Msg("stopped")
 }
 

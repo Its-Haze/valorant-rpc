@@ -48,13 +48,12 @@ func TestValidate_ReportsEveryProblemAtOnce(t *testing.T) {
 	c.Theme = "neon"
 	c.Behavior.CloseAction = "explode"
 	c.Advanced.UpdateInterval = 10
-	c.Advanced.StatsPollingInterval = 999999
 
 	err := c.Validate()
 	if err == nil {
 		t.Fatal("Validate accepted an invalid config")
 	}
-	for _, want := range []string{"discord_app_id", "theme", "close_action", "update_interval", "stats_polling_interval"} {
+	for _, want := range []string{"discord_app_id", "theme", "close_action", "update_interval"} {
 		if !contains(err.Error(), want) {
 			t.Errorf("error %q missing mention of %q", err, want)
 		}
@@ -83,11 +82,8 @@ func TestValidate_AcceptsDefault(t *testing.T) {
 
 func TestClamp_RepairsOutOfBounds(t *testing.T) {
 	c := &Config{
-		Theme: "bogus",
-		Advanced: AdvancedConfig{
-			UpdateInterval:       50,
-			StatsPollingInterval: 100,
-		},
+		Theme:    "bogus",
+		Advanced: AdvancedConfig{UpdateInterval: 50},
 	}
 	c.clamp()
 
@@ -104,9 +100,6 @@ func TestClamp_RepairsOutOfBounds(t *testing.T) {
 	}
 	if c.Advanced.UpdateInterval != DefaultConfig().Advanced.UpdateInterval {
 		t.Errorf("UpdateInterval = %d, want default", c.Advanced.UpdateInterval)
-	}
-	if c.Advanced.StatsPollingInterval != MinStatsPollingInterval {
-		t.Errorf("StatsPollingInterval = %d, want %d", c.Advanced.StatsPollingInterval, MinStatsPollingInterval)
 	}
 	if c.Presence.Templates == nil {
 		t.Error("clamp left nested maps nil")
