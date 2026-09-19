@@ -16,6 +16,7 @@ func TestQueueNameUsesTheHardcodedTable(t *testing.T) {
 		"snowball":    "Snowball Fight",
 		"premier":     "Premier",
 		"fortcollins": "Retake",
+		"skirmish2v2": "Skirmish",
 	}
 
 	for id, want := range cases {

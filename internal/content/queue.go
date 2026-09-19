@@ -21,7 +21,8 @@ var queueNames = map[string]string{
 	"newmap":      "New Map",
 	"snowball":    "Snowball Fight",
 	"premier":     "Premier",
-	"fortcollins": "Retake", // captured 2026-09-19, a Riot codename
+	"fortcollins": "Retake",   // captured 2026-09-19, a Riot codename
+	"skirmish2v2": "Skirmish", // captured 2026-09-20 from a live 2v2
 }
 
 // QueueName is the display name for a queue ID. One the table does not know
