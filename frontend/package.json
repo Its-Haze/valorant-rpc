@@ -1,0 +1,11 @@
+{
+  "name": "valorant-rpc-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node ./build.mjs",
+    "build:dev": "node ./build.mjs",
+    "dev": "node ./build.mjs --serve"
+  }
+}

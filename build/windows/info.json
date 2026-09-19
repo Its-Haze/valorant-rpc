@@ -1,0 +1,16 @@
+{
+    "fixed":  {
+                  "file_version":  "0.0.1",
+                  "product_version":  "0.0.1"
+              },
+    "info":  {
+                 "0409":  {
+                              "ProductVersion":  "0.0.1",
+                              "CompanyName":  "Haze",
+                              "FileDescription":  "Valorant Discord Rich Presence",
+                              "LegalCopyright":  "(c) 2026, Haze",
+                              "ProductName":  "Valorant RPC",
+                              "Comments":  "https://github.com/Its-Haze/valorant-rpc"
+                          }
+             }
+}
