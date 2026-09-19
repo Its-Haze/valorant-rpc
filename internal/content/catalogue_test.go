@@ -3,6 +3,7 @@ package content
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -307,5 +308,94 @@ func TestUnknownPlayerCardDoesNotResolve(t *testing.T) {
 	}
 	if _, ok := cat.PlayerCard(""); ok {
 		t.Error("an empty card UUID resolved")
+	}
+}
+
+func TestEnumeratorsCoverTheWholeTable(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	if got := len(cat.Agents(types.DefaultLocale)); got != len(cat.agents) {
+		t.Errorf("Agents() returned %d, want %d", got, len(cat.agents))
+	}
+	if got := len(cat.Maps(types.DefaultLocale)); got != len(cat.maps) {
+		t.Errorf("Maps() returned %d, want %d", got, len(cat.maps))
+	}
+	if got := len(cat.Tiers(types.DefaultLocale)); got != len(cat.tiers) {
+		t.Errorf("Tiers() returned %d, want %d", got, len(cat.tiers))
+	}
+	if got := len(cat.PlayerCards()); got != len(cat.cards) {
+		t.Errorf("PlayerCards() returned %d, want %d", got, len(cat.cards))
+	}
+}
+
+// The asset liveness test samples these lists, so the order has to be the
+// same on every run rather than Go's randomized map order.
+func TestEnumeratorsAreDeterministic(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	agentOrder := func() []string {
+		var out []string
+		for _, a := range cat.Agents(types.DefaultLocale) {
+			out = append(out, a.UUID)
+		}
+		return out
+	}
+	mapOrder := func() []string {
+		var out []string
+		for _, m := range cat.Maps(types.DefaultLocale) {
+			out = append(out, m.URL)
+		}
+		return out
+	}
+
+	agents, worlds := agentOrder(), mapOrder()
+	for range 5 {
+		if !slices.Equal(agentOrder(), agents) {
+			t.Fatal("Agents() order changed between calls")
+		}
+		if !slices.Equal(mapOrder(), worlds) {
+			t.Fatal("Maps() order changed between calls")
+		}
+	}
+}
+
+func TestTiersEnumerateInLadderOrderWithoutTheUnusedRows(t *testing.T) {
+	tiers := fixtureCatalogue(t).Tiers(types.DefaultLocale)
+
+	if len(tiers) == 0 {
+		t.Fatal("no tiers enumerated")
+	}
+	if tiers[0].Tier != 0 {
+		t.Errorf("first tier is %d, want 0 (Unranked)", tiers[0].Tier)
+	}
+	if last := tiers[len(tiers)-1]; last.Tier != RadiantTier {
+		t.Errorf("last tier is %d, want %d (Radiant)", last.Tier, RadiantTier)
+	}
+	for _, tier := range tiers {
+		if tier.Tier == 1 || tier.Tier == 2 {
+			t.Errorf("the Unused tier %d was enumerated", tier.Tier)
+		}
+	}
+	if !slices.IsSortedFunc(tiers, func(a, b Tier) int { return a.Tier - b.Tier }) {
+		t.Error("tiers are not in ladder order")
+	}
+}
+
+// An empty catalogue enumerates nothing, and a nil one does not panic. Both
+// hand back a slice a caller can range over without checking first.
+func TestEnumeratorsOnAnEmptyCatalogue(t *testing.T) {
+	for name, cat := range map[string]*Catalogue{"zero": {}, "nil": nil} {
+		if got := len(cat.Agents(types.DefaultLocale)); got != 0 {
+			t.Errorf("%s catalogue enumerated %d agents", name, got)
+		}
+		if got := len(cat.Maps(types.DefaultLocale)); got != 0 {
+			t.Errorf("%s catalogue enumerated %d maps", name, got)
+		}
+		if got := len(cat.Tiers(types.DefaultLocale)); got != 0 {
+			t.Errorf("%s catalogue enumerated %d tiers", name, got)
+		}
+		if got := len(cat.PlayerCards()); got != 0 {
+			t.Errorf("%s catalogue enumerated %d cards", name, got)
+		}
 	}
 }

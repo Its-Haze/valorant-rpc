@@ -310,3 +310,74 @@ func decode[T any](blob []byte, path string) (T, error) {
 	}
 	return env.Data, nil
 }
+
+// Agents returns every playable agent, ordered by UUID so a caller sampling
+// the list gets the same entries on every run.
+func (c *Catalogue) Agents(locale string) []Agent {
+	if c == nil {
+		return nil
+	}
+	out := make([]Agent, 0, len(c.agents))
+	for _, key := range sortedKeys(c.agents) {
+		agent, _ := c.Agent(key, locale)
+		out = append(out, agent)
+	}
+	return out
+}
+
+// Maps returns every map entry, ordered by Riot's own map path.
+func (c *Catalogue) Maps(locale string) []Map {
+	if c == nil {
+		return nil
+	}
+	out := make([]Map, 0, len(c.maps))
+	for _, key := range sortedKeys(c.maps) {
+		world, _ := c.Map(key, locale)
+		out = append(out, world)
+	}
+	return out
+}
+
+// Tiers returns every competitive tier that resolves, in ladder order. The
+// "Unused" rows are absent, the same as they are from Tier.
+func (c *Catalogue) Tiers(locale string) []Tier {
+	if c == nil {
+		return nil
+	}
+	numbers := make([]int, 0, len(c.tiers))
+	for number := range c.tiers {
+		numbers = append(numbers, number)
+	}
+	slices.Sort(numbers)
+
+	out := make([]Tier, 0, len(numbers))
+	for _, number := range numbers {
+		tier, _ := c.Tier(number, locale)
+		out = append(out, tier)
+	}
+	return out
+}
+
+// PlayerCards returns every card, ordered by UUID.
+func (c *Catalogue) PlayerCards() []PlayerCard {
+	if c == nil {
+		return nil
+	}
+	out := make([]PlayerCard, 0, len(c.cards))
+	for _, key := range sortedKeys(c.cards) {
+		card, _ := c.PlayerCard(key)
+		out = append(out, card)
+	}
+	return out
+}
+
+// sortedKeys keeps every enumeration deterministic, because Go randomizes
+// map order and a sampled asset check has to be reproducible.
+func sortedKeys[V any](m map[string]V) []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	slices.Sort(keys)
+	return keys
+}
