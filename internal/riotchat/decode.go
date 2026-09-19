@@ -41,19 +41,32 @@ func Decode(payload []byte, puuid string, logger zerolog.Logger) (Presence, erro
 		return Presence{}, fmt.Errorf("riotchat: decoding the presence payload: %w", err)
 	}
 
+	// A malformed entry must not hide a good duplicate, but it is also the
+	// shape change worth reporting when nothing else decodes.
+	var malformed error
+
 	for _, entry := range envelope.Presences {
 		if entry.PUUID != puuid || !strings.EqualFold(entry.Product, ProductValorant) {
 			continue
 		}
 
+		// Riot publishes our own entry with no private blob on login and on
+		// going away. Nothing of ours yet, not a failure.
+		if entry.Private == "" {
+			logger.Debug().Msg("Our presence entry carries no private blob yet")
+			continue
+		}
+
 		blob, err := decodeBase64(entry.Private)
 		if err != nil {
-			return Presence{}, err
+			malformed = err
+			continue
 		}
 
 		presence, err := decodePrivate(blob, logger)
 		if err != nil {
-			return Presence{}, err
+			malformed = err
+			continue
 		}
 		presence.PUUID = entry.PUUID
 		presence.GameName = entry.GameName
@@ -61,15 +74,14 @@ func Decode(payload []byte, puuid string, logger zerolog.Logger) (Presence, erro
 		return presence, nil
 	}
 
+	if malformed != nil {
+		return Presence{}, malformed
+	}
 	return Presence{}, ErrNoPresence
 }
 
 // decodeBase64 accepts Riot's padded blob and an unpadded one.
 func decodeBase64(private string) ([]byte, error) {
-	if private == "" {
-		return nil, fmt.Errorf("riotchat: the presence entry carries no private blob")
-	}
-
 	blob, err := base64.StdEncoding.DecodeString(private)
 	if err == nil {
 		return blob, nil

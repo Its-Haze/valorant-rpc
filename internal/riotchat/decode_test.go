@@ -148,6 +148,31 @@ func TestDecodeReportsATruncatedPrivateBlob(t *testing.T) {
 	}
 }
 
+// Riot publishes our own entry with no private blob on login and on going
+// away. Nothing of ours yet, so it must not reach the caller as a failure.
+func TestDecodeTreatsAnEmptyPrivateBlobAsNoPresence(t *testing.T) {
+	blank := valorantEntry(t, "private_flat.json")
+	blank.Private = ""
+
+	if _, err := Decode(envelope(t, blank), selfPUUID, discardLogger()); !errors.Is(err, ErrNoPresence) {
+		t.Fatalf("err = %v, want ErrNoPresence", err)
+	}
+}
+
+func TestDecodeKeepsLookingPastAMalformedEntry(t *testing.T) {
+	broken := valorantEntry(t, "private_flat.json")
+	broken.Private = "!!!not base64!!!"
+	mine := valorantEntry(t, "private_flat.json")
+
+	got, err := Decode(envelope(t, broken, mine), selfPUUID, discardLogger())
+	if err != nil {
+		t.Fatalf("Decode: %v", err)
+	}
+	if got != wantFlatPresence() {
+		t.Errorf("a malformed duplicate hid the good entry: %+v", got)
+	}
+}
+
 func TestDecodeReportsAnEmptyPresenceList(t *testing.T) {
 	if _, err := Decode([]byte(`{"presences":[]}`), selfPUUID, discardLogger()); !errors.Is(err, ErrNoPresence) {
 		t.Fatalf("err = %v, want ErrNoPresence", err)
