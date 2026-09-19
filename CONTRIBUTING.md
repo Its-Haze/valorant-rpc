@@ -5,7 +5,7 @@ Thanks for taking a look. Bug reports and pull requests are both welcome. If you
 ## Prerequisites
 
 - **Go**, at the version pinned in [`go.mod`](go.mod).
-- **Node.js**, at the version CI builds on, in [`.github/workflows/release.yml`](.github/workflows/release.yml). Nothing enforces a minimum locally, but stay close to what CI uses.
+- **Node.js**, at the version the release workflow builds on, in [`.github/workflows/release.yml`](.github/workflows/release.yml). Nothing enforces a minimum locally, but stay close to what a release is built with.
 - **[Task](https://taskfile.dev/)**, the task runner. `go install github.com/go-task/task/v3/cmd/task@latest`.
 - **The Wails v3 CLI.** Install it at the same version as the `wails/v3` dependency in `go.mod`, not `@latest`. The CLI and the runtime have to agree, and a mismatched pair fails in ways that look like your code is broken:
 
@@ -36,7 +36,15 @@ Namespaced tasks live under `build/Taskfile.yml` and `build/windows/Taskfile.yml
 go test ./...
 ```
 
-Also run `gofmt -l .` before opening a pull request. CI will not accept unformatted Go.
+The frontend has its own suite:
+
+```powershell
+cd frontend; npm test
+```
+
+Also run `gofmt -l .` before opening a pull request. It should print nothing.
+
+Some tests in `internal/discord` hit the live network, because a presence image that stops resolving fails silently: Discord just shows no picture. They check every agent, map and tier URL against valorant-api.com. Pass `-short` to skip them if you are offline.
 
 ## Finding your way around
 
@@ -50,7 +58,9 @@ The app has no command-line flags. Every setting lives in the config tree and is
 
 Discord presence is built per context: a context maps to a builder, and each builder has a matching user-editable template with a default. Adding a context means touching all three, and the existing ones show the pattern.
 
-Architecture decisions live in [`docs/adr/`](docs/adr/). If you are changing how the updater, the presence heartbeat, or the install scope works, read the relevant one first. It probably explains why the obvious approach was rejected.
+The vocabulary is written down in [`CONTEXT.md`](CONTEXT.md), and it is worth a skim before naming anything. This app and its sibling `league-rpc` deliberately do not share terms, so League words arriving in Valorant code is a real and easy mistake.
+
+Architecture decisions live in [`docs/adr/`](docs/adr/). If you are changing the presence heartbeat, when the Discord connection is allowed to open, where presence art comes from, or anything that talks to Riot, read the relevant one first. It probably explains why the obvious approach was rejected.
 
 ## Releases
 
