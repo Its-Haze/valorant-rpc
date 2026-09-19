@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/presence/template"
 )
 
@@ -116,4 +117,48 @@ func contains(s, sub string) bool {
 		}
 	}
 	return false
+}
+
+func TestValidate_RejectsAnUnknownLocale(t *testing.T) {
+	c := DefaultConfig()
+	c.Display.Locale = "en-GB"
+
+	err := c.Validate()
+	if err == nil {
+		t.Fatal("Validate accepted a locale valorant-api does not serve")
+	}
+	if !contains(err.Error(), "locale") {
+		t.Errorf("error %q does not mention the locale", err)
+	}
+}
+
+func TestValidate_AcceptsEveryLocaleTheCatalogueServes(t *testing.T) {
+	for _, l := range content.Locales() {
+		c := DefaultConfig()
+		c.Display.Locale = l.Tag
+
+		if err := c.Validate(); err != nil {
+			t.Errorf("Validate rejected %q: %v", l.Tag, err)
+		}
+	}
+}
+
+func TestClamp_RepairsAnUnknownLocale(t *testing.T) {
+	c := &Config{Display: DisplayConfig{Locale: "kl-KL"}}
+	c.clamp()
+
+	if c.Display.Locale != content.DefaultLocale {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, content.DefaultLocale)
+	}
+}
+
+// A config file written before the field existed has it empty, and must boot
+// on English rather than blanking every name in the presence.
+func TestClamp_FillsAnEmptyLocale(t *testing.T) {
+	c := &Config{}
+	c.clamp()
+
+	if c.Display.Locale != content.DefaultLocale {
+		t.Errorf("Locale = %q, want %q", c.Display.Locale, content.DefaultLocale)
+	}
 }

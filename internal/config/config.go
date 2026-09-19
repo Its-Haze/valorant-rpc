@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/presence/template"
 	"github.com/its-haze/valorant-rpc/pkg/constants"
 )
@@ -28,6 +29,10 @@ type Config struct {
 // DisplayConfig holds what presence shows.
 type DisplayConfig struct {
 	Default DisplayDefaults `json:"default"`
+
+	// Locale picks the language agent, map and rank names render in. The
+	// catalogue holds every language at once, so switching costs no refetch.
+	Locale string `json:"locale"`
 }
 
 // DisplayDefaults is the global on/off state for the two display toggles.
@@ -76,6 +81,7 @@ func DefaultConfig() *Config {
 		OnboardingComplete: false,
 		Display: DisplayConfig{
 			Default: DisplayDefaults{ShowRank: true, ShowStats: true},
+			Locale:  content.DefaultLocale,
 		},
 		Presence: PresenceConfig{
 			ShowEmojis:   true,
@@ -153,6 +159,9 @@ func (c *Config) Validate() error {
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		errs = append(errs, fmt.Errorf("update_interval must be between %d and %d ms", MinUpdateInterval, MaxUpdateInterval))
 	}
+	if !content.ValidLocale(c.Display.Locale) {
+		errs = append(errs, fmt.Errorf("locale %q is not one valorant-api.com serves", c.Display.Locale))
+	}
 
 	return errors.Join(errs...)
 }
@@ -175,6 +184,11 @@ func (c *Config) clamp() {
 	}
 	if c.Advanced.UpdateInterval < MinUpdateInterval || c.Advanced.UpdateInterval > MaxUpdateInterval {
 		c.Advanced.UpdateInterval = def.Advanced.UpdateInterval
+	}
+	// Empty here is a file written before the field existed. Either way the
+	// repair is English, never a blank name in the presence.
+	if !content.ValidLocale(c.Display.Locale) {
+		c.Display.Locale = def.Display.Locale
 	}
 	if c.Presence.Templates == nil {
 		c.Presence.Templates = map[string]TemplatePair{}
