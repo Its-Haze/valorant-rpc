@@ -198,5 +198,8 @@ func TestRepoHostedImagesResolve(t *testing.T) {
 		t.Skipf("%s is not readable anonymously (%d), so its hotlinked images cannot resolve for anyone yet", repoURL, resp.StatusCode)
 	}
 
-	checkAll(t, []asset{{"valorantLogoURL", valorantLogoURL}})
+	checkAll(t, []asset{
+		{"valorantLogoURL", valorantLogoURL},
+		{"valorantLogoIdleURL", valorantLogoIdleURL},
+	})
 }

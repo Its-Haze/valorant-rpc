@@ -87,32 +87,36 @@ func inMatchState() *state.State {
 	return st
 }
 
-func TestEveryContextBuildsAPresence(t *testing.T) {
-	cat := testCatalogue(t)
-	cfg := presenceConfig()
-
-	cases := map[types.PresenceContext]*state.State{
-		types.ContextInClient: inClientState(),
-		types.ContextInMatch:  inMatchState(),
-	}
-
+// everyContextState returns one state per presence context, so a check that
+// must hold everywhere does not have to rebuild them.
+func everyContextState() map[types.PresenceContext]*state.State {
 	queue := inClientState()
 	queue.PartyState = types.PartyMatchmaking
 	queue.QueueID = "competitive"
-	cases[types.ContextInQueue] = queue
 
 	custom := inClientState()
 	custom.PartyState = types.PartyCustomGameSetup
 	custom.MapID = ascentURL
-	cases[types.ContextCustomGame] = custom
 
 	pregame := inClientState()
 	pregame.SessionLoopState = types.SessionLoopPregame
 	pregame.MapID = ascentURL
 	pregame.QueueID = "competitive"
-	cases[types.ContextAgentSelect] = pregame
 
-	for ctx, st := range cases {
+	return map[types.PresenceContext]*state.State{
+		types.ContextInClient:    inClientState(),
+		types.ContextInQueue:     queue,
+		types.ContextCustomGame:  custom,
+		types.ContextAgentSelect: pregame,
+		types.ContextInMatch:     inMatchState(),
+	}
+}
+
+func TestEveryContextBuildsAPresence(t *testing.T) {
+	cat := testCatalogue(t)
+	cfg := presenceConfig()
+
+	for ctx, st := range everyContextState() {
 		if got := st.PhaseContext(); got != ctx {
 			t.Fatalf("state for %q reports context %q", ctx, got)
 		}
@@ -287,6 +291,34 @@ func TestIdleRendersInEveryContext(t *testing.T) {
 		if got := MapStateToPresence(st, cfg, cat); got.Details != "Idle" {
 			t.Errorf("%q details = %q, want Idle", st.PhaseContext(), got.Details)
 		}
+	}
+}
+
+// The ticket asks for idle to swap the small image as well as render a
+// token, in every context, so a glance at the icon says "not at the keyboard".
+func TestIdleSwapsTheSmallImageInEveryContext(t *testing.T) {
+	cat := testCatalogue(t)
+
+	for ctx, st := range everyContextState() {
+		if got := MapStateToPresence(st, presenceConfig(), cat).SmallImage; got == valorantLogoIdleURL {
+			t.Fatalf("%q already shows the idle icon while active: %q", ctx, got)
+		}
+
+		st.IsIdle = true
+		if got := MapStateToPresence(st, presenceConfig(), cat).SmallImage; got != valorantLogoIdleURL {
+			t.Errorf("%q idle small image = %q, want the dimmed icon", ctx, got)
+		}
+	}
+}
+
+// Idle beats the rank emblem: the rank is already in the text, and being
+// away is the fact that just changed.
+func TestIdleBeatsTheRankEmblem(t *testing.T) {
+	st := inMatchState() // competitive, tier 21, so the emblem would normally win
+	st.IsIdle = true
+
+	if got := MapStateToPresence(st, presenceConfig(), testCatalogue(t)).SmallImage; got != valorantLogoIdleURL {
+		t.Errorf("small image = %q, want the idle icon to win over the rank emblem", got)
 	}
 }
 

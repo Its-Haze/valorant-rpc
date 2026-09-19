@@ -13,7 +13,8 @@ func TestLogoURLsPointAtCommittedAssets(t *testing.T) {
 	const prefix = "https://github.com/Its-Haze/valorant-rpc/blob/main/"
 
 	for name, url := range map[string]string{
-		"valorantLogoURL": valorantLogoURL,
+		"valorantLogoURL":     valorantLogoURL,
+		"valorantLogoIdleURL": valorantLogoIdleURL,
 	} {
 		rel, ok := strings.CutPrefix(url, prefix)
 		if !ok {

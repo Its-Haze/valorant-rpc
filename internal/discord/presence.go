@@ -183,9 +183,13 @@ func (v view) cardImage() string {
 	return valorantLogoURL
 }
 
-// smallImage is the rank emblem in a ranked game, and the app's own icon
-// everywhere else.
+// smallImage is the dimmed icon while the player is idle, the rank emblem in
+// a ranked game, and the app's own icon everywhere else. Idle wins because
+// the rank is already in the text and being away is the newer fact.
 func (v view) smallImage() string {
+	if v.st.IsIdle {
+		return valorantLogoIdleURL
+	}
 	if v.cfg.Display.Default.ShowRank && v.hasTier && v.isRanked() {
 		return v.tier.LargeIcon
 	}
