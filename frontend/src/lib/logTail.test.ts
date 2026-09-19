@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { MAX_TAIL_LINES, appendLine, appendLines, isScrolledToBottom } from "./logTail";
+import {
+  MAX_TAIL_LINES,
+  appendLine,
+  appendLines,
+  dropHistoryOverlap,
+  isScrolledToBottom,
+} from "./logTail";
 
 describe("appendLine", () => {
   it("appends a line", () => {
@@ -44,5 +50,32 @@ describe("isScrolledToBottom", () => {
 
   it("is false once scrolled up past tolerance", () => {
     expect(isScrolledToBottom(0, 50, 150, 24)).toBe(false);
+  });
+});
+
+describe("dropHistoryOverlap", () => {
+  it("drops the buffered lines the history already covers", () => {
+    const history = ["a", "b", "c"];
+    const pending = ["b", "c", "d"];
+    expect(dropHistoryOverlap(history, pending)).toEqual(["d"]);
+  });
+
+  it("keeps everything when the two do not meet", () => {
+    expect(dropHistoryOverlap(["a", "b"], ["c", "d"])).toEqual(["c", "d"]);
+  });
+
+  it("drops the whole buffer when the history already has all of it", () => {
+    expect(dropHistoryOverlap(["a", "b", "c"], ["b", "c"])).toEqual([]);
+  });
+
+  it("prefers the longest overlap, so a repeated line does not cut it short", () => {
+    const history = ["x", "x", "y"];
+    const pending = ["x", "y", "z"];
+    expect(dropHistoryOverlap(history, pending)).toEqual(["z"]);
+  });
+
+  it("handles either side being empty", () => {
+    expect(dropHistoryOverlap([], ["a"])).toEqual(["a"]);
+    expect(dropHistoryOverlap(["a"], [])).toEqual([]);
   });
 });

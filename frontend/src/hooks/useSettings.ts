@@ -45,14 +45,17 @@ export function useSettings(): UseSettingsResult {
   const [saving, setSaving] = useState(false);
 
   async function applyPatch(patch: Partial<Config>) {
-    // The base tree is read inside the queue, not at call time, so this
-    // patch lands on top of whatever the previous apply just persisted.
+    // The optimistic set stays synchronous: callers build their nested patch
+    // from the rendered cfg, so a later click has to see this one already.
+    const current = store.get().cfg;
+    if (!current) return;
+    const next: Config = { ...current, ...patch };
+    store.set({ ...store.get(), cfg: next });
+    setSaving(true);
+
+    // Only the write is queued, so two overlapping applies reach the daemon
+    // in call order rather than in whatever order their responses land.
     await applies.run(async () => {
-      const current = store.get().cfg;
-      if (!current) return;
-      const next: Config = { ...current, ...patch };
-      store.set({ ...store.get(), cfg: next });
-      setSaving(true);
       try {
         await ApplySettings(next);
         store.set({ ...store.get(), error: null });

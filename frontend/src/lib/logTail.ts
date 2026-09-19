@@ -15,6 +15,17 @@ export function appendLines(lines: string[], newLines: string[]): string[] {
   return next.length > MAX_TAIL_LINES ? next.slice(next.length - MAX_TAIL_LINES) : next;
 }
 
+// Drops the head of pending that the fetched history already ends with. A
+// line logged between the backend's snapshot and our subscription is in both.
+export function dropHistoryOverlap(history: string[], pending: string[]): string[] {
+  for (let k = Math.min(history.length, pending.length); k > 0; k--) {
+    if (history.slice(-k).every((line, i) => line === pending[i])) {
+      return pending.slice(k);
+    }
+  }
+  return pending;
+}
+
 // Scroll-lock: true once the viewport is within tolerance px of the bottom.
 // New lines only auto-scroll while this holds, else the user reading history gets yanked back down.
 export function isScrolledToBottom(

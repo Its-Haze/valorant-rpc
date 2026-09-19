@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Events } from "@wailsio/runtime";
 import { GetRecentLogs } from "../../../../bindings/github.com/its-haze/valorant-rpc/cmd/valorant-rpc-gui/guiservice";
-import { appendLines, isScrolledToBottom } from "../../../lib/logTail";
+import {
+  MAX_TAIL_LINES,
+  appendLines,
+  dropHistoryOverlap,
+  isScrolledToBottom,
+} from "../../../lib/logTail";
 
 const LOG_LINE_EVENT = "log:line";
 // Flushes buffered incoming lines on this cadence, so a burst of log:line
@@ -18,14 +23,20 @@ export function LogViewer() {
   const historyRef = useRef(false);
 
   useEffect(() => {
-    // Lines keep buffering while this is in flight, and the flush below
-    // holds them back, so nothing written mid-fetch is overwritten.
+    // Lines keep buffering while this is in flight and the flush below holds
+    // them back, so nothing written mid-fetch is lost or shown twice.
     GetRecentLogs()
-      .then((l) => setLines(l ?? []))
+      .then((l) => {
+        const history = l ?? [];
+        pendingRef.current = dropHistoryOverlap(history, pendingRef.current);
+        setLines(history);
+      })
       .catch(() => {})
       .finally(() => (historyRef.current = true));
 
     const off = Events.On(LOG_LINE_EVENT, (ev: { data: string }) => {
+      // Capped, so a history call that never settles cannot grow this forever.
+      if (pendingRef.current.length >= MAX_TAIL_LINES) pendingRef.current.shift();
       pendingRef.current.push(ev.data);
     });
 

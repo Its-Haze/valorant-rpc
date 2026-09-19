@@ -31,8 +31,10 @@ export default function UpdateBanner() {
 
   useEffect(() => {
     // A dismissal lasts only until the next status update, background poll
-    // or manual check alike.
+    // or manual check alike. Stale action errors go with it.
     setDismissedVersion(null);
+    setRestartError(null);
+    setRetryError(null);
   }, [status]);
 
   useEffect(() => {
