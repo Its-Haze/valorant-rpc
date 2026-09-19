@@ -18,6 +18,7 @@ type State struct {
 	RiotID       string             `json:"riot_id"`
 	Tagline      string             `json:"tagline"`
 	AccountLevel int                `json:"account_level"`
+	PlayerCardID string             `json:"player_card_id"` // the equipped card's art
 
 	// Phase
 	SessionLoopState types.SessionLoopState `json:"session_loop_state"`

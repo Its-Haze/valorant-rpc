@@ -23,6 +23,10 @@ type Presence struct {
 	GameName string
 	Tagline  string
 
+	// PlayerCardID is the card the player has equipped, which is the art
+	// shown beside their name in the client.
+	PlayerCardID string
+
 	SessionLoopState string
 	PartyState       string
 	MatchMap         string

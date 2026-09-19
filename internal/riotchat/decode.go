@@ -107,6 +107,7 @@ func decodePrivate(blob []byte, logger zerolog.Logger) (Presence, error) {
 	f.push(top)
 
 	return Presence{
+		PlayerCardID:        f.str("playerCardId"),
 		SessionLoopState:    f.str("sessionLoopState"),
 		PartyState:          f.str("partyState"),
 		MatchMap:            f.str("matchMap"),

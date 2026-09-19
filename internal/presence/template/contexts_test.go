@@ -44,7 +44,7 @@ func TestContextsAreInPhaseOrder(t *testing.T) {
 func TestEveryRequiredTokenIsReachable(t *testing.T) {
 	required := []string{
 		"map", "mode", "score", "score_ally", "score_enemy", "rank",
-		"party_size", "max_party_size", "account_level", "riot_id", "idle", "agent",
+		"party", "party_size", "max_party_size", "account_level", "riot_id", "idle", "agent",
 	}
 
 	reachable := map[string]bool{}

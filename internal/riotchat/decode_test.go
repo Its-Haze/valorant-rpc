@@ -67,6 +67,7 @@ func wantFlatPresence() Presence {
 		PUUID:               selfPUUID,
 		GameName:            "Haze",
 		Tagline:             "EUW",
+		PlayerCardID:        "c2e6c2a0-0000-4000-8000-000000000001",
 		SessionLoopState:    "INGAME",
 		PartyState:          "DEFAULT",
 		MatchMap:            "/Game/Maps/Ascent/Ascent",

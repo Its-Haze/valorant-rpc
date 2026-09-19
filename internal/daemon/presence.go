@@ -17,6 +17,9 @@ func applyPresence(p riotchat.Presence) func(*state.State) {
 			st.Tagline = p.Tagline
 		}
 		st.AccountLevel = p.AccountLevel
+		if p.PlayerCardID != "" {
+			st.PlayerCardID = p.PlayerCardID
+		}
 
 		st.SessionLoopState = types.SessionLoopState(p.SessionLoopState)
 		st.PartyState = types.PartyState(p.PartyState)

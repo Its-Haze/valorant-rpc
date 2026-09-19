@@ -20,9 +20,9 @@ const mid = " · "
 // cuts across phase rather than belonging to one.
 var commonTokens = []string{"riot_id", "account_level", "rank", "idle"}
 
-// partyTokens are the lobby-shaped contexts. A match has a party too, but its
-// size is the least interesting thing on screen once a score exists.
-var partyTokens = []string{"party_size", "max_party_size"}
+// partyTokens carry the lobby size. party is the pre-joined "2/5", the same
+// convenience score is for the two round counts; the halves stay available.
+var partyTokens = []string{"party", "party_size", "max_party_size"}
 
 func tokensFor(extra ...string) []string {
 	out := append([]string{}, extra...)
@@ -41,25 +41,25 @@ func init() {
 	// Each default anchors its state line on a literal, so a presence still
 	// reads as something when every token in it is empty.
 	defaults[ContextInClient] = [2]string{"In the client", "{rank}" + mid + "{idle}"}
-	defaults[ContextInQueue] = [2]string{"{mode}", "In queue" + mid + "{idle}"}
-	defaults[ContextCustomGame] = [2]string{"{map}", "Custom game" + mid + "{idle}"}
-	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{agent}"}
+	defaults[ContextInQueue] = [2]string{"{mode}", "In queue" + mid + "{party}" + mid + "{idle}"}
+	defaults[ContextCustomGame] = [2]string{"{map}", "Custom game" + mid + "{party}" + mid + "{idle}"}
+	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{agent}" + mid + "{party}"}
 	defaults[ContextInMatch] = [2]string{"{mode}" + mid + "{map}", "In a match" + mid + "{score}" + mid + "{agent}"}
 
 	// Sample values for the settings-screen preview. agent is left out on
 	// purpose: v0.1 never resolves one, and a preview should not promise it.
 	sampleData[ContextInClient] = sample(nil)
 	sampleData[ContextInQueue] = sample(map[string]string{
-		"mode": "Competitive", "party_size": "2", "max_party_size": "5",
+		"mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
 	})
 	sampleData[ContextCustomGame] = sample(map[string]string{
-		"map": "Ascent", "mode": "Custom", "party_size": "5", "max_party_size": "10",
+		"map": "Ascent", "mode": "Custom", "party": "5/10", "party_size": "5", "max_party_size": "10",
 	})
 	sampleData[ContextAgentSelect] = sample(map[string]string{
-		"map": "Ascent", "mode": "Competitive", "party_size": "2", "max_party_size": "5",
+		"map": "Ascent", "mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
 	})
 	sampleData[ContextInMatch] = sample(map[string]string{
-		"map": "Ascent", "mode": "Competitive", "party_size": "2", "max_party_size": "5",
+		"map": "Ascent", "mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
 		"score": "7-5", "score_ally": "7", "score_enemy": "5",
 	})
 

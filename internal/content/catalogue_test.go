@@ -15,6 +15,8 @@ const (
 	rangeURL   = "/Game/Maps/Poveglia/Range"
 	rangeV2URL = "/Game/Maps/PovegliaV2/RangeV2"
 	bombMode   = "ShooterGame/Content/GameModes/Bomb/BombGameMode_PrimaryAsset"
+
+	sampleCardUUID = "1711d20d-4b1c-c64a-14be-d4ae58a457c6"
 )
 
 func readFixture(t *testing.T, name string) []byte {
@@ -37,6 +39,7 @@ func fixtureCatalogue(t *testing.T) *Catalogue {
 		readFixture(t, "maps.json"),
 		readFixture(t, "competitivetiers.json"),
 		readFixture(t, "gamemodes.json"),
+		readFixture(t, "playercards.json"),
 	)
 	if err != nil {
 		t.Fatalf("parsing the fixture catalogue: %v", err)
@@ -260,11 +263,49 @@ func TestEmptyCatalogueResolvesNothing(t *testing.T) {
 	if _, ok := cat.GameMode(bombMode, types.DefaultLocale); ok {
 		t.Error("an empty catalogue resolved a game mode")
 	}
+	if _, ok := cat.PlayerCard(sampleCardUUID); ok {
+		t.Error("an empty catalogue resolved a player card")
+	}
 }
 
 func TestParseRejectsMalformedJSON(t *testing.T) {
-	_, err := parseCatalogue([]byte("{"), nil, nil, nil)
+	_, err := parseCatalogue([]byte("{"), nil, nil, nil, nil)
 	if err == nil {
 		t.Error("parsing a truncated payload returned no error")
+	}
+}
+
+func TestPlayerCardLookupJoinsOnUUID(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	card, ok := cat.PlayerCard(sampleCardUUID)
+	if !ok {
+		t.Fatalf("the sample card did not resolve")
+	}
+	if !strings.HasPrefix(card.Icon, "https://media.valorant-api.com/playercards/") {
+		t.Errorf("Icon = %q, want a playercards media URL", card.Icon)
+	}
+	if card.WideArt == "" || card.LargeArt == "" {
+		t.Errorf("missing art: wide=%q large=%q", card.WideArt, card.LargeArt)
+	}
+}
+
+// The presence blob's casing is not guaranteed, same as every other UUID.
+func TestPlayerCardLookupIsCaseInsensitive(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	if _, ok := cat.PlayerCard(strings.ToUpper(sampleCardUUID)); !ok {
+		t.Error("an uppercase card UUID did not resolve")
+	}
+}
+
+func TestUnknownPlayerCardDoesNotResolve(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	if _, ok := cat.PlayerCard("00000000-0000-0000-0000-000000000000"); ok {
+		t.Error("an unknown card UUID resolved")
+	}
+	if _, ok := cat.PlayerCard(""); ok {
+		t.Error("an empty card UUID resolved")
 	}
 }

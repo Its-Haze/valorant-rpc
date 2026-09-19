@@ -1,0 +1,65 @@
+{
+ "status": 200,
+ "data": [
+  {
+   "uuid": "1711d20d-4b1c-c64a-14be-d4ae58a457c6",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/1711d20d-4b1c-c64a-14be-d4ae58a457c6/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2024EOY_EventPass/Concert/Playercard_Concert_PrimaryAsset"
+  },
+  {
+   "uuid": "c8b2f5fd-4331-b172-f3b7-c8a26f356a1f",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/c8b2f5fd-4331-b172-f3b7-c8a26f356a1f/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2024EOY_EventPass/GekkoHoliday/Playercard_GekkoHoliday_PrimaryAsset"
+  },
+  {
+   "uuid": "eef542d2-4724-bc47-f53f-239f8c9c2623",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/eef542d2-4724-bc47-f53f-239f8c9c2623/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/eef542d2-4724-bc47-f53f-239f8c9c2623/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/eef542d2-4724-bc47-f53f-239f8c9c2623/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/eef542d2-4724-bc47-f53f-239f8c9c2623/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2024EOY_EventPass/OutcastHangs/Playercard_OutcastHangs_PrimaryAsset"
+  },
+  {
+   "uuid": "d32e58b1-4191-7315-ad4a-9da58b3f23dd",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/d32e58b1-4191-7315-ad4a-9da58b3f23dd/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/d32e58b1-4191-7315-ad4a-9da58b3f23dd/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/d32e58b1-4191-7315-ad4a-9da58b3f23dd/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/d32e58b1-4191-7315-ad4a-9da58b3f23dd/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2025EOY_EventPass/DanceItAllAway/Playercard_DanceItAllAway_PrimaryAsset"
+  },
+  {
+   "uuid": "d2d3caf9-499f-2ac8-9722-54961c3bcbf5",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/d2d3caf9-499f-2ac8-9722-54961c3bcbf5/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/d2d3caf9-499f-2ac8-9722-54961c3bcbf5/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/d2d3caf9-499f-2ac8-9722-54961c3bcbf5/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/d2d3caf9-499f-2ac8-9722-54961c3bcbf5/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2025EOY_EventPass/PineEOY/Playercard_PineEOY_PrimaryAsset"
+  },
+  {
+   "uuid": "e8787c31-4a39-9636-94a5-77b298d26ba7",
+   "isHiddenIfNotOwned": true,
+   "themeUuid": null,
+   "displayIcon": "https://media.valorant-api.com/playercards/e8787c31-4a39-9636-94a5-77b298d26ba7/displayicon.png",
+   "smallArt": "https://media.valorant-api.com/playercards/e8787c31-4a39-9636-94a5-77b298d26ba7/smallart.png",
+   "wideArt": "https://media.valorant-api.com/playercards/e8787c31-4a39-9636-94a5-77b298d26ba7/wideart.png",
+   "largeArt": "https://media.valorant-api.com/playercards/e8787c31-4a39-9636-94a5-77b298d26ba7/largeart.png",
+   "assetPath": "ShooterGame/Content/Personalization/PlayerCards/2025LNY_EventPass/IsoandFriends/Playercard_IsoandFriends_PrimaryAsset"
+  }
+ ]
+}

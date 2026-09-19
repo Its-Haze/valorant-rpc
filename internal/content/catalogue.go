@@ -22,6 +22,10 @@ const (
 	mapsPath   = "/maps?language=all"
 	tiersPath  = "/competitivetiers?language=all"
 	modesPath  = "/gamemodes?language=all"
+
+	// Cards are looked up for art only, and their names cost roughly another
+	// megabyte across every locale, so this one endpoint skips them.
+	cardsPath = "/playercards"
 )
 
 // invalidDivision marks the "Unused" tier rows. They have no icon and no
@@ -64,6 +68,15 @@ type GameMode struct {
 	Icon      string
 }
 
+// PlayerCard is the art a player has equipped beside their name. Only the
+// images are carried; the catalogue never fetches card names.
+type PlayerCard struct {
+	UUID     string
+	Icon     string // displayIcon, the square art Discord shows best
+	WideArt  string
+	LargeArt string
+}
+
 // localized is a displayName under ?language=all: one string per locale.
 type localized map[string]string
 
@@ -83,6 +96,7 @@ type Catalogue struct {
 	maps   map[string]mapEntry   // keyed by lowercased mapUrl
 	tiers  map[int]tierEntry
 	modes  map[string]modeEntry // keyed by lowercased assetPath
+	cards  map[string]cardEntry // keyed by lowercased UUID
 }
 
 type agentEntry struct {
@@ -120,6 +134,13 @@ type modeEntry struct {
 	AssetPath   string    `json:"assetPath"`
 }
 
+type cardEntry struct {
+	UUID        string `json:"uuid"`
+	DisplayIcon string `json:"displayIcon"`
+	WideArt     string `json:"wideArt"`
+	LargeArt    string `json:"largeArt"`
+}
+
 // envelope is valorant-api's uniform {status, data} wrapper. The HTTP status
 // already gates the read, so only the payload is kept.
 type envelope[T any] struct {
@@ -128,7 +149,8 @@ type envelope[T any] struct {
 
 // Empty reports a catalogue nothing has been loaded into yet.
 func (c *Catalogue) Empty() bool {
-	return c == nil || (len(c.agents) == 0 && len(c.maps) == 0 && len(c.tiers) == 0 && len(c.modes) == 0)
+	return c == nil || (len(c.agents) == 0 && len(c.maps) == 0 && len(c.tiers) == 0 &&
+		len(c.modes) == 0 && len(c.cards) == 0)
 }
 
 // Agent resolves an agent UUID. glz returns them uppercase and valorant-api
@@ -201,11 +223,29 @@ func (c *Catalogue) GameMode(assetPath, locale string) (GameMode, bool) {
 	}, true
 }
 
+// PlayerCard resolves the equipped card's art. It takes no locale: the
+// catalogue holds no card names to localize.
+func (c *Catalogue) PlayerCard(uuid string) (PlayerCard, bool) {
+	if c == nil {
+		return PlayerCard{}, false
+	}
+	entry, ok := c.cards[foldKey(uuid)]
+	if !ok {
+		return PlayerCard{}, false
+	}
+	return PlayerCard{
+		UUID:     entry.UUID,
+		Icon:     entry.DisplayIcon,
+		WideArt:  entry.WideArt,
+		LargeArt: entry.LargeArt,
+	}, true
+}
+
 func foldKey(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
 
 // parseCatalogue builds one snapshot from the four payloads. All four have
 // to parse, so a half-loaded catalogue is never published.
-func parseCatalogue(agents, maps, tiers, modes []byte) (*Catalogue, error) {
+func parseCatalogue(agents, maps, tiers, modes, cards []byte) (*Catalogue, error) {
 	agentList, err := decode[[]agentEntry](agents, agentsPath)
 	if err != nil {
 		return nil, err
@@ -222,12 +262,17 @@ func parseCatalogue(agents, maps, tiers, modes []byte) (*Catalogue, error) {
 	if err != nil {
 		return nil, err
 	}
+	cardList, err := decode[[]cardEntry](cards, cardsPath)
+	if err != nil {
+		return nil, err
+	}
 
 	cat := &Catalogue{
 		agents: make(map[string]agentEntry, len(agentList)),
 		maps:   make(map[string]mapEntry, len(mapList)),
 		tiers:  make(map[int]tierEntry),
 		modes:  make(map[string]modeEntry, len(modeList)),
+		cards:  make(map[string]cardEntry, len(cardList)),
 	}
 	for _, a := range agentList {
 		cat.agents[foldKey(a.UUID)] = a
@@ -240,6 +285,9 @@ func parseCatalogue(agents, maps, tiers, modes []byte) (*Catalogue, error) {
 	}
 	for _, g := range modeList {
 		cat.modes[foldKey(g.AssetPath)] = g
+	}
+	for _, c := range cardList {
+		cat.cards[foldKey(c.UUID)] = c
 	}
 
 	// Riot ships one table per episode and only the last one is current.

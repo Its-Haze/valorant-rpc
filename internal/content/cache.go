@@ -21,8 +21,8 @@ const (
 
 	requestTimeout = 10 * time.Second
 
-	// maxBodyBytes caps a response read with generous headroom over the
-	// agent payload, which is the largest of the four. Exceeding it errors.
+	// maxBodyBytes caps a response read, with generous headroom over the
+	// largest payload. Exceeding it errors rather than truncating.
 	maxBodyBytes = 64 << 20
 )
 
@@ -77,7 +77,8 @@ func (c *Cache) Snapshot() *Catalogue {
 	return c.cat
 }
 
-// Refresh fetches all four endpoints and swaps in a new catalogue. Every
+// Refresh fetches every endpoint and swaps in a new catalogue. All of them
+// have to succeed: a partial swap would silently empty one table.
 func (c *Cache) Refresh(ctx context.Context) error {
 	agents, err := c.get(ctx, agentsPath)
 	if err != nil {
@@ -95,8 +96,12 @@ func (c *Cache) Refresh(ctx context.Context) error {
 	if err != nil {
 		return c.logFailure(err)
 	}
+	cards, err := c.get(ctx, cardsPath)
+	if err != nil {
+		return c.logFailure(err)
+	}
 
-	cat, err := parseCatalogue(agents, maps, tiers, modes)
+	cat, err := parseCatalogue(agents, maps, tiers, modes, cards)
 	if err != nil {
 		return c.logFailure(err)
 	}
@@ -110,6 +115,7 @@ func (c *Cache) Refresh(ctx context.Context) error {
 		Int("maps", len(cat.maps)).
 		Int("tiers", len(cat.tiers)).
 		Int("game_modes", len(cat.modes)).
+		Int("player_cards", len(cat.cards)).
 		Msg("content catalogue refreshed")
 	return nil
 }

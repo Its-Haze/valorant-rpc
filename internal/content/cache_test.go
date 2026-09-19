@@ -57,6 +57,8 @@ func (f *fakeAPI) Do(req *http.Request) (*http.Response, error) {
 		name = "competitivetiers.json"
 	case strings.HasSuffix(path, "/gamemodes"):
 		name = "gamemodes.json"
+	case strings.HasSuffix(path, "/playercards"):
+		name = "playercards.json"
 	default:
 		return &http.Response{StatusCode: http.StatusNotFound, Body: io.NopCloser(strings.NewReader(""))}, nil
 	}
@@ -127,10 +129,13 @@ func TestRefreshPopulatesEveryTable(t *testing.T) {
 	if _, ok := cat.GameMode(bombMode, types.DefaultLocale); !ok {
 		t.Error("game modes did not load")
 	}
+	if _, ok := cat.PlayerCard(sampleCardUUID); !ok {
+		t.Error("player cards did not load")
+	}
 }
 
-// One fetch per endpoint, each asking for every locale so switching language
-// never costs a round trip.
+// One fetch per endpoint. Everything with names asks for every locale, so
+// switching language never costs a round trip.
 func TestRefreshRequestsEveryLocaleOnce(t *testing.T) {
 	api := newFakeAPI(t)
 	cache := newTestCache(api)
@@ -140,10 +145,18 @@ func TestRefreshRequestsEveryLocaleOnce(t *testing.T) {
 	}
 
 	seen := api.seen()
-	if len(seen) != 4 {
-		t.Fatalf("made %d requests, want 4: %v", len(seen), seen)
+	if len(seen) != 5 {
+		t.Fatalf("made %d requests, want 5: %v", len(seen), seen)
 	}
 	for _, req := range seen {
+		// Player cards are fetched for art only, so they skip the locales
+		// that would roughly double the payload.
+		if strings.Contains(req, "/playercards") {
+			if strings.Contains(req, "language") {
+				t.Errorf("%q asks for locales it does not use", req)
+			}
+			continue
+		}
 		if !strings.Contains(req, "language=all") {
 			t.Errorf("%q does not ask for every locale", req)
 		}
