@@ -16,11 +16,11 @@ const (
 // set, so a token collapsing to empty takes its neighbouring middot with it.
 const mid = " · "
 
-// Tokens every context carries: who the player is, and the idle flag, which
-// cuts across phase rather than belonging to one.
-var commonTokens = []string{"riot_id", "account_level", "rank", "idle"}
+// Tokens every context carries: who the player is, and the two idle spellings.
+// availability always renders a word; idle collapses to nothing when present.
+var commonTokens = []string{"riot_id", "account_level", "rank", "availability", "idle"}
 
-// partyTokens carry the lobby size. party is the pre-joined "2/5", the same
+// partyTokens carry the lobby size. party is the pre-joined "(2/5)", the same
 // convenience score is for the two round counts; the halves stay available.
 var partyTokens = []string{"party", "party_size", "max_party_size"}
 
@@ -30,37 +30,47 @@ func tokensFor(extra ...string) []string {
 }
 
 func init() {
-	knownTokens[ContextInClient] = tokensFor()
+	// The lobby and the main menu are one state to Riot: both are MENUS with
+	// partyState DEFAULT, so this context carries the lobby's tokens too.
+	knownTokens[ContextInClient] = tokensFor(append([]string{"mode"}, partyTokens...)...)
 	knownTokens[ContextInQueue] = tokensFor(append([]string{"mode"}, partyTokens...)...)
-	knownTokens[ContextCustomGame] = tokensFor(append([]string{"map", "mode"}, partyTokens...)...)
-	knownTokens[ContextAgentSelect] = tokensFor(append([]string{"map", "mode", "agent"}, partyTokens...)...)
+	// No map token: a custom game hides its map, so offering one would only
+	// ever render nothing.
+	knownTokens[ContextCustomGame] = tokensFor(append([]string{"mode"}, partyTokens...)...)
+	// No agent token: the game log only names the agent once its pawn spawns,
+	// which is after agent select has ended.
+	knownTokens[ContextAgentSelect] = tokensFor(append([]string{"map", "mode"}, partyTokens...)...)
 	knownTokens[ContextInMatch] = tokensFor(append([]string{
-		"map", "mode", "agent", "score", "score_ally", "score_enemy",
+		"map", "mode", "agent", "score", "score_ally", "score_enemy", "kills",
 	}, partyTokens...)...)
 
 	// Each default anchors its state line on a literal, so a presence still
 	// reads as something when every token in it is empty.
-	defaults[ContextInClient] = [2]string{"In the client", "{rank}" + mid + "{idle}"}
+	defaults[ContextInClient] = [2]string{"{mode}", "In lobby" + mid + "{party}" + mid + "{idle}"}
 	defaults[ContextInQueue] = [2]string{"{mode}", "In queue" + mid + "{party}" + mid + "{idle}"}
-	defaults[ContextCustomGame] = [2]string{"{map}", "Custom game" + mid + "{party}" + mid + "{idle}"}
-	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{agent}" + mid + "{party}"}
-	defaults[ContextInMatch] = [2]string{"{mode}" + mid + "{map}", "In a match" + mid + "{score}" + mid + "{agent}"}
+	defaults[ContextCustomGame] = [2]string{"{mode}", "In lobby" + mid + "{party}" + mid + "{idle}"}
+	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{party}"}
+	// The agent is the large image and its hover text, so naming it again in
+	// the state line is a third copy of the same fact.
+	defaults[ContextInMatch] = [2]string{"{mode}" + mid + "{map}", "In a match" + mid + "{score}"}
 
 	// Sample values for the settings-screen preview. agent is left out on
 	// purpose: v0.1 never resolves one, and a preview should not promise it.
-	sampleData[ContextInClient] = sample(nil)
+	sampleData[ContextInClient] = sample(map[string]string{
+		"mode": "Competitive", "party": "(1/5)", "party_size": "1", "max_party_size": "5",
+	})
 	sampleData[ContextInQueue] = sample(map[string]string{
-		"mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
+		"mode": "Competitive", "party": "(2/5)", "party_size": "2", "max_party_size": "5",
 	})
 	sampleData[ContextCustomGame] = sample(map[string]string{
-		"map": "Ascent", "mode": "Custom", "party": "5/10", "party_size": "5", "max_party_size": "10",
+		"map": "Ascent", "mode": "Custom", "party": "(5/10)", "party_size": "5", "max_party_size": "10",
 	})
 	sampleData[ContextAgentSelect] = sample(map[string]string{
-		"map": "Ascent", "mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
+		"map": "Ascent", "mode": "Competitive", "party": "(2/5)", "party_size": "2", "max_party_size": "5",
 	})
 	sampleData[ContextInMatch] = sample(map[string]string{
-		"map": "Ascent", "mode": "Competitive", "party": "2/5", "party_size": "2", "max_party_size": "5",
-		"score": "7-5", "score_ally": "7", "score_enemy": "5",
+		"map": "Ascent", "mode": "Competitive", "party": "(2/5)", "party_size": "2", "max_party_size": "5",
+		"score": "7-5", "score_ally": "7", "score_enemy": "5", "kills": "19",
 	})
 
 	order = append(order, ContextInClient, ContextInQueue, ContextCustomGame, ContextAgentSelect, ContextInMatch)
@@ -72,6 +82,7 @@ func sample(extra map[string]string) map[string]string {
 		"riot_id":       "Haze",
 		"account_level": "312",
 		"rank":          "Immortal 2",
+		"availability":  "Online",
 		"idle":          "Idle",
 	}
 	maps.Copy(out, extra)

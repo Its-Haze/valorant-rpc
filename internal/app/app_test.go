@@ -324,7 +324,7 @@ func TestApp_GetTemplateTokens(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
 	got := a.GetTemplateTokens("in-client")
-	want := []string{"riot_id", "account_level", "rank", "idle"}
+	want := []string{"mode", "party", "party_size", "max_party_size", "riot_id", "account_level", "rank", "availability", "idle"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("GetTemplateTokens(in-client) = %v, want %v", got, want)
 	}

@@ -222,22 +222,24 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 		d.updater.UpdateLaunchingPlaceholder(placeholderStart)
 	}
 
-	// The agent lookup fires on entry into agent select or a match, and
-	// never again until the context changes. See ticket 14.
-	lookupContext := types.PresenceContext("")
+	// The agent lookup runs only in a match, never in agent select: the game
+	// log names the agent once its pawn spawns, which is after the match has
+	// started. It keeps running until one resolves, because the first reads
+	// of a match legitimately find nothing.
+	agentResolved := false
 	fireLookup := func(st *state.State) {
-		phase := st.PhaseContext()
-		if phase != types.ContextAgentSelect && phase != types.ContextInMatch {
-			lookupContext = ""
+		if st.PhaseContext() != types.ContextInMatch {
+			if agentResolved || st.AgentID != "" {
+				d.state.Apply(func(s *state.State) { s.AgentID = "" })
+			}
+			agentResolved = false
 			return
 		}
-		if phase == lookupContext {
+		if agentResolved || d.agents == nil {
 			return
 		}
-		lookupContext = phase
-		if d.agents != nil {
-			d.agents.Lookup(ctx, st)
-		}
+		d.agents.Lookup(ctx, st)
+		agentResolved = d.state.Get().AgentID != ""
 	}
 
 	// placeholderAllowed keeps the launching presence behind its setting, for
@@ -325,8 +327,10 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 			}
 		}
 
+		// Losing the connection drops the agent with it: the next match has
+		// to resolve its own rather than inherit the last one.
 		if mode != modeConnected {
-			lookupContext = ""
+			agentResolved = false
 		}
 	}
 

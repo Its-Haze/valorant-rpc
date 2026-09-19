@@ -93,15 +93,17 @@ func (l localized) pick(locale string) string {
 // Catalogue is one resolved snapshot of the four payloads. It is built once
 // per refresh and never mutated, so readers need no lock of their own.
 type Catalogue struct {
-	agents map[string]agentEntry // keyed by lowercased UUID
-	maps   map[string]mapEntry   // keyed by lowercased mapUrl
-	tiers  map[int]tierEntry
-	modes  map[string]modeEntry // keyed by lowercased assetPath
-	cards  map[string]cardEntry // keyed by lowercased UUID
+	agents    map[string]agentEntry // keyed by lowercased UUID
+	agentDevs map[string]string     // lowercased developerName to UUID
+	maps      map[string]mapEntry   // keyed by lowercased mapUrl
+	tiers     map[int]tierEntry
+	modes     map[string]modeEntry // keyed by lowercased assetPath
+	cards     map[string]cardEntry // keyed by lowercased UUID
 }
 
 type agentEntry struct {
 	UUID           string    `json:"uuid"`
+	DeveloperName  string    `json:"developerName"`
 	DisplayName    localized `json:"displayName"`
 	DisplayIcon    string    `json:"displayIcon"`
 	DisplayIconSml string    `json:"displayIconSmall"`
@@ -171,6 +173,18 @@ func (c *Catalogue) Agent(uuid, locale string) (Agent, bool) {
 		IconSmall:      entry.DisplayIconSml,
 		GradientColors: slices.Clone(entry.GradientColors),
 	}, true
+}
+
+// AgentUUIDByDeveloperName resolves Riot's internal codename for an agent,
+// which is what the game log names, to the UUID the catalogue is keyed by.
+// A codename nothing matches is not an agent: the game logs its UI shells
+// with the same line.
+func (c *Catalogue) AgentUUIDByDeveloperName(name string) (string, bool) {
+	if c == nil {
+		return "", false
+	}
+	uuid, ok := c.agentDevs[foldKey(name)]
+	return uuid, ok
 }
 
 // Map resolves the presence blob's matchMap, which is Riot's own map path.
@@ -274,9 +288,14 @@ func parseCatalogue(agents, maps, tiers, modes, cards []byte) (*Catalogue, error
 		tiers:  make(map[int]tierEntry),
 		modes:  make(map[string]modeEntry, len(modeList)),
 		cards:  make(map[string]cardEntry, len(cardList)),
+
+		agentDevs: make(map[string]string, len(agentList)),
 	}
 	for _, a := range agentList {
 		cat.agents[foldKey(a.UUID)] = a
+		if a.DeveloperName != "" {
+			cat.agentDevs[foldKey(a.DeveloperName)] = a.UUID
+		}
 	}
 	for _, m := range mapList {
 		if m.MapURL == "" {

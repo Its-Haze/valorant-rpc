@@ -35,10 +35,14 @@ type DisplayConfig struct {
 	Locale string `json:"locale"`
 }
 
-// DisplayDefaults is the global on/off state for the two display toggles.
+// DisplayDefaults is the global state for the display settings.
 type DisplayDefaults struct {
 	ShowRank  bool `json:"show_rank"`  // rank emblem and tier name
 	ShowStats bool `json:"show_stats"` // match detail such as the round score
+
+	// MatchImage picks the large art during a match: the agent being played,
+	// or the player card kept from the menus. See MatchImageAgent.
+	MatchImage string `json:"match_image"`
 }
 
 // PresenceConfig holds presence-wide text settings.
@@ -79,7 +83,7 @@ func DefaultConfig() *Config {
 		Theme:              ThemeSystem,
 		OnboardingComplete: false,
 		Display: DisplayConfig{
-			Default: DisplayDefaults{ShowRank: true, ShowStats: true},
+			Default: DisplayDefaults{ShowRank: true, ShowStats: true, MatchImage: MatchImageAgent},
 			Locale:  types.LocaleAuto,
 		},
 		Presence: PresenceConfig{
@@ -116,6 +120,18 @@ const (
 	MinUpdateInterval = 500
 	MaxUpdateInterval = 10000
 )
+
+// Large-image choices during a match. The agent is read from Valorant's own
+// log, which can stop resolving if Riot renames a log line, so the card is
+// both a preference and the fallback.
+const (
+	MatchImageAgent = "agent"
+	MatchImageCard  = "card"
+)
+
+func validMatchImage(m string) bool {
+	return m == MatchImageAgent || m == MatchImageCard
+}
 
 // Theme values.
 const (
@@ -157,6 +173,9 @@ func (c *Config) Validate() error {
 	if !validTheme(c.Theme) {
 		errs = append(errs, fmt.Errorf("theme must be one of %q, %q, %q", ThemeSystem, ThemeLight, ThemeDark))
 	}
+	if !validMatchImage(c.Display.Default.MatchImage) {
+		errs = append(errs, fmt.Errorf("display.default.match_image must be one of %q, %q", MatchImageAgent, MatchImageCard))
+	}
 	if !validCloseAction(c.Behavior.CloseAction) {
 		errs = append(errs, fmt.Errorf("close_action must be one of %q, %q, %q", CloseAsk, CloseTray, CloseQuit))
 	}
@@ -193,6 +212,11 @@ func (c *Config) clamp() {
 	// repair is the default, never a blank name in the presence.
 	if !validLocaleSetting(c.Display.Locale) {
 		c.Display.Locale = def.Display.Locale
+	}
+	// Empty here is a file written before the field existed, which is every
+	// config from before the agent lookup shipped.
+	if !validMatchImage(c.Display.Default.MatchImage) {
+		c.Display.Default.MatchImage = def.Display.Default.MatchImage
 	}
 	if c.Presence.Templates == nil {
 		c.Presence.Templates = map[string]TemplatePair{}

@@ -11,6 +11,10 @@ export function withShowStats(cfg: Config, enabled: boolean): Partial<Config> {
   return { display: { ...cfg.display, default: { ...cfg.display.default, show_stats: enabled } } };
 }
 
+export function withMatchImage(cfg: Config, choice: string): Partial<Config> {
+  return { display: { ...cfg.display, default: { ...cfg.display.default, match_image: choice } } };
+}
+
 export function withLocale(cfg: Config, locale: string): Partial<Config> {
   return { display: { ...cfg.display, locale } };
 }

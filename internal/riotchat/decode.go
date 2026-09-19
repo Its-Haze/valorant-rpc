@@ -93,8 +93,8 @@ func decodeBase64(private string) ([]byte, error) {
 }
 
 // decodePrivate normalizes the private blob. Riot is migrating this payload
-// between a flat shape and one nesting the match and party fields, so every
-// field is looked up in the nested containers before the top level.
+// between a flat shape and one nesting the match, party and player fields,
+// so every field is looked up in the nested containers before the top level.
 func decodePrivate(blob []byte, logger zerolog.Logger) (Presence, error) {
 	var top map[string]json.RawMessage
 	if err := json.Unmarshal(blob, &top); err != nil {
@@ -102,8 +102,9 @@ func decodePrivate(blob []byte, logger zerolog.Logger) (Presence, error) {
 	}
 
 	f := fields{logger: logger}
-	f.push(nested(top, "matchPresenceData", logger))
-	f.push(nested(top, "partyPresenceData", logger))
+	for _, container := range nestedContainers {
+		f.push(nested(top, container, logger))
+	}
 	f.push(top)
 
 	return Presence{
@@ -115,6 +116,7 @@ func decodePrivate(blob []byte, logger zerolog.Logger) (Presence, error) {
 		ProvisioningFlow:    f.str("provisioningFlow"),
 		ScoreAllyTeam:       f.num("partyOwnerMatchScoreAllyTeam"),
 		ScoreEnemyTeam:      f.num("partyOwnerMatchScoreEnemyTeam"),
+		GameScoreType:       f.str("gameScoreType"),
 		PartySize:           f.num("partySize"),
 		MaxPartySize:        f.num("maxPartySize"),
 		PartyAccessibility:  f.str("partyAccessibility"),
@@ -126,6 +128,10 @@ func decodePrivate(blob []byte, logger zerolog.Logger) (Presence, error) {
 		QueueEntryTime:      f.timestamp("queueEntryTime"),
 	}, nil
 }
+
+// nestedContainers are the nested shape's groupings. premierPresenceData is
+// deliberately absent: nothing is read from it and its keys are its own.
+var nestedContainers = []string{"matchPresenceData", "partyPresenceData", "playerPresenceData"}
 
 // nested returns one of the containers of the nested shape, or nil when the
 // payload is flat.

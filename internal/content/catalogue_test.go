@@ -429,3 +429,25 @@ func TestRandomPlayerCardFindsNothingInAnEmptyCatalogue(t *testing.T) {
 		t.Error("an empty catalogue should have no card to draw")
 	}
 }
+
+// The game log names agents by Riot's internal codename, which is exactly
+// valorant-api's developerName. The join folds case like every other.
+func TestAgentUUIDByDeveloperName(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	const jett = "add6443a-41bd-e414-f6ad-e58d267f4e95"
+	for _, name := range []string{"Wushu", "wushu", "WUSHU", " Wushu "} {
+		got, ok := cat.AgentUUIDByDeveloperName(name)
+		if !ok || got != jett {
+			t.Errorf("AgentUUIDByDeveloperName(%q) = %q, %v, want Jett", name, got, ok)
+		}
+	}
+
+	// The menus log their UI classes through the same line, so a codename
+	// nothing matches is the signal that this is not an agent.
+	for _, name := range []string{"Career", "SettingsLanding", "InGameShell", ""} {
+		if _, ok := cat.AgentUUIDByDeveloperName(name); ok {
+			t.Errorf("AgentUUIDByDeveloperName(%q) resolved, want no match", name)
+		}
+	}
+}

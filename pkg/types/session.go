@@ -25,6 +25,13 @@ const (
 // Provisioning flows worth naming. The range is a variant of being in a
 // match, so it is a predicate on the state rather than a context.
 const (
+	// Score types. Points is deathmatch, where the ally score is the player's
+	// own kills rather than a team's rounds.
+	ScoreTypeRounds = "Rounds"
+	ScoreTypePoints = "Points"
+)
+
+const (
 	ProvisioningFlowMatchmaking   = "Matchmaking"
 	ProvisioningFlowCustomGame    = "CustomGame"
 	ProvisioningFlowShootingRange = "ShootingRange"

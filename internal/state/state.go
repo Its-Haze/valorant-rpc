@@ -40,6 +40,8 @@ type State struct {
 	QueueEntryTime     time.Time `json:"queue_entry_time"`
 
 	// Rank
+	GameScoreType string `json:"game_score_type"` // Rounds, or Points in a deathmatch
+
 	CompetitiveTier     int `json:"competitive_tier"`
 	LeaderboardPosition int `json:"leaderboard_position"`
 
@@ -89,6 +91,15 @@ func (s *State) PhaseContext() types.PresenceContext {
 // a variant rather than a context of its own.
 func (s *State) IsRange() bool {
 	return strings.EqualFold(s.ProvisioningFlow, types.ProvisioningFlowShootingRange)
+}
+
+// IsCustomGame reports a custom game in any of its phases. The lobby carries
+// only the party state, and the flow appears once the game is provisioned.
+func (s *State) IsCustomGame() bool {
+	if strings.EqualFold(s.ProvisioningFlow, types.ProvisioningFlowCustomGame) {
+		return true
+	}
+	return types.PartyState(strings.ToUpper(string(s.PartyState))) == types.PartyCustomGameSetup
 }
 
 // Equals compares every field, so a field added later counts towards change

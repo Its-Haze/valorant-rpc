@@ -74,6 +74,7 @@ func wantFlatPresence() Presence {
 		QueueID:             "competitive",
 		ScoreAllyTeam:       9,
 		ScoreEnemyTeam:      4,
+		GameScoreType:       "Rounds",
 		PartySize:           2,
 		MaxPartySize:        5,
 		PartyAccessibility:  "CLOSED",

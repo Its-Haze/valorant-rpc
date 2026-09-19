@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"strings"
 	"sync"
 	"testing"
 
@@ -31,14 +32,14 @@ func TestUpdater_LastSent_ReflectsLastRealSend(t *testing.T) {
 	if got.Cleared {
 		t.Fatal("LastSent marked cleared after a real send")
 	}
-	if got.Data == nil || got.Data.Details != "In the client" {
+	if got.Data == nil || !strings.HasPrefix(got.Data.State, "In lobby") {
 		t.Fatalf("LastSent.Data = %+v, want the in-client payload", got.Data)
 	}
 
 	// The caller must not be able to mutate the Updater's copy.
-	got.Data.Details = "tampered"
-	if again := u.LastSent(); again.Data.Details != "In the client" {
-		t.Fatalf("LastSent returned a shared pointer: second read = %q", again.Data.Details)
+	got.Data.State = "tampered"
+	if again := u.LastSent(); !strings.HasPrefix(again.Data.State, "In lobby") {
+		t.Fatalf("LastSent returned a shared pointer: second read = %q", again.Data.State)
 	}
 }
 

@@ -11,7 +11,7 @@ export const PRESENCE_CONTEXTS = [
 export type PresenceContext = (typeof PRESENCE_CONTEXTS)[number];
 
 export const PRESENCE_CONTEXT_LABELS: Record<PresenceContext, string> = {
-  "in-client": "In client",
+  "in-client": "In lobby",
   "in-queue": "In queue",
   "custom-game": "Custom game",
   "agent-select": "Agent select",

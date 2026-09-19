@@ -36,6 +36,10 @@ type Presence struct {
 	ScoreAllyTeam  int
 	ScoreEnemyTeam int
 
+	// GameScoreType is "Rounds" in a round-based mode and "Points" in a
+	// deathmatch, where the ally score is the player's own kill count.
+	GameScoreType string
+
 	PartySize          int
 	MaxPartySize       int
 	PartyAccessibility string

@@ -6,6 +6,7 @@ import (
 	"github.com/its-haze/valorant-rpc/internal/config"
 	"github.com/its-haze/valorant-rpc/internal/content"
 	"github.com/its-haze/valorant-rpc/internal/discord"
+	"github.com/its-haze/valorant-rpc/internal/gamelog"
 	"github.com/its-haze/valorant-rpc/internal/process"
 	"github.com/its-haze/valorant-rpc/internal/riotchat"
 	"github.com/its-haze/valorant-rpc/internal/riotclient"
@@ -28,10 +29,12 @@ func Wire(store *config.Store, logger zerolog.Logger) (*Daemon, *content.Cache) 
 		return riotchat.NewWatcher(riotClient, logger, onUpdate)
 	}, WithLocaleReader(riotClient))
 
+	agents := NewGameLogAgents(gamelog.New(gamelog.Options{}), catalogue, stateMgr, logger)
+
 	riotSup := NewProductionRiotSupervisor(source, checker)
 	discordSup := NewDiscordSupervisor(discordClient, checker, riotSup)
 
 	return New(discordSup, riotSup, updater, stateMgr, logger,
 		DefaultPresencePollInterval, DefaultPlaceholderInterval,
-		WithCatalogue(catalogue)), catalogue
+		WithCatalogue(catalogue), WithAgentLookup(agents)), catalogue
 }

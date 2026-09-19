@@ -128,8 +128,9 @@ func TestEveryContextBuildsAPresence(t *testing.T) {
 		if rpc.LargeImage == "" || rpc.SmallImage == "" {
 			t.Errorf("%q is missing art: %+v", ctx, rpc)
 		}
-		if rpc.SmallText != constants.SmallText {
-			t.Errorf("%q small text = %q, want the build tooltip", ctx, rpc.SmallText)
+		// The competitive contexts hand the hover text to the rank instead.
+		if rpc.SmallText == "" {
+			t.Errorf("%q has no small text", ctx)
 		}
 		if rpc.Start != st.ContextEnteredAt.Unix() {
 			t.Errorf("%q timer = %d, want the context entry %d", ctx, rpc.Start, st.ContextEnteredAt.Unix())
@@ -174,24 +175,51 @@ func TestInMatchShowsTheAgentWhenOneIsKnown(t *testing.T) {
 	if rpc.LargeText != "Jett" {
 		t.Errorf("large text = %q, want Jett", rpc.LargeText)
 	}
-	if !strings.Contains(rpc.State, "Jett") {
-		t.Errorf("state = %q, want it to name the agent", rpc.State)
+	// The art and its hover name the agent, so the state line must not.
+	if strings.Contains(rpc.State, "Jett") {
+		t.Errorf("state = %q, want the agent left to the art", rpc.State)
 	}
 }
 
-// v0.1 never resolves an agent, so the match presence has to fall back to
-// something rather than losing its image.
-func TestInMatchFallsBackToTheMapWithoutAnAgent(t *testing.T) {
+// If Riot renames the log line the agent stops resolving. The match presence
+// then falls back to the player card, not to the map and not to nothing.
+func TestInMatchFallsBackToTheCardWithoutAnAgent(t *testing.T) {
 	cat := testCatalogue(t)
 
 	rpc := MapStateToPresence(inMatchState(), presenceConfig(), cat)
 
 	world, _ := cat.Map(ascentURL, types.DefaultLocale)
-	if rpc.LargeImage != world.Splash {
-		t.Errorf("large image = %q, want the Ascent splash", rpc.LargeImage)
+	if rpc.LargeImage == world.Splash {
+		t.Error("large image fell back to the map splash")
 	}
-	if rpc.LargeText != "Ascent" {
-		t.Errorf("large text = %q, want Ascent", rpc.LargeText)
+	card, _ := cat.PlayerCard(inMatchState().PlayerCardID)
+	if rpc.LargeImage != card.Icon {
+		t.Errorf("large image = %q, want the player card", rpc.LargeImage)
+	}
+	if rpc.LargeText != "Haze#EUW" {
+		t.Errorf("large text = %q, want the riot id", rpc.LargeText)
+	}
+}
+
+// The setting keeps the card even when the agent resolved fine.
+func TestInMatchHonoursTheCardSetting(t *testing.T) {
+	cat := testCatalogue(t)
+
+	st := inMatchState()
+	st.AgentID = jettUUID
+
+	cfg := presenceConfig()
+	cfg.Display.Default.MatchImage = config.MatchImageCard
+
+	rpc := MapStateToPresence(st, cfg, cat)
+
+	agent, _ := cat.Agent(jettUUID, types.DefaultLocale)
+	if rpc.LargeImage == agent.Icon {
+		t.Error("large image used the agent despite the card setting")
+	}
+	card, _ := cat.PlayerCard(st.PlayerCardID)
+	if rpc.LargeImage != card.Icon {
+		t.Errorf("large image = %q, want the player card", rpc.LargeImage)
 	}
 }
 
@@ -328,8 +356,9 @@ func TestPartyRendersAsText(t *testing.T) {
 	st.PartyState = types.PartyMatchmaking
 	st.QueueID = "competitive"
 
-	if got := MapStateToPresence(st, presenceConfig(), cat); !strings.Contains(got.State, "2/5") {
-		t.Errorf("state = %q, want the party size as text", got.State)
+	// Parenthesised, matching league-rpc's "In Lobby (2/5)".
+	if got := MapStateToPresence(st, presenceConfig(), cat); !strings.Contains(got.State, "(2/5)") {
+		t.Errorf("state = %q, want the party size in parentheses", got.State)
 	}
 
 	// Riot publishes nothing worth rendering before a party exists.
@@ -416,5 +445,173 @@ func TestContextKeysAreStable(t *testing.T) {
 	}
 	if len(builders) != len(want) {
 		t.Errorf("%d builders registered, want %d", len(builders), len(want))
+	}
+}
+
+// The rank emblem replaces the app icon only in a competitive queue, and it
+// takes the hover text with it so the tier is readable somewhere.
+func TestCompetitiveQueueSwapsTheIconForTheRankEmblem(t *testing.T) {
+	cat := testCatalogue(t)
+	cfg := presenceConfig()
+
+	st := inClientState()
+	st.QueueID = "competitive"
+
+	rpc := MapStateToPresence(st, cfg, cat)
+	if rpc.SmallImage == valorantLogoBorderlessURL {
+		t.Error("competitive still shows the app icon")
+	}
+	if rpc.SmallText == constants.SmallText || rpc.SmallText == "" {
+		t.Errorf("small text = %q, want the tier name", rpc.SmallText)
+	}
+
+	st.QueueID = "unrated"
+	unrated := MapStateToPresence(st, cfg, cat)
+	if unrated.SmallImage != valorantLogoBorderlessURL {
+		t.Errorf("unrated small image = %q, want the app icon", unrated.SmallImage)
+	}
+	if unrated.SmallText != constants.SmallText {
+		t.Errorf("unrated small text = %q, want the build tooltip", unrated.SmallText)
+	}
+}
+
+// Idle outranks the emblem, and the credit line comes back with it.
+func TestIdleKeepsTheDimmedIconEvenInCompetitive(t *testing.T) {
+	st := inClientState()
+	st.QueueID = "competitive"
+	st.IsIdle = true
+
+	rpc := MapStateToPresence(st, presenceConfig(), testCatalogue(t))
+	if rpc.SmallImage != valorantLogoIdleURL {
+		t.Errorf("small image = %q, want the idle mark", rpc.SmallImage)
+	}
+	if rpc.SmallText != constants.SmallText {
+		t.Errorf("small text = %q, want the build tooltip", rpc.SmallText)
+	}
+	if !strings.HasSuffix(rpc.State, "Idle") {
+		t.Errorf("state = %q, want it to end in Idle", rpc.State)
+	}
+}
+
+// A custom game names itself as the mode and hides its map everywhere, in
+// the text and in the art, through every phase it passes through.
+func TestCustomGameNamesItselfAndHidesTheMap(t *testing.T) {
+	cat := testCatalogue(t)
+	cfg := presenceConfig()
+	world, _ := cat.Map(ascentURL, types.DefaultLocale)
+
+	lobby := inClientState()
+	lobby.PartyState = types.PartyCustomGameSetup
+
+	// Riot leaves partyState on CUSTOM_GAME_SETUP once the game starts, and
+	// sets the flow, so each phase is reachable by its own marker.
+	pregame := inMatchState()
+	pregame.SessionLoopState = types.SessionLoopPregame
+	pregame.ProvisioningFlow = types.ProvisioningFlowCustomGame
+
+	match := inMatchState()
+	match.ProvisioningFlow = types.ProvisioningFlowCustomGame
+
+	for name, st := range map[string]*state.State{"lobby": lobby, "pregame": pregame, "match": match} {
+		st.MapID = ascentURL
+		st.QueueID = ""
+
+		rpc := MapStateToPresence(st, cfg, cat)
+		for _, line := range []string{rpc.Details, rpc.State, rpc.LargeText} {
+			if strings.Contains(line, "Ascent") {
+				t.Errorf("%s leaked the map: %q", name, line)
+			}
+		}
+		if rpc.LargeImage == world.Splash {
+			t.Errorf("%s used the map splash as art", name)
+		}
+		if !strings.Contains(rpc.Details, customLabel) {
+			t.Errorf("%s details = %q, want the custom label", name, rpc.Details)
+		}
+	}
+}
+
+// The custom lobby keeps the queue that was selected before it, so the rank
+// emblem has to be excluded by the custom marker rather than by the queue.
+func TestCustomGameNeverShowsTheRankEmblem(t *testing.T) {
+	cat := testCatalogue(t)
+	cfg := presenceConfig()
+
+	st := inClientState()
+	st.QueueID = "competitive"
+	st.PartyState = types.PartyCustomGameSetup
+
+	rpc := MapStateToPresence(st, cfg, cat)
+	if rpc.SmallImage != valorantLogoBorderlessURL {
+		t.Errorf("small image = %q, want the app icon", rpc.SmallImage)
+	}
+	if rpc.SmallText != constants.SmallText {
+		t.Errorf("small text = %q, want the build tooltip", rpc.SmallText)
+	}
+}
+
+// Riot republishes the presence every 60 to 90 seconds, so a deathmatch kill
+// count is stale far more often than not. The default line shows no score at
+// all there rather than a number that is usually wrong.
+func TestDeathmatchShowsNoScoreByDefault(t *testing.T) {
+	cat := testCatalogue(t)
+	cfg := presenceConfig()
+
+	st := inMatchState()
+	st.QueueID = "deathmatch"
+	st.GameScoreType = types.ScoreTypePoints
+	st.ScoreAlly, st.ScoreEnemy = 19, 39
+
+	rpc := MapStateToPresence(st, cfg, cat)
+	for _, unwanted := range []string{"19", "39", "kill"} {
+		if strings.Contains(rpc.State, unwanted) {
+			t.Errorf("state = %q, want no score in a deathmatch", rpc.State)
+		}
+	}
+	if !strings.Contains(rpc.State, "In a match") {
+		t.Errorf("state = %q, want the match line to survive", rpc.State)
+	}
+}
+
+// The count is still available to anyone who opts into it by name.
+func TestDeathmatchKillsTokenStaysAvailable(t *testing.T) {
+	cat := testCatalogue(t)
+
+	cfg := presenceConfig()
+	cfg.Presence.Templates["in-match"] = config.TemplatePair{Details: "{mode}", State: "{kills}"}
+
+	st := inMatchState()
+	st.GameScoreType = types.ScoreTypePoints
+	st.ScoreAlly, st.ScoreEnemy = 19, 39
+
+	if rpc := MapStateToPresence(st, cfg, cat); rpc.State != "19 kills" {
+		t.Errorf("state = %q, want the opted-in kill count", rpc.State)
+	}
+}
+
+func TestKillsTokenIsSingularForOneKill(t *testing.T) {
+	cat := testCatalogue(t)
+
+	cfg := presenceConfig()
+	cfg.Presence.Templates["in-match"] = config.TemplatePair{Details: "{mode}", State: "{kills}"}
+
+	st := inMatchState()
+	st.GameScoreType = types.ScoreTypePoints
+	st.ScoreAlly, st.ScoreEnemy = 1, 12
+
+	if rpc := MapStateToPresence(st, cfg, cat); rpc.State != "1 kill" {
+		t.Errorf("state = %q, want a singular kill", rpc.State)
+	}
+}
+
+// Round-based modes are unchanged: that score really is two teams.
+func TestRoundScoreStillRendersBothTeams(t *testing.T) {
+	st := inMatchState()
+	st.GameScoreType = types.ScoreTypeRounds
+	st.ScoreAlly, st.ScoreEnemy = 7, 5
+
+	rpc := MapStateToPresence(st, presenceConfig(), testCatalogue(t))
+	if !strings.Contains(rpc.State, "7-5") {
+		t.Errorf("state = %q, want the round score", rpc.State)
 	}
 }

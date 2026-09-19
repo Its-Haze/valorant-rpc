@@ -9,17 +9,17 @@ export function DefaultConfig(): Config {
     theme: "system",
     onboarding_complete: false,
     display: {
-      default: { show_rank: true, show_stats: true },
+      default: { show_rank: true, show_stats: true, match_image: "agent" },
       locale: "auto",
     },
     presence: {
       show_in_client: true,
       templates: {
-        "in-client": { details: "In the client", state: "{rank} · {idle}" },
+        "in-client": { details: "{mode}", state: "In lobby · {party} · {idle}" },
         "in-queue": { details: "{mode}", state: "In queue · {party} · {idle}" },
-        "custom-game": { details: "{map}", state: "Custom game · {party} · {idle}" },
-        "agent-select": { details: "{mode} · {map}", state: "Agent select · {agent} · {party}" },
-        "in-match": { details: "{mode} · {map}", state: "In a match · {score} · {agent}" },
+        "custom-game": { details: "{mode}", state: "In lobby · {party} · {idle}" },
+        "agent-select": { details: "{mode} · {map}", state: "Agent select · {party}" },
+        "in-match": { details: "{mode} · {map}", state: "In a match · {score}" },
       },
     },
     behavior: {

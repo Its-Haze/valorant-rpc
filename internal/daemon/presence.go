@@ -30,6 +30,7 @@ func applyPresence(p riotchat.Presence) func(*state.State) {
 		st.QueueID = types.QueueID(p.QueueID)
 		st.ScoreAlly = p.ScoreAllyTeam
 		st.ScoreEnemy = p.ScoreEnemyTeam
+		st.GameScoreType = p.GameScoreType
 
 		st.PartySize = p.PartySize
 		st.MaxPartySize = p.MaxPartySize

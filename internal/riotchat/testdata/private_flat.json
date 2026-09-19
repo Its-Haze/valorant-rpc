@@ -8,6 +8,7 @@
   "partyOwnerMatchCurrentTeam": "Blue",
   "partyOwnerMatchScoreAllyTeam": 9,
   "partyOwnerMatchScoreEnemyTeam": 4,
+  "gameScoreType": "Rounds",
   "partyOwnerProvisioningFlow": "Matchmaking",
   "provisioningFlow": "Matchmaking",
   "matchMap": "/Game/Maps/Ascent/Ascent",

@@ -4,7 +4,8 @@ import { useDefaultConfig } from "../../hooks/useDefaultConfig";
 import { useLocales } from "../../hooks/useLocales";
 import { useSettings } from "../../hooks/useSettings";
 import { useStatus } from "../../hooks/useStatus";
-import { withLocale, withShowInClient, withShowRank, withShowStats } from "../../lib/displayPatch";
+import { withLocale, withMatchImage, withShowInClient, withShowRank, withShowStats } from "../../lib/displayPatch";
+import { MATCH_IMAGE_OPTIONS } from "../../lib/matchImage";
 import { LOCALE_AUTO, autoLocaleLabel } from "../../lib/locales";
 import { PRESENCE_CONTEXT_LABELS, PRESENCE_CONTEXTS } from "../../lib/presenceContexts";
 import { Field, Select, SettingsCard, Tabs, Toggle } from "../ui";
@@ -69,6 +70,24 @@ export function DisplayScreen() {
             checked={cfg.display.default.show_stats}
             onCheckedChange={(v) => void applyPatch(withShowStats(cfg, v))}
             label="Show match detail"
+          />
+        </Field>
+        <Field
+          id="match-image"
+          label="Picture during a match"
+          hint="Your card is used anyway if the agent can't be read"
+          onReset={
+            defaults
+              ? () => void applyPatch(withMatchImage(cfg, defaults.display.default.match_image))
+              : undefined
+          }
+          isDefault={!defaults || cfg.display.default.match_image === defaults.display.default.match_image}
+        >
+          <Select
+            value={cfg.display.default.match_image}
+            onValueChange={(v) => void applyPatch(withMatchImage(cfg, v))}
+            options={MATCH_IMAGE_OPTIONS}
+            aria-label="Picture during a match"
           />
         </Field>
         <Field

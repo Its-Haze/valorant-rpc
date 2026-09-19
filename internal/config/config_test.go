@@ -185,3 +185,27 @@ func TestDefaultConfig_ShowsTheLaunchingPlaceholder(t *testing.T) {
 		t.Error("ShowPlaceholderPresence = false, want true")
 	}
 }
+
+// Every config written before the agent lookup shipped has no match_image,
+// and an empty enum must land on the default rather than on no art at all.
+func TestClamp_RepairsTheMatchImageSetting(t *testing.T) {
+	for name, given := range map[string]string{
+		"missing from an older file": "",
+		"not a value we know":        "splash",
+	} {
+		c := DefaultConfig()
+		c.Display.Default.MatchImage = given
+		c.clamp()
+
+		if c.Display.Default.MatchImage != MatchImageAgent {
+			t.Errorf("%s: match_image = %q, want %q", name, c.Display.Default.MatchImage, MatchImageAgent)
+		}
+	}
+
+	c := DefaultConfig()
+	c.Display.Default.MatchImage = MatchImageCard
+	c.clamp()
+	if c.Display.Default.MatchImage != MatchImageCard {
+		t.Error("clamp overwrote a deliberate card choice")
+	}
+}

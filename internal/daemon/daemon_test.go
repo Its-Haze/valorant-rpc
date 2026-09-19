@@ -3,6 +3,7 @@ package daemon
 import (
 	"context"
 	"errors"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -88,17 +89,30 @@ func (f *fakePresenceSender) clearCount() int32 {
 	return atomic.LoadInt32(&f.cleared)
 }
 
-// fakeAgentLookup records every call, so a test can assert the v0.2 seam
-// fires once per entry into agent select or a match.
+// fakeAgentLookup records every call. resolve stands in for the game log
+// finally naming a pawn, which happens some seconds into a match.
 type fakeAgentLookup struct {
 	mu       sync.Mutex
 	contexts []types.PresenceContext
+	stateMgr *state.Manager
+	resolve  bool
 }
 
 func (f *fakeAgentLookup) Lookup(ctx context.Context, st *state.State) {
 	f.mu.Lock()
-	defer f.mu.Unlock()
+	resolve := f.resolve
 	f.contexts = append(f.contexts, st.PhaseContext())
+	f.mu.Unlock()
+
+	if resolve {
+		f.stateMgr.Apply(func(s *state.State) { s.AgentID = "add6443a-41bd-e414-f6ad-e58d267f4e95" })
+	}
+}
+
+func (f *fakeAgentLookup) startResolving() {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.resolve = true
 }
 
 func (f *fakeAgentLookup) seen() []types.PresenceContext {
@@ -223,7 +237,7 @@ func TestDaemon_RealPresenceOnceBothConnected(t *testing.T) {
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.Details == "In the client"
+		return last != nil && strings.HasPrefix(last.State, "In lobby")
 	})
 }
 
@@ -357,7 +371,7 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.connected.Store(true)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.Details == "In the client"
+		return last != nil && strings.HasPrefix(last.State, "In lobby")
 	})
 
 	// Nothing ever arrived on this connection: show the placeholder rather
@@ -375,7 +389,7 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.stalled.Store(false)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.Details == "In the client"
+		return last != nil && strings.HasPrefix(last.State, "In lobby")
 	})
 }
 
@@ -429,9 +443,10 @@ func TestDaemon_PauseClearsPresenceAndUnpauseResumes(t *testing.T) {
 	waitFor(t, testTimeout, func() bool { return sender.sendCount() > resumeBefore })
 }
 
-func TestDaemon_AgentLookupFiresOncePerEntryIntoAMatch(t *testing.T) {
+func TestDaemon_AgentLookupRunsOnlyInAMatchAndStopsOnceResolved(t *testing.T) {
 	lookup := &fakeAgentLookup{}
 	d, discordRunner, riotRunner, stateMgr, sender := newTestDaemon(t, defaultTestConfig(), WithAgentLookup(lookup))
+	lookup.stateMgr = stateMgr
 	discordRunner.connected.Store(true)
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -441,31 +456,36 @@ func TestDaemon_AgentLookupFiresOncePerEntryIntoAMatch(t *testing.T) {
 	riotRunner.connected.Store(true)
 	waitFor(t, testTimeout, func() bool { return sender.sendCount() > 0 })
 
-	// Sitting in the client is not a lookup.
-	if got := lookup.seen(); len(got) != 0 {
-		t.Fatalf("expected no lookups in the client, got %v", got)
-	}
-
+	// Neither the client nor agent select is a lookup: the log cannot name
+	// the agent until its pawn has spawned.
 	stateMgr.Apply(func(st *state.State) { st.SessionLoopState = types.SessionLoopPregame })
-	waitFor(t, testTimeout, func() bool { return len(lookup.seen()) == 1 })
-
-	// Another change inside agent select must not fire it again.
-	stateMgr.Apply(func(st *state.State) { st.PartySize = 3 })
 	time.Sleep(10 * testPollInterval)
-	if got := lookup.seen(); len(got) != 1 {
-		t.Fatalf("expected one lookup while still in agent select, got %v", got)
+	if got := lookup.seen(); len(got) != 0 {
+		t.Fatalf("expected no lookups before the match, got %v", got)
 	}
 
+	// In a match it retries, because the first reads find nothing.
 	stateMgr.Apply(func(st *state.State) { st.SessionLoopState = types.SessionLoopInGame })
-	waitFor(t, testTimeout, func() bool { return len(lookup.seen()) == 2 })
-
-	want := []types.PresenceContext{types.ContextAgentSelect, types.ContextInMatch}
-	got := lookup.seen()
-	for i := range want {
-		if got[i] != want[i] {
-			t.Fatalf("lookup contexts = %v, want %v", got, want)
+	waitFor(t, testTimeout, func() bool { return len(lookup.seen()) > 2 })
+	for _, phase := range lookup.seen() {
+		if phase != types.ContextInMatch {
+			t.Fatalf("lookup fired outside a match: %v", lookup.seen())
 		}
 	}
+
+	// Once one resolves it stops asking.
+	lookup.startResolving()
+	waitFor(t, testTimeout, func() bool { return stateMgr.Get().AgentID != "" })
+
+	settled := len(lookup.seen())
+	time.Sleep(10 * testPollInterval)
+	if got := len(lookup.seen()); got > settled+1 {
+		t.Fatalf("lookup kept firing after resolving: %d then %d", settled, got)
+	}
+
+	// Leaving the match drops the agent so the next one cannot inherit it.
+	stateMgr.Apply(func(st *state.State) { st.SessionLoopState = types.SessionLoopMenus })
+	waitFor(t, testTimeout, func() bool { return stateMgr.Get().AgentID == "" })
 }
 
 func TestDaemon_NoLookupWiredIsNotAPanic(t *testing.T) {
@@ -545,7 +565,7 @@ func TestDaemon_ResendsPresenceOnceDiscordConnectsAfterTheRiotClient(t *testing.
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.Details == "In the client"
+		return last != nil && strings.HasPrefix(last.State, "In lobby")
 	})
 }
 
