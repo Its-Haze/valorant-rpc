@@ -6,7 +6,17 @@ import { useDiscordAppName } from "../../hooks/useDiscordAppName";
 import { useSettings } from "../../hooks/useSettings";
 import { formatIntervalSeconds, type Bounds } from "../../lib/advancedBounds";
 import { DISCORD_DEVELOPER_PORTAL_URL, openExternal } from "../../lib/links";
-import { DebouncedTextField, Field, SettingsCard, Toggle } from "../ui";
+import { DebouncedTextField, Field, Select, SettingsCard, Toggle } from "../ui";
+
+// The two ways the presence can appear on a profile. Custom is a UI mode
+// rather than a stored value; the config only ever holds an application ID.
+const APP_ID_DEFAULT = "default";
+const APP_ID_CUSTOM = "custom";
+
+const APP_ID_OPTIONS = [
+  { value: APP_ID_DEFAULT, label: "Valorant" },
+  { value: APP_ID_CUSTOM, label: "My own Discord app" },
+];
 
 // The Advanced section: the Discord Application ID, the update interval
 // clamped to the config package's bounds, and debug logging.
@@ -17,6 +27,9 @@ export function AdvancedScreen() {
   // null means "untouched this session"; once the user types, even an empty
   // string sticks, so clearing the field to retype it doesn't snap back.
   const [draftAppId, setDraftAppId] = useState<string | null>(null);
+  // Sticky once chosen, so selecting Custom does not snap back to Valorant
+  // while the id still equals the default.
+  const [customAppId, setCustomAppId] = useState(false);
 
   // Every hook must run before the "still loading" early return below, so
   // this falls back to a blank value until cfg resolves.
@@ -28,6 +41,19 @@ export function AdvancedScreen() {
   }
 
   const appIdInvalid = appId.trim() === "";
+  // Custom is a UI mode, not a stored setting: an id that is not the built-in
+  // default is custom by definition, and picking Custom keeps the field open
+  // while the user types even before it differs.
+  const isCustomAppId = customAppId || (!!defaults && cfg.discord_app_id !== defaults.discord_app_id);
+
+  function handleAppIdMode(mode: string) {
+    if (mode === APP_ID_CUSTOM) {
+      setCustomAppId(true);
+      return;
+    }
+    setCustomAppId(false);
+    handleAppIdReset();
+  }
 
   function handleAppIdCommit(value: string) {
     setDraftAppId(value);
@@ -51,27 +77,39 @@ export function AdvancedScreen() {
         description="Which app your presence appears under, including its name and icon on your profile."
       >
         <Field
-          id="app-id"
-          label="Application ID"
-          hint="Leave this alone unless you want your presence to appear under your own Discord app"
-          onReset={defaults ? handleAppIdReset : undefined}
-          isDefault={!defaults || cfg.discord_app_id === defaults.discord_app_id}
+          id="app-id-mode"
+          label="Appears as"
+          hint="Leave this on Valorant unless you want your presence to appear under your own Discord app"
+          onReset={defaults && isCustomAppId ? () => handleAppIdMode(APP_ID_DEFAULT) : undefined}
+          isDefault={!isCustomAppId}
         >
-          <DebouncedTextField
-            id="app-id"
-            value={appId}
-            onCommit={handleAppIdCommit}
-            className="border-border bg-surface-raised text-text rounded-sm border px-3 py-1.5 text-sm"
-            aria-invalid={appIdInvalid}
+          <Select
+            value={isCustomAppId ? APP_ID_CUSTOM : APP_ID_DEFAULT}
+            onValueChange={handleAppIdMode}
+            options={APP_ID_OPTIONS}
+            aria-label="Appears as"
           />
         </Field>
-        {resolvedName && (
-          <p className="text-muted text-right text-xs">
-            Resolves to <span className="text-text font-medium">{resolvedName}</span>
-          </p>
+        {isCustomAppId && (
+          <>
+            <Field id="app-id" label="Application ID" hint="The ID from your own Discord application">
+              <DebouncedTextField
+                id="app-id"
+                value={appId}
+                onCommit={handleAppIdCommit}
+                className="border-border bg-surface-raised text-text rounded-sm border px-3 py-1.5 text-sm"
+                aria-invalid={appIdInvalid}
+              />
+            </Field>
+            {resolvedName && (
+              <p className="text-muted text-right text-xs">
+                Resolves to <span className="text-text font-medium">{resolvedName}</span>
+              </p>
+            )}
+            {appIdInvalid && <p className="text-danger text-xs">Discord Application ID must not be empty.</p>}
+            <CustomAppIdTutorial />
+          </>
         )}
-        {appIdInvalid && <p className="text-danger text-xs">Discord Application ID must not be empty.</p>}
-        <CustomAppIdTutorial />
       </SettingsCard>
 
       <SettingsCard
