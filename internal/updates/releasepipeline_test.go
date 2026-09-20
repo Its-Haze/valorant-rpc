@@ -43,6 +43,24 @@ func TestSigningKeyStaysInsideTheProtectedEnvironment(t *testing.T) {
 	}
 }
 
+// A tag with no curated notes fails the release either way. Failing it first
+// is what keeps a doomed tag from burning a build and a use of the signing key.
+func TestReleaseNotesGuardRunsBeforeTheBuild(t *testing.T) {
+	body := readFile(t, releaseWorkflow)
+	if !strings.Contains(body, "run: bash .github/scripts/require-release-notes.sh") {
+		t.Fatalf("%s no longer runs the release-notes guard as its own step", releaseWorkflow)
+	}
+
+	guard := strings.Index(body, "preflight:")
+	build := strings.Index(body, "build:")
+	if guard < 0 || build < 0 || guard > build {
+		t.Fatalf("%s must declare the preflight job before build", releaseWorkflow)
+	}
+	if !strings.Contains(body, "needs: preflight") {
+		t.Fatalf("%s no longer gates the build on preflight", releaseWorkflow)
+	}
+}
+
 func TestEmbeddedPublicKeyIsAUsableEd25519Key(t *testing.T) {
 	if _, err := parseEmbeddedKey(); err != nil {
 		t.Fatalf("keys/update-public.pem: %v", err)

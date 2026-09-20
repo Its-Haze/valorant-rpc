@@ -4,11 +4,8 @@ set -euo pipefail
 : "${GITHUB_REF_NAME:?}"
 : "${GITHUB_REPOSITORY:?}"
 
-notes_file=".github/release-notes/${GITHUB_REF_NAME}.md"
-if [[ ! -f "$notes_file" ]]; then
-  echo "::error::$notes_file is missing. Copy .github/release-notes/TEMPLATE.md to it and fill in what changed before tagging."
-  exit 1
-fi
+# The preflight job runs this same guard before the build spends any time.
+notes_file=$(bash "$(dirname "$0")/require-release-notes.sh")
 
 installer=$(basename dist/*-setup.exe)
 installer_url="https://github.com/$GITHUB_REPOSITORY/releases/download/$GITHUB_REF_NAME/$installer"

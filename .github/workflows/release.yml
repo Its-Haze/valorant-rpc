@@ -17,7 +17,18 @@ env:
   RELEASE_ASSET: "valorant-rpc-windows-amd64.bin"
 
 jobs:
+  # Needs only the tag, so it fails a notes-less tag in seconds rather than
+  # after a Windows package build and a use of the signing key.
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require curated release notes for this tag
+        run: bash .github/scripts/require-release-notes.sh
+
   build:
+    needs: preflight
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
