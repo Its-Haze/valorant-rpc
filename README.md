@@ -104,6 +104,22 @@ You'll need Go, Node and [Task](https://taskfile.dev/). [CONTRIBUTING.md](CONTRI
 
 ---
 
+## 💖 Support the project
+Valorant RPC is free, and it stays that way. No ads, no accounts, no feature locked behind a payment.
+I build and maintain it in my spare time because I wanted it to exist.
+
+If it's earned a spot in your startup folder and you'd like to chip in toward keeping it maintained,
+there are two ways:
+
+- [**GitHub Sponsors**](https://github.com/sponsors/Its-Haze) takes no cut, and does one-time or monthly.
+- [**Ko-fi**](https://ko-fi.com/itshaze) needs no account, just a card or PayPal.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O0N227CV0N)
+
+Neither unlocks a feature. Supporters get a role in the [Discord](https://discord.haze.sh), and a star costs nothing at all.
+
+---
+
 ## 📞 Contact and Support
 Got questions? Join the [Discord Server](https://discord.haze.sh)
 Feel free to open up Help tickets, or contact me directly on Discord (@haze.dev).
