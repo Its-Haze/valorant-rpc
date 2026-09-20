@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/its-haze/valorant-rpc/pkg/types"
 )
@@ -51,8 +52,8 @@ type Map struct {
 	Splash       string
 }
 
-// Tier is one rung of the competitive ladder. Name already carries the
-// division and the number, as in "IRON 1".
+// Tier is one rung of the competitive ladder. Name carries the division and
+// the number, cased for display as in "Iron 1".
 type Tier struct {
 	Tier      int
 	Name      string
@@ -215,9 +216,24 @@ func (c *Catalogue) Tier(tier int, locale string) (Tier, bool) {
 	}
 	return Tier{
 		Tier:      entry.Tier,
-		Name:      entry.TierName.pick(locale),
+		Name:      tierDisplayName(entry.TierName.pick(locale)),
 		LargeIcon: entry.LargeIcon,
 	}, true
+}
+
+// tierDisplayName softens valorant-api's shouted tier names, "GOLD 2" into
+// "Gold 2". A name that already carries lower case is left exactly as it is.
+func tierDisplayName(name string) string {
+	if name != strings.ToUpper(name) {
+		return name
+	}
+	words := strings.Fields(name)
+	for i, w := range words {
+		runes := []rune(strings.ToLower(w))
+		runes[0] = unicode.ToUpper(runes[0])
+		words[i] = string(runes)
+	}
+	return strings.Join(words, " ")
 }
 
 // GameMode resolves a game mode by its asset path.

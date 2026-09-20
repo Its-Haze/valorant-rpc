@@ -421,3 +421,27 @@ func TestAgentUUIDByDeveloperName(t *testing.T) {
 		}
 	}
 }
+
+// Riot ships tier names in caps. Presence reads as a sentence, so "GOLD 2"
+// shouting next to "Competitive" is the one thing worth normalizing here.
+func TestTierNamesAreNotShouted(t *testing.T) {
+	cat := fixtureCatalogue(t)
+
+	for tier, want := range map[int]string{0: "Unranked", 3: "Iron 1", RadiantTier: "Radiant"} {
+		got, ok := cat.Tier(tier, types.DefaultLocale)
+		if !ok {
+			t.Fatalf("tier %d did not resolve", tier)
+		}
+		if got.Name != want {
+			t.Errorf("tier %d name = %q, want %q", tier, got.Name, want)
+		}
+	}
+}
+
+func TestTierDisplayNameLeavesMixedCaseAlone(t *testing.T) {
+	for _, name := range []string{"Or non classé", "ゴールド 2", "Iron 1"} {
+		if got := tierDisplayName(name); got != name {
+			t.Errorf("tierDisplayName(%q) = %q, want it unchanged", name, got)
+		}
+	}
+}
