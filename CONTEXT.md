@@ -40,8 +40,8 @@ One resolved, immutable snapshot of agents, maps, competitive tiers, game modes 
 _Avoid_: cache (that is the thing that holds the catalogue), asset data
 
 **Locale**:
-The language names render in. `display.locale` is either a tag the catalogue serves or `auto`, which follows the Riot Client's own language. Unlike league-rpc, where the client's language is auto-detected and never user-facing, this *is* a setting, because the catalogue carries every language at once and switching costs nothing.
-_Avoid_: language, client locale (that is the input, not the setting)
+The language names render in, always `types.DefaultLocale` (`en-US`). It is a lookup parameter on the catalogue, not a setting: the language picker was removed because the only thing it changed was the rank name. The catalogue still carries every language, so restoring a picker costs a config field and a dropdown, not a refetch.
+_Avoid_: language, client locale
 
 **Presence stalled**:
 A Riot Client connection that is up but has never produced a presence. Not a timeout: `Watcher.Start` fetches the current snapshot the moment it connects, so once any presence arrives the connection is never stalled again, and a reconnect restarts the window. This is the condition that actually indicates something broken, as opposed to a slow start.

@@ -152,11 +152,6 @@ func (s *guiService) GetTemplateTokens(ctx string) []string {
 	return s.app.GetTemplateTokens(ctx)
 }
 
-// GetLocales returns the languages the Display screen's dropdown offers.
-func (s *guiService) GetLocales() []app.Locale {
-	return s.app.GetLocales()
-}
-
 // GetRecentLogs returns the buffered log lines, oldest first.
 func (s *guiService) GetRecentLogs() []string {
 	return s.app.GetRecentLogs()

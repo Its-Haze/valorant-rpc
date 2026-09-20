@@ -14,7 +14,6 @@ import (
 type State struct {
 	// Player
 	Availability types.Availability `json:"availability"`
-	ClientLocale string             `json:"client_locale"` // resolved from the Riot Client
 	RiotID       string             `json:"riot_id"`
 	Tagline      string             `json:"tagline"`
 	AccountLevel int                `json:"account_level"`
@@ -56,7 +55,6 @@ type State struct {
 func NewState() *State {
 	return &State{
 		Availability:     types.AvailabilityOnline,
-		ClientLocale:     types.DefaultLocale,
 		ContextEnteredAt: time.Now(),
 	}
 }

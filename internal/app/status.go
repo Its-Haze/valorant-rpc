@@ -7,7 +7,6 @@ import (
 
 	"github.com/its-haze/valorant-rpc/internal/discord"
 	"github.com/its-haze/valorant-rpc/internal/state"
-	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 // defaultStatusPollInterval is how often the bridge re-checks the connection
@@ -38,10 +37,7 @@ type StatusSnapshot struct {
 	Paused           bool `json:"paused"`
 	// Context is one of the five presence contexts, empty until the first
 	// state arrives. It is what the phase row on the Home screen reads.
-	Context string `json:"context"`
-	// AutoLocale is the language the "Automatic" locale setting resolves to
-	// right now, so the Display screen can label it with a real language.
-	AutoLocale      string           `json:"auto_locale"`
+	Context         string           `json:"context"`
 	Presence        *discord.RPCData `json:"presence"`
 	PresenceCleared bool             `json:"presence_cleared"`
 }
@@ -54,7 +50,6 @@ func (s StatusSnapshot) equal(o StatusSnapshot) bool {
 		s.DiscordConnected != o.DiscordConnected ||
 		s.Paused != o.Paused ||
 		s.Context != o.Context ||
-		s.AutoLocale != o.AutoLocale ||
 		s.PresenceCleared != o.PresenceCleared {
 		return false
 	}
@@ -77,12 +72,11 @@ type statusBridge struct {
 
 	pollInterval time.Duration
 
-	mu         sync.Mutex
-	context    string
-	autoLocale string
-	last       StatusSnapshot
-	haveLast   bool
-	onChange   func(StatusSnapshot)
+	mu       sync.Mutex
+	context  string
+	last     StatusSnapshot
+	haveLast bool
+	onChange func(StatusSnapshot)
 }
 
 func newStatusBridge(conns Connections, probe PresenceProbe, pauser Pauser, states <-chan *state.State) *statusBridge {
@@ -105,7 +99,7 @@ func (b *statusBridge) setOnChange(fn func(StatusSnapshot)) {
 // snapshot assembles the current status from all sources.
 func (b *statusBridge) snapshot() StatusSnapshot {
 	b.mu.Lock()
-	ctx, autoLocale := b.context, b.autoLocale
+	ctx := b.context
 	b.mu.Unlock()
 
 	ls := b.probe.LastSent()
@@ -116,7 +110,6 @@ func (b *statusBridge) snapshot() StatusSnapshot {
 		DiscordConnected: b.conns.DiscordConnected(),
 		Paused:           b.pauser.IsPaused(),
 		Context:          ctx,
-		AutoLocale:       autoLocale,
 		Presence:         ls.Data,
 		PresenceCleared:  ls.Cleared,
 	}
@@ -139,7 +132,6 @@ func (b *statusBridge) run(ctx context.Context) {
 			}
 			b.mu.Lock()
 			b.context = string(st.PhaseContext())
-			b.autoLocale = types.MatchLocale(st.ClientLocale)
 			b.mu.Unlock()
 			b.emitIfChanged()
 		case <-ticker.C:

@@ -10,7 +10,6 @@ function snapshot(over: Partial<StatusSnapshot> = {}): StatusSnapshot {
     discord_connected: true,
     paused: false,
     context: "in-client",
-    auto_locale: "en-US",
     presence: null,
     presence_cleared: false,
     ...over,

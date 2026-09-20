@@ -1,11 +1,8 @@
-import { Eye, Languages, MessageSquareText } from "lucide-react";
+import { Eye, MessageSquareText } from "lucide-react";
 import type { TemplatePair } from "../../../bindings/github.com/its-haze/valorant-rpc/internal/config/models";
 import { useDefaultConfig } from "../../hooks/useDefaultConfig";
-import { useLocales } from "../../hooks/useLocales";
 import { useSettings } from "../../hooks/useSettings";
-import { useStatus } from "../../hooks/useStatus";
 import {
-  withLocale,
   withMatchImage,
   withShowInClient,
   withShowKills,
@@ -13,18 +10,15 @@ import {
   withShowStats,
 } from "../../lib/displayPatch";
 import { MATCH_IMAGE_OPTIONS } from "../../lib/matchImage";
-import { LOCALE_AUTO, autoLocaleLabel } from "../../lib/locales";
 import { PRESENCE_CONTEXT_LABELS, PRESENCE_CONTEXTS } from "../../lib/presenceContexts";
 import { Field, Select, SettingsCard, Tabs, Toggle } from "../ui";
 import { TemplateEditor } from "./display/TemplateEditor";
 
-// The Display section: global toggles, the name language, and one tab per
-// presence context so the five text editors don't all show at once.
+// The Display section: global toggles and one tab per presence context so
+// the five text editors don't all show at once.
 export function DisplayScreen() {
   const { cfg, error, applyPatch } = useSettings();
   const defaults = useDefaultConfig();
-  const locales = useLocales();
-  const status = useStatus();
 
   if (!cfg) {
     return <p className="text-muted text-sm">Loading settings…</p>;
@@ -35,11 +29,6 @@ export function DisplayScreen() {
       presence: { ...cfg!.presence, templates: { ...cfg!.presence.templates, [ctx]: next } },
     });
   }
-
-  const localeOptions = [
-    { value: LOCALE_AUTO, label: autoLocaleLabel(status?.auto_locale ?? "", locales) },
-    ...locales.map((l) => ({ value: l.tag, label: l.name })),
-  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -123,27 +112,6 @@ export function DisplayScreen() {
             checked={cfg.presence.show_in_client}
             onCheckedChange={(v) => void applyPatch(withShowInClient(cfg, v))}
             label="Show presence while in client"
-          />
-        </Field>
-      </SettingsCard>
-
-      <SettingsCard
-        icon={Languages}
-        title="Language"
-        description="What language agent, map and rank names appear in. Changing it takes effect on your next status update."
-      >
-        <Field
-          id="locale"
-          label="Name language"
-          hint="Automatic follows whatever language your Riot Client is running in"
-          onReset={defaults ? () => void applyPatch(withLocale(cfg, defaults.display.locale)) : undefined}
-          isDefault={!defaults || cfg.display.locale === defaults.display.locale}
-        >
-          <Select
-            value={cfg.display.locale}
-            onValueChange={(v) => void applyPatch(withLocale(cfg, v))}
-            options={localeOptions}
-            aria-label="Name language"
           />
         </Field>
       </SettingsCard>

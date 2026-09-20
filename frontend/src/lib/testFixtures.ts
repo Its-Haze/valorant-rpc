@@ -10,7 +10,6 @@ export function DefaultConfig(): Config {
     onboarding_complete: false,
     display: {
       default: { show_rank: true, show_stats: true, show_kills: false, match_image: "agent" },
-      locale: "auto",
     },
     presence: {
       show_in_client: true,

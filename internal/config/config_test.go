@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/its-haze/valorant-rpc/internal/presence/template"
-	"github.com/its-haze/valorant-rpc/pkg/types"
 )
 
 func TestDefaultConfig_ShipsEveryPresenceTemplate(t *testing.T) {
@@ -117,67 +116,6 @@ func contains(s, sub string) bool {
 		}
 	}
 	return false
-}
-
-func TestValidate_RejectsAnUnknownLocale(t *testing.T) {
-	c := DefaultConfig()
-	c.Display.Locale = "en-GB"
-
-	err := c.Validate()
-	if err == nil {
-		t.Fatal("Validate accepted a locale valorant-api does not serve")
-	}
-	if !contains(err.Error(), "locale") {
-		t.Errorf("error %q does not mention the locale", err)
-	}
-}
-
-func TestValidate_AcceptsEveryLocaleTheCatalogueServes(t *testing.T) {
-	for _, l := range types.Locales() {
-		c := DefaultConfig()
-		c.Display.Locale = l.Tag
-
-		if err := c.Validate(); err != nil {
-			t.Errorf("Validate rejected %q: %v", l.Tag, err)
-		}
-	}
-}
-
-func TestValidate_AcceptsTheAutoLocale(t *testing.T) {
-	c := DefaultConfig()
-	c.Display.Locale = types.LocaleAuto
-
-	if err := c.Validate(); err != nil {
-		t.Errorf("Validate rejected the auto locale: %v", err)
-	}
-}
-
-// Following the Riot Client is the friendlier default, and the one setting a
-// user never has to find.
-func TestDefaultConfig_FollowsTheClientLocale(t *testing.T) {
-	if got := DefaultConfig().Display.Locale; got != types.LocaleAuto {
-		t.Errorf("default locale = %q, want %q", got, types.LocaleAuto)
-	}
-}
-
-func TestClamp_RepairsAnUnknownLocale(t *testing.T) {
-	c := &Config{Display: DisplayConfig{Locale: "kl-KL"}}
-	c.clamp()
-
-	if c.Display.Locale != types.LocaleAuto {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.LocaleAuto)
-	}
-}
-
-// A config file written before the field existed has it empty, and must boot
-// on English rather than blanking every name in the presence.
-func TestClamp_FillsAnEmptyLocale(t *testing.T) {
-	c := &Config{}
-	c.clamp()
-
-	if c.Display.Locale != types.LocaleAuto {
-		t.Errorf("Locale = %q, want %q", c.Display.Locale, types.LocaleAuto)
-	}
 }
 
 func TestDefaultConfig_ShowsTheLaunchingPlaceholder(t *testing.T) {

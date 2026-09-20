@@ -354,29 +354,6 @@ func TestApp_GetDefaultConfig_MatchesConfigDefault(t *testing.T) {
 	}
 }
 
-// The dropdown is built from this list, so English has to stay first and the
-// auto sentinel must never appear in it.
-func TestApp_GetLocales_MatchesTheTypesTable(t *testing.T) {
-	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
-
-	got := a.GetLocales()
-	want := types.Locales()
-	if len(got) != len(want) {
-		t.Fatalf("GetLocales() returned %d entries, want %d", len(got), len(want))
-	}
-	if got[0].Tag != types.DefaultLocale {
-		t.Errorf("first locale is %q, want %q", got[0].Tag, types.DefaultLocale)
-	}
-	for i, l := range got {
-		if l.Tag != want[i].Tag || l.Name != want[i].Name {
-			t.Errorf("locale %d = %+v, want %+v", i, l, want[i])
-		}
-		if l.Tag == types.LocaleAuto {
-			t.Errorf("the auto sentinel leaked into the language list at %d", i)
-		}
-	}
-}
-
 type fakeAppLookup struct {
 	name string
 	err  error

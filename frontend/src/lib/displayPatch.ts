@@ -19,10 +19,6 @@ export function withMatchImage(cfg: Config, choice: string): Partial<Config> {
   return { display: { ...cfg.display, default: { ...cfg.display.default, match_image: choice } } };
 }
 
-export function withLocale(cfg: Config, locale: string): Partial<Config> {
-  return { display: { ...cfg.display, locale } };
-}
-
 export function withShowInClient(cfg: Config, enabled: boolean): Partial<Config> {
   return { presence: { ...cfg.presence, show_in_client: enabled } };
 }

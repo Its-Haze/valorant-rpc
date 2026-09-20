@@ -273,24 +273,6 @@ func (a *App) SubscribeSettings() <-chan *config.Config {
 	return a.store.Subscribe()
 }
 
-// Locale is one language the catalogue renders names in, for the Display
-// screen's dropdown. Tag is the value stored in config.
-type Locale struct {
-	Tag  string `json:"tag"`
-	Name string `json:"name"`
-}
-
-// GetLocales returns every language the catalogue serves, English first and
-// the rest in a fixed order so the dropdown never reshuffles.
-func (a *App) GetLocales() []Locale {
-	src := types.Locales()
-	out := make([]Locale, 0, len(src))
-	for _, l := range src {
-		out = append(out, Locale{Tag: l.Tag, Name: l.Name})
-	}
-	return out
-}
-
 // GetTemplateTokens returns the {token} names valid for ctx, so the Display
 // screen can show a reference next to each editor. Nil for an unknown ctx.
 func (a *App) GetTemplateTokens(ctx string) []string {
@@ -368,7 +350,7 @@ func (a *App) addPreviewAgent(sample map[string]string) {
 	if !ok {
 		return
 	}
-	if agent, found := cat.Agent(uuid, types.ResolveLocale(a.store.Load().Display.Locale, "")); found {
+	if agent, found := cat.Agent(uuid, types.DefaultLocale); found {
 		sample["agent"] = agent.Name
 	}
 }
@@ -393,16 +375,15 @@ func (a *App) previewImages(ctx template.Context, showRank bool, matchImage stri
 	}
 
 	cat := a.catalogue.Snapshot()
-	locale := types.ResolveLocale(a.store.Load().Display.Locale, "")
 
-	if art, ok := a.previewLargeImage(cat, ctx, locale, matchImage); ok {
+	if art, ok := a.previewLargeImage(cat, ctx, types.DefaultLocale, matchImage); ok {
 		large = art
 	}
 
 	if !showRank || !rankedPreviewContexts[ctx] {
 		return large, small
 	}
-	tier, ok := cat.Tier(previewSampleTier, locale)
+	tier, ok := cat.Tier(previewSampleTier, types.DefaultLocale)
 	if ok && tier.LargeIcon != "" {
 		small = tier.LargeIcon
 	}

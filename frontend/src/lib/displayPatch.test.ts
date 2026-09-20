@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DefaultConfig } from "./testFixtures";
-import { withLocale, withShowInClient, withShowRank, withShowStats } from "./displayPatch";
+import { withShowInClient, withShowRank, withShowStats } from "./displayPatch";
 
 describe("withShowRank", () => {
   it("sets show_rank and keeps sibling display fields", () => {
@@ -21,14 +21,6 @@ describe("withShowStats", () => {
       ...cfg.display,
       default: { ...cfg.display.default, show_stats: false },
     });
-  });
-});
-
-describe("withLocale", () => {
-  it("sets the locale and keeps sibling display fields", () => {
-    const cfg = DefaultConfig();
-    const patch = withLocale(cfg, "sv-SE");
-    expect(patch.display).toEqual({ ...cfg.display, locale: "sv-SE" });
   });
 });
 

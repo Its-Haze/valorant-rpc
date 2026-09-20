@@ -88,7 +88,9 @@ func ShouldClearPresence(st *state.State, cfg *config.Config) bool {
 // resolve does every catalogue lookup and token decision once, so the five
 // builders only choose a template context and which art to hang on it.
 func resolve(st *state.State, cfg *config.Config, cat *content.Catalogue) view {
-	locale := types.ResolveLocale(cfg.Display.Locale, st.ClientLocale)
+	// English everywhere: the rank was the only name a language picker ever
+	// changed, so the setting was dropped rather than kept for one string.
+	locale := types.DefaultLocale
 	v := view{st: st, cfg: cfg, tokens: map[string]string{}}
 
 	v.card, v.hasCard = cat.PlayerCard(st.PlayerCardID)

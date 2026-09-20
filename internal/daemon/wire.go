@@ -27,7 +27,7 @@ func Wire(store *config.Store, logger zerolog.Logger) (*Daemon, *content.Cache) 
 	riotClient := riotclient.New(riotclient.Options{Logger: logger})
 	source := NewRiotSource(riotClient, stateMgr, logger, func(onUpdate func(riotchat.Presence)) presenceWatcher {
 		return riotchat.NewWatcher(riotClient, logger, onUpdate)
-	}, WithLocaleReader(riotClient))
+	})
 
 	agents := NewGameLogAgents(gamelog.New(gamelog.Options{}), catalogue, stateMgr, logger)
 
