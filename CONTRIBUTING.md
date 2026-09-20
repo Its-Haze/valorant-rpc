@@ -46,6 +46,8 @@ Also run `gofmt -l .` before opening a pull request. It should print nothing.
 
 Some tests in `internal/discord` hit the live network, because a presence image that stops resolving fails silently: Discord just shows no picture. They check every agent, map and tier URL against valorant-api.com. Pass `-short` to skip them if you are offline.
 
+CI runs `gofmt`, `go vet` and the suite with `-short` on every push and pull request, plus a separate `-race` job and the frontend suite. The live network tests are not in that run: valorant-api.com is a free community API and its being down is no reason to fail your push. They run weekly instead, and on demand from the Actions tab.
+
 ## Finding your way around
 
 `cmd/` holds the entry points. The GUI application is the real one; there is also a headless daemon that runs the same presence engine with no window attached, which is the easier thing to debug against when the problem is on the Riot Client or Discord side rather than in the UI. Each `cmd/` subdirectory has a short package comment saying which is which.

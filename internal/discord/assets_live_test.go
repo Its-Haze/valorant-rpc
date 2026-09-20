@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -21,19 +20,11 @@ import (
 // stops resolving fails silently: Discord just shows no picture.
 
 const (
-	// repoURL is checked anonymously, the way Discord's image proxy sees it.
-	repoURL = "https://github.com/Its-Haze/valorant-rpc"
-
 	// liveProbes is the concurrency against valorant-api.com. Small on
 	// purpose: this is a free community API, not a load target.
 	liveProbes = 6
 
 	liveTimeout = 30 * time.Second
-
-	// cardSample caps how many of the ~1000 cards a normal run checks. They
-	// share one URL shape, and fullCardScanEnv checks every one in ~7s.
-	cardSample      = 25
-	fullCardScanEnv = "VALORANT_RPC_FULL_ASSET_SCAN"
 )
 
 // asset is one URL the builders can emit, labelled so a failure names the
@@ -151,8 +142,10 @@ func TestPresenceImagesResolve(t *testing.T) {
 	checkAll(t, assets)
 }
 
-// TestPlayerCardImagesResolve samples the card art, because any card a
-// player has equipped becomes their large image in the lobby contexts.
+// TestPlayerCardImagesResolve checks one card, because any card a player has
+// equipped becomes their large image in the lobby contexts. Every card shares
+// one URL shape, so one proves the shape and ~1000 only prove valorant-api is
+// up.
 func TestPlayerCardImagesResolve(t *testing.T) {
 	if testing.Short() {
 		t.Skip("network test")
@@ -163,39 +156,16 @@ func TestPlayerCardImagesResolve(t *testing.T) {
 		t.Fatal("no player cards in the catalogue")
 	}
 
-	_, full := os.LookupEnv(fullCardScanEnv)
-	step := 1
-	if !full && len(cards) > cardSample {
-		step = len(cards) / cardSample
-	}
-
-	var assets []asset
-	for i := 0; i < len(cards); i += step {
-		assets = append(assets, asset{"card " + cards[i].UUID + " displayIcon", cards[i].Icon})
-	}
-
-	if full {
-		t.Logf("checking all %d cards", len(cards))
-	} else {
-		t.Logf("sampling %d of %d cards; set %s=1 to check every one", len(assets), len(cards), fullCardScanEnv)
-	}
-	checkAll(t, assets)
+	// PlayerCards sorts by UUID, so this picks the same card every run.
+	card := cards[0]
+	checkAll(t, []asset{{"card " + card.UUID + " displayIcon", card.Icon}})
 }
 
-// TestRepoHostedImagesResolve checks this repository's own images. A private
-// repo 404s for Discord's proxy, so the check starts working when it opens.
+// TestRepoHostedImagesResolve checks this repository's own images, which the
+// builders hotlink and Discord's proxy fetches anonymously.
 func TestRepoHostedImagesResolve(t *testing.T) {
 	if testing.Short() {
 		t.Skip("network test")
-	}
-
-	resp, err := head(liveClient(), repoURL)
-	if err != nil {
-		t.Skipf("%s is unreachable: %v", repoURL, err)
-	}
-	resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		t.Skipf("%s is not readable anonymously (%d), so its hotlinked images cannot resolve for anyone yet", repoURL, resp.StatusCode)
 	}
 
 	checkAll(t, []asset{

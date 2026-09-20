@@ -1,0 +1,95 @@
+name: Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  # Asset rot is the only thing the weekly run catches that a push run cannot.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # windows-latest, not ubuntu: internal/discord/ipc is built on Windows named
+  # pipes and Wails needs GTK, so the tree does not compile anywhere else.
+  go:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: gofmt
+        shell: bash
+        run: |
+          unformatted=$(gofmt -l .)
+          test -z "$unformatted" || { echo "$unformatted"; exit 1; }
+
+      - name: go vet
+        run: go vet ./...
+
+      # -short skips the live valorant-api and GitHub probes. A community API
+      # being down is not a reason to fail someone's push; the weekly run owns it.
+      - name: go test
+        run: go test -short ./...
+
+  # Separate from the job above so a broken race runtime cannot mask a real
+  # test failure. Four data races in internal/updates were found by a flake.
+  race:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: go test -race
+        run: go test -short -race ./...
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Test
+        working-directory: frontend
+        run: npm test
+
+  # The network tests: every agent, map and tier UUID resolved against
+  # valorant-api.com, plus this repo's own hotlinked logos.
+  assets:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Probe live presence images
+        run: go test -v -count=1 -run Resolve ./internal/discord

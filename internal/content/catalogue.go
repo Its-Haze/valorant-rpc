@@ -407,7 +407,7 @@ func (c *Catalogue) PlayerCards() []PlayerCard {
 }
 
 // sortedKeys keeps every enumeration deterministic, because Go randomizes
-// map order and a sampled asset check has to be reproducible.
+// map order and the live asset check has to probe the same card every run.
 func sortedKeys[V any](m map[string]V) []string {
 	keys := make([]string, 0, len(m))
 	for key := range m {
