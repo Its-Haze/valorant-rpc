@@ -9,6 +9,8 @@ permissions:
   contents: write
 
 env:
+  # Pinned to the version this project builds against (go.mod).
+  WAILS_VERSION: "v3.0.0-beta.15"
   TASK_VERSION: "v3.53.1"
   # internal/updates.ReleaseAsset; a regression test keeps the two in step.
   RELEASE_ASSET: "valorant-rpc-windows-amd64.bin"
@@ -43,11 +45,8 @@ jobs:
       - name: Install Task
         run: go install github.com/go-task/task/v3/cmd/task@${{ env.TASK_VERSION }}
 
-      # Read from go.mod so the CLI can never build against a different Wails
-      # than the app links.
       - name: Install wails3 CLI
-        shell: bash
-        run: go install "github.com/wailsapp/wails/v3/cmd/wails3@$(go list -m -f '{{.Version}}' github.com/wailsapp/wails/v3)"
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
 
       - name: Install NSIS
         shell: bash

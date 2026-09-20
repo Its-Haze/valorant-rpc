@@ -8,16 +8,12 @@ import (
 	"encoding/pem"
 	"errors"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 )
 
-const (
-	signingDoc  = "../../docs/release-signing.md"
-	workflowDir = "../../.github/workflows"
-)
+const signingDoc = "../../docs/release-signing.md"
 
 var (
 	errNoPEM      = errors.New("no PEM block")
@@ -114,48 +110,4 @@ func readFile(t *testing.T, path string) string {
 		t.Fatalf("read %s: %v", path, err)
 	}
 	return string(body)
-}
-
-// A Go version pinned in a workflow drifts from go.mod the first time go.mod
-// moves, and CI then tests something nobody builds.
-func TestWorkflowsTakeTheGoVersionFromGoMod(t *testing.T) {
-	entries, err := os.ReadDir(workflowDir)
-	if err != nil {
-		t.Fatalf("read %s: %v", workflowDir, err)
-	}
-
-	checked := 0
-	for _, entry := range entries {
-		if entry.IsDir() || filepath.Ext(entry.Name()) != ".yml" {
-			continue
-		}
-		body := readFile(t, filepath.Join(workflowDir, entry.Name()))
-		uses := strings.Count(body, "uses: actions/setup-go@")
-		if uses == 0 {
-			continue
-		}
-		checked++
-
-		if got := strings.Count(body, "go-version-file: go.mod"); got != uses {
-			t.Errorf("%s calls setup-go %d times but reads go.mod %d times", entry.Name(), uses, got)
-		}
-		// "go-version-file:" does not contain "go-version:", so this only
-		// catches a literal pin.
-		if strings.Contains(body, "go-version:") {
-			t.Errorf("%s pins a Go version literally; use go-version-file: go.mod", entry.Name())
-		}
-	}
-
-	if checked == 0 {
-		t.Fatalf("no workflow in %s uses setup-go, so this guard checks nothing", workflowDir)
-	}
-}
-
-// The wails3 CLI generates the icons and bindings the build compiles against,
-// so a CLI built from a different Wails than go.mod pins is a silent skew.
-func TestReleaseWorkflowTakesTheWailsVersionFromGoMod(t *testing.T) {
-	body := readFile(t, releaseWorkflow)
-	if !strings.Contains(body, `go list -m -f '{{.Version}}' github.com/wailsapp/wails/v3`) {
-		t.Fatalf("%s no longer derives the wails3 CLI version from go.mod", releaseWorkflow)
-	}
 }

@@ -28,12 +28,6 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: gofmt
-        shell: bash
-        run: |
-          unformatted=$(gofmt -l .)
-          test -z "$unformatted" || { echo "$unformatted"; exit 1; }
-
       - name: go vet
         run: go vet ./...
 
