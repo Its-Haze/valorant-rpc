@@ -64,4 +64,6 @@ Architecture decisions live in [`docs/adr/`](docs/adr/). If you are changing the
 
 ## Releases
 
-Tagging a version triggers the release workflow, which builds the installer and the update binary, then signs a checksum file with an ed25519 key held in a protected environment. The app verifies that signature against a public key compiled into itself before installing anything.
+Tagging a version triggers the release workflow, which builds the installer and the update binary, then signs a checksum file with an ed25519 key held in a protected environment. The app verifies that signature against a public key compiled into itself before installing anything. [`docs/release-signing.md`](docs/release-signing.md) has the details, including how to verify a release by hand.
+
+A tag with a hyphen in it, like `v0.1.0-rc1`, publishes as a prerelease. Installed clients only ever look at `/releases/latest`, which skips prereleases, so a hyphen tag is the safe way to exercise the pipeline without shipping anything to anyone.

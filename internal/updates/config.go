@@ -22,8 +22,8 @@ const ChecksumAsset = "SHA256SUMS"
 // after the launch check.
 const CheckInterval = 30 * time.Minute
 
-// publicKeyPEM is the release-signature trust root. Placeholder: its private
-// half was generated and discarded, so no release can verify until it is real.
+// publicKeyPEM is the release-signature trust root; its private half exists
+// only as the UPDATE_SIGNING_KEY secret. See docs/release-signing.md.
 //
 //go:embed keys/update-public.pem
 var publicKeyPEM []byte
