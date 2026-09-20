@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	wupdater "github.com/wailsapp/wails/v3/pkg/updater"
@@ -107,7 +108,7 @@ func TestSignedProvider_AttachesSignature(t *testing.T) {
 	}
 }
 
-func TestSignedProvider_NoSidecarLeavesDigestOnly(t *testing.T) {
+func TestSignedProvider_RefusesAReleaseWithNoSidecar(t *testing.T) {
 	const artifactName = "valorant-rpc-gui.exe"
 	artifactBytes := []byte("pretend-exe-bytes")
 	digest := sha256.Sum256(artifactBytes)
@@ -141,22 +142,19 @@ func TestSignedProvider_NoSidecarLeavesDigestOnly(t *testing.T) {
 		t.Fatalf("github.New: %v", err)
 	}
 
-	// A release with no SHA256SUMS.sig asset at all: an older release published
-	// before this pipeline existed.
+	// The digest travels in the same release as the binary, so on its own it
+	// proves nothing about who published either. Refuse rather than downgrade.
 	doer := doerFunc(func(r *http.Request) (*http.Response, error) {
 		return jsonResponse(200, `{"assets":[]}`), nil
 	})
 
 	p := newSignedGithubProvider(inner, "owner/repo", doer)
-	rel, err := p.Check(context.Background(), updaterCheckRequest("0.0.0"))
-	if err != nil {
-		t.Fatalf("Check: %v", err)
+	_, err = p.Check(context.Background(), updaterCheckRequest("0.0.0"))
+	if err == nil {
+		t.Fatal("Check accepted a release with no SHA256SUMS.sig")
 	}
-	if rel == nil || rel.Verification == nil {
-		t.Fatal("expected a digest-only Verification")
-	}
-	if len(rel.Verification.Signature) != 0 {
-		t.Fatal("expected no signature when no sidecar is published")
+	if !strings.Contains(err.Error(), SignatureAsset) {
+		t.Fatalf("Check error = %v, want it to name %s", err, SignatureAsset)
 	}
 }
 
@@ -164,4 +162,57 @@ func TestSignedProvider_NoSidecarLeavesDigestOnly(t *testing.T) {
 // that the fixed "v1.2.3" fixture release always looks newer.
 func updaterCheckRequest(currentVersion string) wupdater.CheckRequest {
 	return wupdater.CheckRequest{CurrentVersion: currentVersion}
+}
+
+// A sidecar naming only some other artifact leaves our binary unsigned, which
+// is the no-sidecar case wearing a disguise.
+func TestSignedProvider_RefusesASidecarWithNoLineForTheArtifact(t *testing.T) {
+	const artifactName = "valorant-rpc-gui.exe"
+	artifactBytes := []byte("pretend-exe-bytes")
+	digest := sha256.Sum256(artifactBytes)
+
+	mux := http.NewServeMux()
+	srv := httptest.NewServer(mux)
+	defer srv.Close()
+
+	mux.HandleFunc("/repos/owner/repo/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, `{
+			"tag_name": "v1.2.3",
+			"assets": [
+				{"id": 1, "name": %q, "browser_download_url": %q},
+				{"id": 2, "name": "SHA256SUMS", "browser_download_url": %q}
+			]
+		}`, artifactName, srv.URL+"/dl/"+artifactName, srv.URL+"/dl/SHA256SUMS")
+	})
+	mux.HandleFunc("/dl/"+artifactName, func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write(artifactBytes)
+	})
+	mux.HandleFunc("/dl/SHA256SUMS", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(checksumsFile(digest[:], artifactName)))
+	})
+	mux.HandleFunc("/dl/SHA256SUMS.sig", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("cafebabe  some-other-artifact.exe\n"))
+	})
+
+	inner, err := github.New(github.Config{
+		Repository:    "owner/repo",
+		BaseURL:       srv.URL,
+		ChecksumAsset: ChecksumAsset,
+	})
+	if err != nil {
+		t.Fatalf("github.New: %v", err)
+	}
+
+	doer := doerFunc(func(r *http.Request) (*http.Response, error) {
+		if strings.HasSuffix(r.URL.Path, "/"+SignatureAsset) {
+			return jsonResponse(200, "cafebabe  some-other-artifact.exe\n"), nil
+		}
+		return jsonResponse(200, fmt.Sprintf(`{"assets":[{"name":%q,"browser_download_url":%q}]}`,
+			SignatureAsset, srv.URL+"/dl/SHA256SUMS.sig")), nil
+	})
+
+	p := newSignedGithubProvider(inner, "owner/repo", doer)
+	if _, err := p.Check(context.Background(), updaterCheckRequest("0.0.0")); err == nil {
+		t.Fatal("Check accepted a release whose sidecar has no line for the artifact")
+	}
 }

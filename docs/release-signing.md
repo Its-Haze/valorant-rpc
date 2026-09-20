@@ -10,15 +10,16 @@ download and run. The raw binary (`internal/updates.ReleaseAsset`) is what the
 in-app updater swaps in, named `.bin` so it doesn't look double-clickable
 sitting next to the installer. `SHA256SUMS` lists the sha256 of both, and
 `SHA256SUMS.sig` holds a detached ed25519 signature over each of those digests.
-`internal/updates` checks the digest, and the signature when the release
-carries one, before it writes anything to disk.
+`internal/updates` checks the digest and the signature before it writes
+anything to disk, and refuses a release that carries no signature for its
+binary. That refusal is the point: the digest travels in the same release as
+the binary, so on its own it proves the download was not corrupted and nothing
+about who published it. A release missing `SHA256SUMS.sig`, or whose sidecar
+has no line naming the binary, fails the check and the app stays on the version
+it has.
 
-That "when" is load-bearing, so read it twice. A release that publishes no
-`SHA256SUMS.sig`, or whose sidecar has no line for the binary, verifies on the
-digest alone and installs. The signature is the defence against a release
-published from a compromised repo, and that defence is opt-in per release right
-now. Every release must publish the sidecar. Ticket 19 tracks making the client
-refuse a release that lacks one.
+The practical consequence is that a broken `sign` job blocks a release rather
+than degrading it. That is the intended trade.
 
 ## How the workflow is split
 

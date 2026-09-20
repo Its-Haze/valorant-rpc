@@ -39,8 +39,10 @@ func (p *signedGithubProvider) Check(ctx context.Context, req wupdater.CheckRequ
 	if err != nil {
 		return nil, fmt.Errorf("updates: load release signature: %w", err)
 	}
+	// Fail closed. The digest ships in the same release as the binary, so
+	// accepting a release without a signature verifies nothing about its origin.
 	if sig == nil {
-		return rel, nil
+		return nil, fmt.Errorf("updates: release publishes no %s entry for %s", SignatureAsset, rel.Artifact.Filename)
 	}
 	if rel.Verification == nil {
 		rel.Verification = &wupdater.Verification{}
