@@ -114,10 +114,10 @@ For issues related to the code, or project as a whole, please open an [issue on 
 
 ## Star History
 
-<a href="https://star-history.com/#Its-Haze/valorant-rpc&Date">
+<a href="https://www.star-history.com/?repos=Its-Haze%2Fvalorant-rpc&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Its-Haze/valorant-rpc&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Its-Haze/valorant-rpc&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Its-Haze/valorant-rpc&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Its-Haze/valorant-rpc&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Its-Haze/valorant-rpc&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Its-Haze/valorant-rpc&type=date&legend=top-left" />
  </picture>
 </a>
