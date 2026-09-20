@@ -25,39 +25,29 @@
 
 </div>
 
-Your map, mode, rank and round score on your Discord profile, and every line of it is yours to
-rewrite. It reads what the Riot Client already publishes on your own PC, so there's nothing to
-configure and nothing for Vanguard to object to.
+Valorant RPC replaces the presence Valorant gives Discord with one that actually says something:
+your agent, your rank, the map, the round score. Every line of it is a template you can rewrite.
 
 ---
 
 ## Showcase
 
-### In a Match
+<table>
+<tr>
+<th width="50%">❌ Valorant's own presence</th>
+<th width="50%">✅ With Valorant RPC</th>
+</tr>
+<tr>
+<td><img src="images/riot_default_in_match.png" alt="Valorant's built-in presence in a match" /></td>
+<td><img src="images/in_match_showcase.png" alt="The same match with Valorant RPC" /></td>
+</tr>
+<tr>
+<td><img src="images/riot_default_in_client.png" alt="Valorant's built-in presence in the client" /></td>
+<td><img src="images/in_client_showcase.png" alt="The same client with Valorant RPC" /></td>
+</tr>
+</table>
 
-Your map as the artwork, the round score as it happens, and a timer that runs from the first round.
-
-![in-game](images/in_match_showcase.png)
-
-### Ranked Games
-
-Your rank emblem, right there on your presence. Competitive only, so an unrated game never advertises your rank, and **Show rank** turns it off entirely.
-
-![ranked-1](images/in_queue_show_rank_1.png) ![ranked-2](images/in_match_show_rank_1.png)
-
-### In the Client
-
-Your equipped player card shows up between matches, the same art the game puts next to your name.
-
-![player-card-1](images/in_client_card_1.png) ![player-card-2](images/in_client_card_2.png)
-
-There's an idle marker too, for when you've stepped away.
-
-![Online](images/in_client_online_status.png) ![Idle](images/in_client_idle_status.png)
-
-### Write Your Own
-
-Every line Discord shows is a template. Rewrite it, drop in your map, mode, party or score, and the preview updates as you type. Each situation has its own: client, queue, custom game, agent select and in a match.
+### You choose what to show
 
 ![presence-text-editor](images/presence-text.gif)
 
@@ -91,8 +81,8 @@ Nope! It only reads what the Riot Client already publishes on your own computer.
 ### 🛡️ Is this a virus? Why is Windows warning me?
 No, and because it isn't code-signed. A certificate costs $100 a year, which is hard to justify for a free project, so Windows distrusts an installer it hasn't seen before. Click **More info**, then **Run anyway**, and whitelist it if Defender gets loud. The entire source code is public on GitHub, so review it or build it yourself.
 
-### 🎭 Why doesn't it show my agent?
-Riot doesn't publish that one on your own machine, so there's nothing to read yet. It's the next thing on the list.
+### 🎭 Why is my agent only there once the match starts?
+It comes from Valorant's own log file, and that file doesn't name your agent until you've loaded in. Agent select still shows your player card. If you'd rather keep the card during the match too, **Display** → **Picture during a match** switches it.
 
 There's a longer FAQ inside the app, under **Help**, for the questions you only run into once it's running.
 
