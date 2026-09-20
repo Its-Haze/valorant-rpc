@@ -1,0 +1,13 @@
+# Git for Windows checks out CRLF by default and gofmt calls a CRLF .go file
+# unformatted, so CI fails on a tree nobody edited. Everything here is LF.
+* text=auto eol=lf
+
+*.png binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+
+# PowerShell is fine with LF, but NSIS reads its scripts on Windows only.
+*.ps1 text eol=crlf
+*.nsi text eol=crlf
+*.nsh text eol=crlf

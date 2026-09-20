@@ -71,10 +71,8 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Typecheck
-        working-directory: frontend
-        run: npx tsc --noEmit
-
+      # No typecheck here: tsc needs frontend/bindings/, which wails3 generates
+      # and .gitignore excludes. task build and the release workflow cover it.
       - name: Test
         working-directory: frontend
         run: npm test
