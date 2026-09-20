@@ -113,11 +113,12 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         question: "Can I see names in my own language?",
         answer:
-          "Yes. Display page, Name language. Automatic follows whatever language your Riot Client is in, and switching takes effect on your next status update.",
+          "No. Agent, map and rank names are always in English. The only name that ever differed was your rank, so the language picker wasn't worth the setting.",
       },
       {
-        question: "Why is the round score missing early in a match?",
-        answer: "It only appears once somebody has won a round. Riot reports 0-0 all through the menus, and that isn't a score.",
+        question: "Why does the round score lag behind the scoreboard?",
+        answer:
+          "Riot republishes your status on a timer rather than when a round ends, so it can sit 60 to 90 seconds behind. That timer is inside the Riot Client and nothing this app does can speed it up.",
       },
     ],
   },

@@ -5,7 +5,6 @@ package content
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand/v2"
 	"slices"
 	"strings"
 
@@ -389,16 +388,6 @@ func (c *Catalogue) PlayerCards() []PlayerCard {
 		out = append(out, card)
 	}
 	return out
-}
-
-// RandomPlayerCard draws one card at random. The launching placeholder wants
-// a different face on every rotation, so this is the one accessor that varies.
-func (c *Catalogue) RandomPlayerCard() (PlayerCard, bool) {
-	cards := c.PlayerCards()
-	if len(cards) == 0 {
-		return PlayerCard{}, false
-	}
-	return cards[rand.IntN(len(cards))], true
 }
 
 // sortedKeys keeps every enumeration deterministic, because Go randomizes

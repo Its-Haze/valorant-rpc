@@ -363,35 +363,6 @@ func (u *Updater) ImmediateUpdate(st *state.State) {
 	u.startReclaimBurst()
 }
 
-// UpdateLaunchingPlaceholder sends the launching placeholder, drawing its
-// card art from the current catalogue.
-func (u *Updater) UpdateLaunchingPlaceholder(start int64) {
-	u.UpdatePlaceholder(BuildLaunchingPresence(start, u.snapshot()))
-}
-
-// UpdatePlaceholder sends rpcData as-is, bypassing MapStateToPresence, for
-// the placeholder shown before there is any state to map.
-func (u *Updater) UpdatePlaceholder(rpcData *RPCData) {
-	u.mu.Lock()
-	defer u.mu.Unlock()
-
-	if u.timer != nil {
-		u.timer.Stop()
-		u.timer = nil
-	}
-
-	if err := u.client.UpdatePresence(rpcData); err != nil {
-		u.logger.Warn().Err(err).Msg("Failed to update Discord placeholder presence")
-		return
-	}
-
-	// Clear previousState so the first real state isn't skipped as "unchanged".
-	u.previousState = nil
-	u.previousRPCData = rpcData.Copy()
-	u.recordSent(rpcData)
-	u.stopHeartbeat()
-}
-
 // ClearPresence clears the Discord presence
 func (u *Updater) ClearPresence() {
 	u.mu.Lock()

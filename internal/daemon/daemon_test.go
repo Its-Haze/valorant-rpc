@@ -142,7 +142,7 @@ func newTestDaemon(t *testing.T, cfg *config.Config, opts ...DaemonOption) (*Dae
 	updater, stateMgr, sender := newTestDaemonDeps(cfg)
 	discordRunner := &fakeRunner{}
 	riotRunner := &fakeRiotRunner{}
-	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval, testPollInterval, opts...)
+	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval, opts...)
 	return d, discordRunner, riotRunner, stateMgr, sender
 }
 
@@ -182,7 +182,7 @@ func TestDaemon_RunNeverExitsWhileBothSupervisorsFailRepeatedly(t *testing.T) {
 	discordSup := NewSupervisor(&fakeConnector{connectFailures: 1 << 30}, testRetryInterval, testPollInterval)
 	riotSup := NewRiotSupervisor(&fakeConnector{connectFailures: 1 << 30}, newFakeProcessChecker(), testRetryInterval, testPollInterval, testPollInterval)
 	updater, stateMgr, _ := newTestDaemonDeps(defaultTestConfig())
-	d := New(discordSup, riotSup, updater, stateMgr, zerolog.Nop(), testPollInterval, testPollInterval)
+	d := New(discordSup, riotSup, updater, stateMgr, zerolog.Nop(), testPollInterval)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	done := make(chan struct{})
@@ -216,7 +216,7 @@ func TestDaemon_OneSupervisorFailingDoesNotBlockTheOther(t *testing.T) {
 		WithOnConnect(func() { healthyConnected.Store(true) }))
 
 	updater, stateMgr, _ := newTestDaemonDeps(defaultTestConfig())
-	d := New(stuck, healthy, updater, stateMgr, zerolog.Nop(), testPollInterval, testPollInterval)
+	d := New(stuck, healthy, updater, stateMgr, zerolog.Nop(), testPollInterval)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -237,7 +237,7 @@ func TestDaemon_RealPresenceOnceBothConnected(t *testing.T) {
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && strings.HasPrefix(last.State, "In lobby")
+		return last != nil && strings.HasPrefix(last.State, "In client")
 	})
 }
 
@@ -256,7 +256,7 @@ func TestDaemon_PresenceFollowsStateChangesOnceConnected(t *testing.T) {
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && last.State == "In a match"
+		return last != nil && last.State == "In a match · 0-0"
 	})
 }
 
@@ -271,7 +271,7 @@ func TestDaemon_ResendsPresenceOnConfigChangeWhileConnected(t *testing.T) {
 	discordRunner := &fakeRunner{}
 	discordRunner.connected.Store(true)
 	riotRunner := &fakeRiotRunner{}
-	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval, testPollInterval)
+	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -309,58 +309,27 @@ func TestDaemon_ClearsPresenceWhenDisconnectedAndValorantNotRunning(t *testing.T
 	waitFor(t, testTimeout, func() bool { return sender.clearCount() > before })
 }
 
-func TestDaemon_NoPlaceholderWhileTheSettingIsOff(t *testing.T) {
-	cfg := defaultTestConfig()
-	cfg.Behavior.ShowPlaceholderPresence = false
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
+func TestDaemon_ShowsNothingWhileValorantIsStartingUp(t *testing.T) {
+	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, defaultTestConfig())
 	discordRunner.connected.Store(true)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	go d.Run(ctx)
 
-	// Valorant is up but nothing has connected, which is placeholder territory.
+	// Valorant's process is up but nothing has connected yet. The app used to
+	// show a launching card here; now it waits for real presence.
 	riotRunner.gameUp.Store(true)
 	time.Sleep(10 * testPollInterval)
 
 	if sender.sendCount() != 0 {
-		t.Fatalf("expected no placeholder sends with the setting off, got %d", sender.sendCount())
+		t.Fatalf("expected no sends before the first presence arrives, got %d", sender.sendCount())
 	}
 	waitFor(t, testTimeout, func() bool { return sender.clearCount() > 0 })
 }
 
-func TestDaemon_ShowsRotatingPlaceholderWhenTheSettingIsOn(t *testing.T) {
-	cfg := defaultTestConfig()
-	cfg.Behavior.ShowPlaceholderPresence = true
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
-	discordRunner.connected.Store(true)
-
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
-	go d.Run(ctx)
-
-	riotRunner.gameUp.Store(true)
-
-	waitFor(t, testTimeout, func() bool {
-		last := sender.lastSend()
-		return last != nil && last.Details == "Launching VALORANT..."
-	})
-
-	// More than one send while still launching, so the rotation is running.
-	waitFor(t, testTimeout, func() bool { return sender.sendCount() >= 2 })
-
-	// The instant a presence is readable, real presence takes over.
-	riotRunner.connected.Store(true)
-	waitFor(t, testTimeout, func() bool {
-		last := sender.lastSend()
-		return last != nil && last.Details != "Launching VALORANT..."
-	})
-}
-
 func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
-	cfg := defaultTestConfig()
-	cfg.Behavior.ShowPlaceholderPresence = true
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
+	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, defaultTestConfig())
 	discordRunner.connected.Store(true)
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -371,16 +340,14 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.connected.Store(true)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && strings.HasPrefix(last.State, "In lobby")
+		return last != nil && strings.HasPrefix(last.State, "In client")
 	})
 
-	// Nothing ever arrived on this connection: show the placeholder rather
-	// than a state the daemon never actually read.
+	// Nothing ever arrived on this connection: clear rather than show a state
+	// the daemon never actually read.
+	before := sender.clearCount()
 	riotRunner.stalled.Store(true)
-	waitFor(t, testTimeout, func() bool {
-		last := sender.lastSend()
-		return last != nil && last.Details == "Launching VALORANT..."
-	})
+	waitFor(t, testTimeout, func() bool { return sender.clearCount() > before })
 
 	if !d.PresenceStalled() {
 		t.Fatal("PresenceStalled should report the stall to the GUI too")
@@ -389,27 +356,8 @@ func TestDaemon_StalledConnectionFallsOutOfRealPresence(t *testing.T) {
 	riotRunner.stalled.Store(false)
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && strings.HasPrefix(last.State, "In lobby")
+		return last != nil && strings.HasPrefix(last.State, "In client")
 	})
-}
-
-func TestDaemon_StalledConnectionClearsWhenThePlaceholderIsOff(t *testing.T) {
-	cfg := defaultTestConfig()
-	cfg.Behavior.ShowPlaceholderPresence = false
-	d, discordRunner, riotRunner, _, sender := newTestDaemon(t, cfg)
-	discordRunner.connected.Store(true)
-
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
-	go d.Run(ctx)
-
-	riotRunner.gameUp.Store(true)
-	riotRunner.connected.Store(true)
-	waitFor(t, testTimeout, func() bool { return sender.sendCount() > 0 })
-
-	before := sender.clearCount()
-	riotRunner.stalled.Store(true)
-	waitFor(t, testTimeout, func() bool { return sender.clearCount() > before })
 }
 
 func TestDaemon_PauseClearsPresenceAndUnpauseResumes(t *testing.T) {
@@ -506,6 +454,97 @@ func TestDaemon_NoLookupWiredIsNotAPanic(t *testing.T) {
 	})
 }
 
+// fakeMenuLookup stands in for the game log reader, counting reads and
+// applying whatever screen the test set.
+type fakeMenuLookup struct {
+	mu     sync.Mutex
+	state  *state.Manager
+	screen types.MenuScreen
+	reads  int
+}
+
+func (f *fakeMenuLookup) Read() {
+	f.mu.Lock()
+	screen := f.screen
+	f.reads++
+	f.mu.Unlock()
+	f.state.Apply(func(st *state.State) { st.MenuScreen = screen })
+}
+
+func (f *fakeMenuLookup) set(screen types.MenuScreen) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.screen = screen
+}
+
+func (f *fakeMenuLookup) readCount() int {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return f.reads
+}
+
+// Riot reports the same payload for the home screen and the Play section, so
+// the presence has to move on the screen alone.
+func TestDaemon_MenuScreenSplitsTheClientFromTheLobby(t *testing.T) {
+	updater, stateMgr, sender := newTestDaemonDeps(defaultTestConfig())
+	screens := &fakeMenuLookup{state: stateMgr, screen: types.ScreenClient}
+	discordRunner, riotRunner := &fakeRunner{}, &fakeRiotRunner{}
+	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval, WithMenuLookup(screens))
+	discordRunner.connected.Store(true)
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go d.Run(ctx)
+
+	riotRunner.connected.Store(true)
+	waitFor(t, testTimeout, func() bool {
+		last := sender.lastSend()
+		return last != nil && strings.HasPrefix(last.State, "In client")
+	})
+
+	screens.set(types.ScreenLobby)
+	waitFor(t, testTimeout, func() bool {
+		last := sender.lastSend()
+		return last != nil && strings.HasPrefix(last.State, "In lobby")
+	})
+
+	// And back: pressing Home has to take the lobby off the presence.
+	screens.set(types.ScreenClient)
+	waitFor(t, testTimeout, func() bool {
+		last := sender.lastSend()
+		return last != nil && strings.HasPrefix(last.State, "In client")
+	})
+}
+
+// The log grows fast in a match and the screen could not change the context
+// there anyway, so the read is skipped rather than paid for.
+func TestDaemon_MenuScreenIsNotReadDuringAMatch(t *testing.T) {
+	updater, stateMgr, sender := newTestDaemonDeps(defaultTestConfig())
+	screens := &fakeMenuLookup{state: stateMgr, screen: types.ScreenClient}
+	discordRunner, riotRunner := &fakeRunner{}, &fakeRiotRunner{}
+	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.Nop(), testPollInterval, WithMenuLookup(screens))
+	discordRunner.connected.Store(true)
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go d.Run(ctx)
+
+	riotRunner.connected.Store(true)
+	waitFor(t, testTimeout, func() bool { return screens.readCount() > 0 })
+
+	stateMgr.Apply(func(st *state.State) { st.SessionLoopState = types.SessionLoopInGame })
+	waitFor(t, testTimeout, func() bool {
+		last := sender.lastSend()
+		return last != nil && strings.HasPrefix(last.State, "In a match")
+	})
+
+	before := screens.readCount()
+	time.Sleep(10 * testPollInterval)
+	if got := screens.readCount(); got != before {
+		t.Errorf("the log was read %d more times during a match", got-before)
+	}
+}
+
 // countingWriter counts Write calls, standing in for a log sink so tests can
 // assert on log volume without parsing log lines.
 type countingWriter struct {
@@ -522,7 +561,7 @@ func TestDaemon_LogsOnceWhileWaitingForDiscordThenAgainOnNextEdge(t *testing.T) 
 	writer := &countingWriter{}
 	discordRunner := &fakeRunner{} // starts disconnected
 	riotRunner := &fakeRiotRunner{}
-	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.New(writer), testPollInterval, testPollInterval)
+	d := New(discordRunner, riotRunner, updater, stateMgr, zerolog.New(writer), testPollInterval)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -565,7 +604,7 @@ func TestDaemon_ResendsPresenceOnceDiscordConnectsAfterTheRiotClient(t *testing.
 
 	waitFor(t, testTimeout, func() bool {
 		last := sender.lastSend()
-		return last != nil && strings.HasPrefix(last.State, "In lobby")
+		return last != nil && strings.HasPrefix(last.State, "In client")
 	})
 }
 

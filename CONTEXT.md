@@ -21,11 +21,15 @@ Riot's string subdividing `MENUS`: `DEFAULT`, `MATCHMAKING`, `CUSTOM_GAME_SETUP`
 _Avoid_: lobby state, queue state
 
 **Context**:
-One of the five situations a presence is built for: `in-client`, `in-queue`, `custom-game`, `agent-select`, `in-match`. Derived from session loop state and party state by `State.PhaseContext()`. Each maps to one builder and one user-editable template pair. The exact strings are config keys, pinned on the Go side by `TestContextKeysAreStable` and duplicated in `frontend/src/lib/presenceContexts.ts`.
-_Avoid_: phase, screen, mode (mode means something else, below)
+One of the six situations a presence is built for: `in-client`, `in-lobby`, `in-queue`, `custom-game`, `agent-select`, `in-match`. Derived from session loop state, party state and the menu screen by `State.PhaseContext()`. Each maps to one builder and one user-editable template pair. The exact strings are config keys, pinned on the Go side by `TestContextKeysAreStable` and duplicated in `frontend/src/lib/presenceContexts.ts`.
+_Avoid_: phase, mode (mode means something else, below)
+
+**Menu screen**:
+Which half of the out-of-game client is open, `ScreenClient` or `ScreenLobby`, read from Valorant's own log by `gamelog.Reader.MenuScreen`. It exists because Riot publishes the same payload for the home screen and the Play section, so it is the only thing that separates `in-client` from `in-lobby`. An unread screen means `in-client`, never `in-lobby`. See [ADR-0007](./docs/adr/0007-menu-screen-comes-from-the-game-log.md).
+_Avoid_: UI state, tab, page
 
 **Provisioning flow**:
-Riot's string for how the current match was created. `ShootingRange` is the only one that matters: the range is rendered as a variant of `in-match`, not a sixth context, and its leftover round score is suppressed because the range has no rounds.
+Riot's string for how the current match was created. `ShootingRange` is the only one that matters: the range is rendered as a variant of `in-match` rather than a context of its own, and its leftover round score is suppressed because the range has no rounds. Outside a match the score is suppressed too, since Riot keeps publishing the last match's.
 _Avoid_: match type
 
 **Idle**:
@@ -67,5 +71,3 @@ _Avoid_: RPCUpdater, presence manager
 **App Update**:
 The in-app self-update flow, which is a different thing from **Updater** above despite the name collision inherited from league-rpc. App Update downloads a signed release binary and swaps it; Updater sends Discord presence. When both appear in one sentence, say "App Update" and "the presence Updater".
 
-**Placeholder presence**:
-The "Launching VALORANT..." card shown while Valorant is running but no presence has been read yet, wearing a random player card as its art and a new one on every rotation. On by default, behind `Behavior.ShowPlaceholderPresence` for anyone who would rather show nothing until the game reports something.

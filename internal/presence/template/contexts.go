@@ -1,11 +1,15 @@
 package template
 
-import "maps"
+import (
+	"maps"
+	"slices"
+)
 
-// The five presence contexts. These strings are the config keys for a user's
+// The six presence contexts. These strings are the config keys for a user's
 // templates and are duplicated in frontend/src/lib/presenceContexts.ts.
 const (
 	ContextInClient    Context = "in-client"
+	ContextInLobby     Context = "in-lobby"
 	ContextInQueue     Context = "in-queue"
 	ContextCustomGame  Context = "custom-game"
 	ContextAgentSelect Context = "agent-select"
@@ -29,10 +33,17 @@ func tokensFor(extra ...string) []string {
 	return append(out, commonTokens...)
 }
 
+// withoutRank drops the rank token. In client the player has chosen nothing,
+// so their competitive tier is not what they are doing.
+func withoutRank(tokens []string) []string {
+	return slices.DeleteFunc(tokens, func(t string) bool { return t == "rank" })
+}
+
 func init() {
-	// The lobby and the main menu are one state to Riot: both are MENUS with
-	// partyState DEFAULT, so this context carries the lobby's tokens too.
-	knownTokens[ContextInClient] = tokensFor(append([]string{"mode"}, partyTokens...)...)
+	// Riot reports MENUS with partyState DEFAULT for both, so these two are
+	// split by the client's UI route rather than by anything in the payload.
+	knownTokens[ContextInClient] = withoutRank(tokensFor(append([]string{"mode"}, partyTokens...)...))
+	knownTokens[ContextInLobby] = tokensFor(append([]string{"mode"}, partyTokens...)...)
 	knownTokens[ContextInQueue] = tokensFor(append([]string{"mode"}, partyTokens...)...)
 	// No map token: a custom game hides its map, so offering one would only
 	// ever render nothing.
@@ -46,7 +57,10 @@ func init() {
 
 	// Each default anchors its state line on a literal, so a presence still
 	// reads as something when every token in it is empty.
-	defaults[ContextInClient] = [2]string{"{mode}", "In lobby" + mid + "{party}" + mid + "{idle}"}
+	// In client names only what is true: online or away, and in the client.
+	// Valorant preselects the mode and the rank follows the queue, so neither.
+	defaults[ContextInClient] = [2]string{"{availability}", "In client"}
+	defaults[ContextInLobby] = [2]string{"{mode}", "In lobby" + mid + "{party}" + mid + "{idle}"}
 	defaults[ContextInQueue] = [2]string{"{mode}", "In queue" + mid + "{party}" + mid + "{idle}"}
 	defaults[ContextCustomGame] = [2]string{"{mode}", "In lobby" + mid + "{party}" + mid + "{idle}"}
 	defaults[ContextAgentSelect] = [2]string{"{mode}" + mid + "{map}", "Agent select" + mid + "{party}"}
@@ -59,6 +73,10 @@ func init() {
 	// Sample values for the settings-screen preview. agent is left out on
 	// purpose: v0.1 never resolves one, and a preview should not promise it.
 	sampleData[ContextInClient] = sample(map[string]string{
+		"mode": "Unrated", "party": "(1/5)", "party_size": "1", "max_party_size": "5",
+	})
+	delete(sampleData[ContextInClient], "rank")
+	sampleData[ContextInLobby] = sample(map[string]string{
 		"mode": "Competitive", "party": "(1/5)", "party_size": "1", "max_party_size": "5",
 	})
 	sampleData[ContextInQueue] = sample(map[string]string{
@@ -75,7 +93,7 @@ func init() {
 		"score": "7-5", "score_ally": "7", "score_enemy": "5", "kills": "19",
 	})
 
-	order = append(order, ContextInClient, ContextInQueue, ContextCustomGame, ContextAgentSelect, ContextInMatch)
+	order = append(order, ContextInClient, ContextInLobby, ContextInQueue, ContextCustomGame, ContextAgentSelect, ContextInMatch)
 }
 
 // sample merges the per-context values over the ones every context shares.

@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-// valorantContexts is the five the app ships, in phase order.
+// valorantContexts is the six the app ships, in phase order.
 var valorantContexts = []Context{
-	ContextInClient, ContextInQueue, ContextCustomGame, ContextAgentSelect, ContextInMatch,
+	ContextInClient, ContextInLobby, ContextInQueue, ContextCustomGame, ContextAgentSelect, ContextInMatch,
 }
 
 func TestEveryValorantContextIsInstalled(t *testing.T) {
@@ -32,7 +32,7 @@ func TestContextsAreInPhaseOrder(t *testing.T) {
 	got := Contexts()
 
 	if len(got) < len(valorantContexts) {
-		t.Fatalf("Contexts() = %v, want at least the five Valorant contexts", got)
+		t.Fatalf("Contexts() = %v, want at least the six Valorant contexts", got)
 	}
 	if !slices.Equal(got[:len(valorantContexts)], valorantContexts) {
 		t.Errorf("Contexts() starts %v, want %v", got[:len(valorantContexts)], valorantContexts)

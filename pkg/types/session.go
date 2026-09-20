@@ -37,16 +37,32 @@ const (
 	ProvisioningFlowShootingRange = "ShootingRange"
 )
 
-// PresenceContext names one of the five phases a presence is built for. The
+// PresenceContext names one of the six phases a presence is built for. The
 // values are the template context keys, and the frontend duplicates them.
 type PresenceContext string
 
 const (
 	ContextInClient    PresenceContext = "in-client"
+	ContextInLobby     PresenceContext = "in-lobby"
 	ContextInQueue     PresenceContext = "in-queue"
 	ContextCustomGame  PresenceContext = "custom-game"
 	ContextAgentSelect PresenceContext = "agent-select"
 	ContextInMatch     PresenceContext = "in-match"
+)
+
+// MenuScreen is which part of the out-of-game client is open. Every player
+// is in a party from login, so only the UI tells an opened lobby from that.
+type MenuScreen int
+
+const (
+	// ScreenUnknown is a client that has not said yet. It reads as the
+	// client rather than the lobby, so a lost signal understates.
+	ScreenUnknown MenuScreen = iota
+	// ScreenClient is the home screen, the store, the career page and the
+	// collection.
+	ScreenClient
+	// ScreenLobby is the Play section.
+	ScreenLobby
 )
 
 // QueueID is Riot's queue string, e.g. "competitive" or "hurm". There is no

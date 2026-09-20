@@ -32,13 +32,13 @@ func TestUpdater_LastSent_ReflectsLastRealSend(t *testing.T) {
 	if got.Cleared {
 		t.Fatal("LastSent marked cleared after a real send")
 	}
-	if got.Data == nil || !strings.HasPrefix(got.Data.State, "In lobby") {
+	if got.Data == nil || !strings.HasPrefix(got.Data.State, "In client") {
 		t.Fatalf("LastSent.Data = %+v, want the in-client payload", got.Data)
 	}
 
 	// The caller must not be able to mutate the Updater's copy.
 	got.Data.State = "tampered"
-	if again := u.LastSent(); !strings.HasPrefix(again.Data.State, "In lobby") {
+	if again := u.LastSent(); !strings.HasPrefix(again.Data.State, "In client") {
 		t.Fatalf("LastSent returned a shared pointer: second read = %q", again.Data.State)
 	}
 }
@@ -67,15 +67,6 @@ func TestUpdater_LastSent_MarksClearFromHideInClient(t *testing.T) {
 	got := u.LastSent()
 	if !got.Cleared || got.Data != nil {
 		t.Fatalf("LastSent = %+v, want the clear marker", got)
-	}
-}
-
-func TestUpdater_LastSent_TracksPlaceholder(t *testing.T) {
-	u := newLastSentTestUpdater(newFakePresenceSender())
-
-	u.UpdatePlaceholder(BuildLaunchingPresence(0, nil))
-	if got := u.LastSent(); got.Cleared || got.Data == nil || got.Data.Details != "Launching VALORANT..." {
-		t.Fatalf("LastSent after placeholder = %+v", got.Data)
 	}
 }
 

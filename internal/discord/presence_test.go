@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -16,6 +17,7 @@ import (
 
 	"github.com/its-haze/valorant-rpc/internal/config"
 	"github.com/its-haze/valorant-rpc/internal/content"
+	"github.com/its-haze/valorant-rpc/internal/presence/template"
 	"github.com/its-haze/valorant-rpc/internal/state"
 	"github.com/its-haze/valorant-rpc/pkg/constants"
 	"github.com/its-haze/valorant-rpc/pkg/types"
@@ -77,6 +79,15 @@ func inClientState() *state.State {
 	return st
 }
 
+// inLobbyState is the Play section: the same payload as the client, told
+// apart only by the screen the game log reported.
+func inLobbyState() *state.State {
+	st := inClientState()
+	st.MenuScreen = types.ScreenLobby
+	st.QueueID = "competitive"
+	return st
+}
+
 func inMatchState() *state.State {
 	st := inClientState()
 	st.SessionLoopState = types.SessionLoopInGame
@@ -105,6 +116,7 @@ func everyContextState() map[types.PresenceContext]*state.State {
 
 	return map[types.PresenceContext]*state.State{
 		types.ContextInClient:    inClientState(),
+		types.ContextInLobby:     inLobbyState(),
 		types.ContextInQueue:     queue,
 		types.ContextCustomGame:  custom,
 		types.ContextAgentSelect: pregame,
@@ -256,20 +268,37 @@ func TestRankEmblemHonoursTheShowRankToggle(t *testing.T) {
 	}
 }
 
-// Riot reports 0-0 through the whole of the menus, so a zero score is not a
-// score and must not render.
-func TestScoreSuppressedUntilARoundIsWon(t *testing.T) {
+// A match that has not finished its first round is still 0-0, and hiding it
+// left the presence with a bare "In a match" for the first few minutes.
+func TestScoreRendersFromTheFirstRound(t *testing.T) {
 	cat := testCatalogue(t)
 
 	fresh := inMatchState()
 	fresh.ScoreAlly, fresh.ScoreEnemy = 0, 0
-	if got := MapStateToPresence(fresh, presenceConfig(), cat); strings.Contains(got.State, "0-0") {
-		t.Errorf("state = %q, want no score at 0-0", got.State)
+	if got := MapStateToPresence(fresh, presenceConfig(), cat); !strings.Contains(got.State, "0-0") {
+		t.Errorf("state = %q, want the 0-0 score", got.State)
 	}
 
 	played := MapStateToPresence(inMatchState(), presenceConfig(), cat)
 	if !strings.Contains(played.State, "7-5") {
 		t.Errorf("state = %q, want the 7-5 score", played.State)
+	}
+}
+
+// Riot keeps publishing the last match's score through the menus. No context
+// but in-match may name a score, whatever the state fields still hold.
+func TestScoreNeverLeaksOutOfAMatch(t *testing.T) {
+	cat := testCatalogue(t)
+
+	for ctx, st := range everyContextState() {
+		if ctx == types.ContextInMatch {
+			continue
+		}
+		st.ScoreAlly, st.ScoreEnemy = 7, 5
+		rpc := MapStateToPresence(st, presenceConfig(), cat)
+		if strings.Contains(rpc.State, "7-5") || strings.Contains(rpc.Details, "7-5") {
+			t.Errorf("%s leaked the score: details = %q, state = %q", ctx, rpc.Details, rpc.State)
+		}
 	}
 }
 
@@ -426,8 +455,79 @@ func TestUserTemplatesOverrideTheDefaults(t *testing.T) {
 }
 
 // Guards the frontend's duplicated list: presenceContexts.ts must match.
+// The launch lobby was the whole complaint: Valorant preselects a queue and
+// parties the player up, so in client names only availability and the client.
+func TestInClientNamesOnlyAvailability(t *testing.T) {
+	cat := testCatalogue(t)
+	st := inClientState()
+	st.QueueID = "unrated"
+
+	rpc := MapStateToPresence(st, presenceConfig(), cat)
+	if rpc.Details != availabilityOnline || rpc.State != "In client" {
+		t.Errorf("details = %q, state = %q, want %q and \"In client\"", rpc.Details, rpc.State, availabilityOnline)
+	}
+
+	st.IsIdle = true
+	away := MapStateToPresence(st, presenceConfig(), cat)
+	if away.Details != availabilityAway {
+		t.Errorf("idle details = %q, want %q", away.Details, availabilityAway)
+	}
+}
+
+// The tier follows whatever queue Valorant preselected, so in client it is
+// not a fact about the player. It comes back the moment they open a lobby.
+func TestRankIsHiddenInClientAndBackInALobby(t *testing.T) {
+	cat := testCatalogue(t)
+
+	st := inClientState()
+	st.QueueID = "competitive"
+	client := MapStateToPresence(st, presenceConfig(), cat)
+	if strings.Contains(client.Details, "Immortal") || strings.Contains(client.State, "Immortal") {
+		t.Errorf("the rank leaked into the client text: %+v", client)
+	}
+	if client.SmallImage != valorantLogoBorderlessURL {
+		t.Errorf("small image = %q, want the app icon rather than the emblem", client.SmallImage)
+	}
+
+	lobby := MapStateToPresence(inLobbyState(), presenceConfig(), cat)
+	if lobby.SmallImage == valorantLogoBorderlessURL {
+		t.Error("a competitive lobby should wear the rank emblem")
+	}
+}
+
+// The token is not offered either, so nobody can put it back by hand and be
+// surprised by a tier that tracks a queue they never picked.
+func TestInClientOffersNoRankToken(t *testing.T) {
+	for _, tok := range template.KnownTokens(template.ContextInClient) {
+		if tok == "rank" {
+			t.Fatal("in client still offers the rank token")
+		}
+	}
+	if !slices.Contains(template.KnownTokens(template.ContextInLobby), "rank") {
+		t.Error("in lobby should still offer the rank token")
+	}
+}
+
+// The same payload, one field apart. Only the screen moves the presence.
+func TestTheScreenIsAllThatSeparatesTheClientFromTheLobby(t *testing.T) {
+	cat := testCatalogue(t)
+
+	client := MapStateToPresence(inClientState(), presenceConfig(), cat)
+	lobby := MapStateToPresence(inLobbyState(), presenceConfig(), cat)
+
+	if !strings.HasPrefix(lobby.State, "In lobby") {
+		t.Errorf("lobby state = %q, want it to start with In lobby", lobby.State)
+	}
+	if !strings.Contains(lobby.Details, "Competitive") {
+		t.Errorf("lobby details = %q, want the chosen mode", lobby.Details)
+	}
+	if client.State == lobby.State {
+		t.Errorf("both rendered %q; the screen changed nothing", client.State)
+	}
+}
+
 func TestContextKeysAreStable(t *testing.T) {
-	want := []string{"in-client", "in-queue", "custom-game", "agent-select", "in-match"}
+	want := []string{"in-client", "in-lobby", "in-queue", "custom-game", "agent-select", "in-match"}
 
 	blob, err := json.Marshal(want)
 	if err != nil {
@@ -448,13 +548,13 @@ func TestContextKeysAreStable(t *testing.T) {
 	}
 }
 
-// The rank emblem replaces the app icon only in a competitive queue, and it
-// takes the hover text with it so the tier is readable somewhere.
+// The rank emblem replaces the app icon in a competitive lobby, and it takes
+// the hover text with it so the tier is readable somewhere.
 func TestCompetitiveQueueSwapsTheIconForTheRankEmblem(t *testing.T) {
 	cat := testCatalogue(t)
 	cfg := presenceConfig()
 
-	st := inClientState()
+	st := inLobbyState()
 	st.QueueID = "competitive"
 
 	rpc := MapStateToPresence(st, cfg, cat)
@@ -477,7 +577,7 @@ func TestCompetitiveQueueSwapsTheIconForTheRankEmblem(t *testing.T) {
 
 // Idle outranks the emblem, and the credit line comes back with it.
 func TestIdleKeepsTheDimmedIconEvenInCompetitive(t *testing.T) {
-	st := inClientState()
+	st := inLobbyState()
 	st.QueueID = "competitive"
 	st.IsIdle = true
 

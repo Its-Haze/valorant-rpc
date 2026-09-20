@@ -14,6 +14,10 @@ No Riot Client connection means no presence, uniformly, with one exception: whil
 
 A time-based grace period on disconnect was considered and rejected, for the same reason as in league-rpc: it trades a correct signal for a guess about why the connection dropped. Process detection answers the one case, active launch, that deserves an idle card instead of nothing.
 
+**Superseded, 2026-09-20**: both paragraphs above are history. The launch placeholder is gone entirely; see the second amendment below.
+
 One difference from league-rpc worth naming. There, a live LCU connection that has gone quiet is indistinguishable from a slow start, so the stall signal is time-based. Here `RiotSource.PresenceStalled` means "this connection has never read a presence", because `Watcher.Start` fetches the current snapshot the moment it connects. Once any presence arrives the connection is never stalled again, and a reconnect restarts the window.
 
 **Amendment, 2026-09-19 (ticket 10)**: the placeholder now defaults to on. The reasoning above, that a second RPC tool may already be showing something, does not survive reading league-rpc: it gates its own placeholder on the League process being up and clears presence otherwise, so neither app ever holds an idle card and there is nothing to collide with. `Behavior.ShowPlaceholderPresence` stays, as a preference rather than a defence.
+
+**Amendment, 2026-09-20**: the placeholder is removed, along with `Behavior.ShowPlaceholderPresence` and the Behavior screen row that drove it. Two reasons, both from watching it in Discord. The window it covers is a few seconds and the card barely registers before it is replaced. And it is not even the launch window it claims to be: Valorant reports "in client" while it is still loading, then drops the player into an unrated lobby on its own, so the real presence arrives early and says something the player never chose. `presenceLoop` now has two modes, connected and cleared, and shows nothing until a presence has actually been read.

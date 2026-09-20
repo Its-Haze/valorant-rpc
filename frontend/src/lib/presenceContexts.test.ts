@@ -6,6 +6,7 @@ describe("PRESENCE_CONTEXTS", () => {
   it("matches the keys the Go builders are registered under", () => {
     expect([...PRESENCE_CONTEXTS]).toEqual([
       "in-client",
+      "in-lobby",
       "in-queue",
       "custom-game",
       "agent-select",

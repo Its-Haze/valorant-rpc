@@ -29,12 +29,14 @@ func Wire(store *config.Store, logger zerolog.Logger) (*Daemon, *content.Cache) 
 		return riotchat.NewWatcher(riotClient, logger, onUpdate)
 	})
 
-	agents := NewGameLogAgents(gamelog.New(gamelog.Options{}), catalogue, stateMgr, logger)
+	log := gamelog.New(gamelog.Options{})
+	agents := NewGameLogAgents(log, catalogue, stateMgr, logger)
+	screens := NewGameLogScreens(log, stateMgr, logger)
 
 	riotSup := NewProductionRiotSupervisor(source, checker)
 	discordSup := NewDiscordSupervisor(discordClient, checker, riotSup)
 
 	return New(discordSup, riotSup, updater, stateMgr, logger,
-		DefaultPresencePollInterval, DefaultPlaceholderInterval,
-		WithCatalogue(catalogue), WithAgentLookup(agents)), catalogue
+		DefaultPresencePollInterval,
+		WithCatalogue(catalogue), WithAgentLookup(agents), WithMenuLookup(screens)), catalogue
 }

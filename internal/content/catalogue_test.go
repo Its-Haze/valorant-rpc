@@ -400,36 +400,6 @@ func TestEnumeratorsOnAnEmptyCatalogue(t *testing.T) {
 	}
 }
 
-func TestRandomPlayerCardDrawsFromTheTable(t *testing.T) {
-	cat := fixtureCatalogue(t)
-	known := make(map[string]bool)
-	for _, card := range cat.PlayerCards() {
-		known[card.UUID] = true
-	}
-
-	seen := make(map[string]bool)
-	for range 200 {
-		card, ok := cat.RandomPlayerCard()
-		if !ok {
-			t.Fatal("RandomPlayerCard found nothing in a populated catalogue")
-		}
-		if !known[card.UUID] {
-			t.Fatalf("drew %q, which is not in the catalogue", card.UUID)
-		}
-		seen[card.UUID] = true
-	}
-
-	if len(seen) < 2 {
-		t.Errorf("200 draws returned %d distinct card(s); it is not random", len(seen))
-	}
-}
-
-func TestRandomPlayerCardFindsNothingInAnEmptyCatalogue(t *testing.T) {
-	if _, ok := (&Catalogue{}).RandomPlayerCard(); ok {
-		t.Error("an empty catalogue should have no card to draw")
-	}
-}
-
 // The game log names agents by Riot's internal codename, which is exactly
 // valorant-api's developerName. The join folds case like every other.
 func TestAgentUUIDByDeveloperName(t *testing.T) {

@@ -4,6 +4,7 @@ package daemon
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -29,7 +30,7 @@ type discordRunner interface {
 }
 
 // riotRunner also reports the connection, the game process and the stall,
-// the inputs Daemon needs to pick real presence, placeholder, or cleared.
+// the inputs Daemon needs to pick real presence or cleared.
 type riotRunner interface {
 	runner
 	Connected() bool
@@ -49,13 +50,18 @@ type AgentLookup interface {
 	Lookup(ctx context.Context, st *state.State)
 }
 
+// MenuLookup resolves which section of the client is open, which is the only
+// way to tell a lobby the player opened from the one Valorant gave them.
+type MenuLookup interface {
+	Read()
+}
+
 // presenceMode is what Daemon currently shows on Discord. See ADR-0002.
 type presenceMode int
 
 const (
 	modeUnknown presenceMode = iota
 	modeConnected
-	modePlaceholder
 	modeCleared
 )
 
@@ -72,6 +78,11 @@ func WithAgentLookup(a AgentLookup) DaemonOption {
 	return func(d *Daemon) { d.agents = a }
 }
 
+// WithMenuLookup wires the menu-screen reader into the presence loop.
+func WithMenuLookup(m MenuLookup) DaemonOption {
+	return func(d *Daemon) { d.screens = m }
+}
+
 // Daemon owns the Discord and Riot Connection Supervisors and drives Discord
 // presence off their state. Run is the single seam here. See ADR-0002.
 type Daemon struct {
@@ -80,6 +91,7 @@ type Daemon struct {
 	updater *discord.Updater
 	state   *state.Manager
 	agents  AgentLookup
+	screens MenuLookup
 	logger  zerolog.Logger
 
 	// catalogue is optional: a Daemon without one still drives presence,
@@ -87,7 +99,6 @@ type Daemon struct {
 	catalogue CatalogueRefresher
 
 	presencePollInterval time.Duration
-	placeholderInterval  time.Duration
 
 	// paused is a runtime flag, never persisted to Config. It starts false
 	// on every Daemon and clears presence for as long as it is set.
@@ -102,7 +113,7 @@ func New(
 	updater *discord.Updater,
 	stateMgr *state.Manager,
 	logger zerolog.Logger,
-	presencePollInterval, placeholderInterval time.Duration,
+	presencePollInterval time.Duration,
 	opts ...DaemonOption,
 ) *Daemon {
 	d := &Daemon{
@@ -112,7 +123,6 @@ func New(
 		state:                stateMgr,
 		logger:               logger,
 		presencePollInterval: presencePollInterval,
-		placeholderInterval:  placeholderInterval,
 		pauseSignal:          make(chan struct{}, 1),
 	}
 	for _, opt := range opts {
@@ -188,8 +198,8 @@ func (d *Daemon) Run(ctx context.Context) {
 	wg.Wait()
 }
 
-// presenceLoop shows real presence once a presence has been read, a
-// placeholder while Valorant is starting, or clears presence. See ADR-0002.
+// presenceLoop shows real presence once a presence has been read, and clears
+// presence the rest of the time. See ADR-0002.
 func (d *Daemon) presenceLoop(ctx context.Context) {
 	ticker := time.NewTicker(d.presencePollInterval)
 	defer ticker.Stop()
@@ -201,31 +211,20 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 	waitingForDiscordLogged := false
 	stallLogged := false
 
-	var placeholderTicker *time.Ticker
-	var placeholderC <-chan time.Time
-	var placeholderStart int64
-
-	stopPlaceholder := func() {
-		if placeholderTicker != nil {
-			placeholderTicker.Stop()
-			placeholderTicker = nil
-			placeholderC = nil
-		}
-	}
-	defer stopPlaceholder()
-
-	sendPlaceholder := func() {
-		// Skip while Discord isn't connected yet; the reconnect handler below resends once it is.
-		if !d.discord.Connected() {
+	// The menu screen is only read in the menus. In a match the log grows
+	// fast and the answer could not change the context anyway.
+	fireScreen := func() {
+		if d.screens == nil {
 			return
 		}
-		d.updater.UpdateLaunchingPlaceholder(placeholderStart)
+		if loop := d.state.Get().SessionLoopState; !isMenus(loop) {
+			return
+		}
+		d.screens.Read()
 	}
 
-	// The agent lookup runs only in a match, never in agent select: the game
-	// log names the agent once its pawn spawns, which is after the match has
-	// started. It keeps running until one resolves, because the first reads
-	// of a match legitimately find nothing.
+	// The agent lookup runs only in a match, never in agent select: the log
+	// names the agent once its pawn spawns, after the match has started.
 	agentResolved := false
 	fireLookup := func(st *state.State) {
 		if st.PhaseContext() != types.ContextInMatch {
@@ -242,19 +241,12 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 		agentResolved = d.state.Get().AgentID != ""
 	}
 
-	// placeholderAllowed keeps the launching presence behind its setting, for
-	// users who would rather show nothing until the game reports something.
-	placeholderAllowed := func() bool {
-		return d.updater.Config().Behavior.ShowPlaceholderPresence
-	}
-
 	// reconcile picks the presence mode from the current connection and pause
 	// state. It runs on every poll tick and on any pause-flag change.
 	reconcile := func() {
 		// Pause is a runtime flag: while set, hold presence cleared the same
 		// way Valorant-not-running does, and skip the rest of the decision.
 		if d.paused.Load() {
-			stopPlaceholder()
 			if mode != modeCleared {
 				d.updater.ClearPresence()
 				mode = modeCleared
@@ -265,13 +257,8 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 		// Discord can connect after the Riot Client already has; resend the
 		// current mode's presence instead of waiting for a state change.
 		nowConnected := d.discord.Connected()
-		if nowConnected && !discordConnected {
-			switch mode {
-			case modeConnected:
-				d.updater.ImmediateUpdate(d.state.Get())
-			case modePlaceholder:
-				sendPlaceholder()
-			}
+		if nowConnected && !discordConnected && mode == modeConnected {
+			d.updater.ImmediateUpdate(d.state.Get())
 		}
 		discordConnected = nowConnected
 
@@ -286,8 +273,8 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 			waitingForDiscordLogged = false
 		}
 
-		// A stalled connection is a connection with nothing behind it. Fall
-		// through to the placeholder rather than show a state we never read.
+		// A stalled connection is a connection with nothing behind it. Clear
+		// presence rather than show a state we never read.
 		stalled := d.riot.PresenceStalled()
 		if stalled && !stallLogged {
 			d.logger.Warn().Msg("Connected to the Riot Client but no Valorant presence has arrived; presence is unknown")
@@ -299,9 +286,11 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 
 		switch {
 		case d.riot.Connected() && !stalled:
+			// Before the state is read, so entering the client builds its
+			// presence from the right half of the menus the first time.
+			fireScreen()
 			st := d.state.Get()
 			if mode != modeConnected {
-				stopPlaceholder()
 				// Skip while Discord isn't connected yet; the reconnect handler above resends once it is.
 				if d.discord.Connected() {
 					d.updater.ImmediateUpdate(st)
@@ -310,18 +299,8 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 			}
 			fireLookup(st)
 
-		case d.riot.GameRunning() && placeholderAllowed():
-			if mode != modePlaceholder {
-				mode = modePlaceholder
-				placeholderStart = time.Now().Unix()
-				sendPlaceholder()
-				placeholderTicker = time.NewTicker(d.placeholderInterval)
-				placeholderC = placeholderTicker.C
-			}
-
 		default:
 			if mode != modeCleared {
-				stopPlaceholder()
 				d.updater.ClearPresence()
 				mode = modeCleared
 			}
@@ -346,6 +325,7 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 			if mode == modeConnected {
 				d.updater.DelayUpdate(st)
 				fireLookup(st)
+				fireScreen()
 			}
 
 		case <-cfgUpdates:
@@ -355,9 +335,6 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 				d.updater.ImmediateUpdate(d.state.Get())
 			}
 
-		case <-placeholderC:
-			sendPlaceholder()
-
 		case <-d.pauseSignal:
 			reconcile()
 
@@ -365,4 +342,10 @@ func (d *Daemon) presenceLoop(ctx context.Context) {
 			reconcile()
 		}
 	}
+}
+
+// isMenus reports the out-of-game loop state, where an empty value counts:
+// a connection that has read nothing yet is not in a match.
+func isMenus(loop types.SessionLoopState) bool {
+	return loop == "" || strings.EqualFold(string(loop), string(types.SessionLoopMenus))
 }

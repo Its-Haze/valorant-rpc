@@ -41,6 +41,95 @@ func TestState_PhaseContext(t *testing.T) {
 	}
 }
 
+// Valorant puts every player in a party with a queue chosen at login, so the
+// payload reads the same on the home screen as in a lobby. Only the UI knows.
+func TestState_PhaseContext_SplitsTheMenusByScreen(t *testing.T) {
+	tests := []struct {
+		name   string
+		screen types.MenuScreen
+		want   types.PresenceContext
+	}{
+		{"the Play section is a lobby", types.ScreenLobby, types.ContextInLobby},
+		{"the home screen is the client", types.ScreenClient, types.ContextInClient},
+		{"an unread screen understates", types.ScreenUnknown, types.ContextInClient},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &State{
+				SessionLoopState: types.SessionLoopMenus,
+				PartyState:       types.PartyDefault,
+				MenuScreen:       tt.screen,
+			}
+			if got := s.PhaseContext(); got != tt.want {
+				t.Errorf("PhaseContext() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+// A custom lobby outlives the page it is on. Backing out to the home screen
+// with one still open is being in the client, the same as the launch party.
+func TestState_PhaseContext_CustomLobbyDefersToTheScreen(t *testing.T) {
+	for name, tt := range map[string]struct {
+		screen types.MenuScreen
+		want   types.PresenceContext
+	}{
+		"looking at the custom lobby":   {types.ScreenLobby, types.ContextCustomGame},
+		"backed out to the home screen": {types.ScreenClient, types.ContextInClient},
+		// Degrading the other way would deny a lobby the player did open.
+		"an unread screen keeps the lobby": {types.ScreenUnknown, types.ContextCustomGame},
+	} {
+		t.Run(name, func(t *testing.T) {
+			s := &State{
+				SessionLoopState: types.SessionLoopMenus,
+				PartyState:       types.PartyCustomGameSetup,
+				MenuScreen:       tt.screen,
+			}
+			if got := s.PhaseContext(); got != tt.want {
+				t.Errorf("PhaseContext() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+// Matchmaking runs whatever page is open and ends by pulling the player into
+// a match, so browsing the store while queued is still queueing.
+func TestState_PhaseContext_QueueingIgnoresTheScreen(t *testing.T) {
+	for _, screen := range []types.MenuScreen{types.ScreenClient, types.ScreenLobby, types.ScreenUnknown} {
+		s := &State{
+			SessionLoopState: types.SessionLoopMenus,
+			PartyState:       types.PartyMatchmaking,
+			MenuScreen:       screen,
+		}
+		if got := s.PhaseContext(); got != types.ContextInQueue {
+			t.Errorf("PhaseContext() with screen %v = %q, want %q", screen, got, types.ContextInQueue)
+		}
+	}
+}
+
+// The screen only splits MENUS with a DEFAULT party. Queueing from the Play
+// section is queueing, not sitting in a lobby.
+func TestState_PhaseContext_ScreenNeverOutranksTheRealPhase(t *testing.T) {
+	for name, tt := range map[string]struct {
+		loop  types.SessionLoopState
+		party types.PartyState
+		want  types.PresenceContext
+	}{
+		"queueing from the Play section": {types.SessionLoopMenus, types.PartyMatchmaking, types.ContextInQueue},
+		"a custom lobby":                 {types.SessionLoopMenus, types.PartyCustomGameSetup, types.ContextCustomGame},
+		"agent select":                   {types.SessionLoopPregame, types.PartyDefault, types.ContextAgentSelect},
+		"a match":                        {types.SessionLoopInGame, types.PartyDefault, types.ContextInMatch},
+	} {
+		t.Run(name, func(t *testing.T) {
+			s := &State{SessionLoopState: tt.loop, PartyState: tt.party, MenuScreen: types.ScreenLobby}
+			if got := s.PhaseContext(); got != tt.want {
+				t.Errorf("PhaseContext() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestState_IsRange(t *testing.T) {
 	tests := []struct {
 		flow string

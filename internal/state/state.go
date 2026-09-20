@@ -25,6 +25,10 @@ type State struct {
 	ProvisioningFlow string                 `json:"provisioning_flow"`
 	IsIdle           bool                   `json:"is_idle"`
 
+	// MenuScreen is read from Valorant's own log, not from any Riot payload.
+	// It is the only thing that tells an opened lobby from the launch one.
+	MenuScreen types.MenuScreen `json:"menu_screen"`
+
 	// Match
 	MapID      string        `json:"map_id"` // Riot's map path, joined case-insensitively
 	QueueID    types.QueueID `json:"queue_id"`
@@ -59,7 +63,7 @@ func NewState() *State {
 	}
 }
 
-// PhaseContext derives one of the five presence contexts. Only MENUS defers
+// PhaseContext derives one of the six presence contexts. Only MENUS defers
 // to the party state, and anything unrecognized degrades to the client.
 func (s *State) PhaseContext() types.PresenceContext {
 	loop := types.SessionLoopState(strings.ToUpper(string(s.SessionLoopState)))
@@ -78,9 +82,22 @@ func (s *State) PhaseContext() types.PresenceContext {
 
 	switch types.PartyState(strings.ToUpper(string(s.PartyState))) {
 	case types.PartyMatchmaking:
+		// Queueing carries on whatever page is open, so the screen does not
+		// override it the way it overrides a lobby that just sits there.
 		return types.ContextInQueue
 	case types.PartyCustomGameSetup:
+		// The custom lobby outlives the page it lives on. Browsing the home
+		// screen with one open is being in the client, not in the lobby.
+		if s.MenuScreen == types.ScreenClient {
+			return types.ContextInClient
+		}
 		return types.ContextCustomGame
+	}
+
+	// Riot reports the same party state for the home screen and the Play
+	// section, so the lobby is the UI's answer or nothing.
+	if s.MenuScreen == types.ScreenLobby {
+		return types.ContextInLobby
 	}
 	return types.ContextInClient
 }

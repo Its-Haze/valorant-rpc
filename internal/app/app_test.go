@@ -324,7 +324,8 @@ func TestApp_GetTemplateTokens(t *testing.T) {
 	a := New(config.NewStore(config.DefaultConfig()), &fakePauser{})
 
 	got := a.GetTemplateTokens("in-client")
-	want := []string{"mode", "party", "party_size", "max_party_size", "riot_id", "account_level", "rank", "availability", "idle"}
+	// No rank: in client the tier follows a queue the player did not choose.
+	want := []string{"mode", "party", "party_size", "max_party_size", "riot_id", "account_level", "availability", "idle"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("GetTemplateTokens(in-client) = %v, want %v", got, want)
 	}

@@ -63,10 +63,6 @@ type BehaviorConfig struct {
 	LaunchAtStartup bool   `json:"launch_at_startup"` // start with Windows
 	CloseAction     string `json:"close_action"`      // ask | tray | quit
 	NotifyUpdates   bool   `json:"notify_updates"`    // show system notifications when update available
-
-	// ShowPlaceholderPresence covers the gap between Valorant starting and its
-	// first presence arriving, which would otherwise show nothing at all.
-	ShowPlaceholderPresence bool `json:"show_placeholder_presence"`
 }
 
 // AdvancedConfig holds tuning knobs and debug options.
@@ -90,10 +86,9 @@ func DefaultConfig() *Config {
 			Templates:    defaultTemplates(),
 		},
 		Behavior: BehaviorConfig{
-			LaunchAtStartup:         true,
-			CloseAction:             CloseAsk,
-			NotifyUpdates:           true,
-			ShowPlaceholderPresence: true,
+			LaunchAtStartup: true,
+			CloseAction:     CloseAsk,
+			NotifyUpdates:   true,
 		},
 		Advanced: AdvancedConfig{
 			UpdateInterval: 1500,

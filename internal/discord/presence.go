@@ -40,6 +40,7 @@ type builder func(v view) *RPCData
 
 var builders = map[types.PresenceContext]builder{
 	types.ContextInClient:    buildInClient,
+	types.ContextInLobby:     buildInLobby,
 	types.ContextInQueue:     buildInQueue,
 	types.ContextCustomGame:  buildCustomGame,
 	types.ContextAgentSelect: buildAgentSelect,
@@ -79,13 +80,17 @@ func MapStateToPresence(st *state.State, cfg *config.Config, cat *content.Catalo
 	return build(resolve(st, cfg, cat))
 }
 
-// ShouldClearPresence reports whether presence should be cleared rather than
-// updated, which today is only the show-in-client toggle turned off.
+// ShouldClearPresence reports whether the show-in-client toggle is hiding
+// this state. It covers the lobby too: both are sitting in the client.
 func ShouldClearPresence(st *state.State, cfg *config.Config) bool {
-	return !cfg.Presence.ShowInClient && st.PhaseContext() == types.ContextInClient
+	if cfg.Presence.ShowInClient {
+		return false
+	}
+	ctx := st.PhaseContext()
+	return ctx == types.ContextInClient || ctx == types.ContextInLobby
 }
 
-// resolve does every catalogue lookup and token decision once, so the five
+// resolve does every catalogue lookup and token decision once, so the six
 // builders only choose a template context and which art to hang on it.
 func resolve(st *state.State, cfg *config.Config, cat *content.Catalogue) view {
 	// English everywhere: the rank was the only name a language picker ever
@@ -107,7 +112,9 @@ func resolve(st *state.State, cfg *config.Config, cat *content.Catalogue) view {
 		v.tokens["availability"] = availabilityAway
 		v.tokens["idle"] = "Idle"
 	}
-	if cfg.Display.Default.ShowRank && v.hasTier {
+	// No rank in client: the tier follows the preselected queue, not anything
+	// the player picked. It returns the moment they open a competitive lobby.
+	if cfg.Display.Default.ShowRank && v.hasTier && st.PhaseContext() != types.ContextInClient {
 		v.tokens["rank"] = v.tier.Name
 	}
 	if v.hasAgent {
@@ -130,9 +137,9 @@ func resolve(st *state.State, cfg *config.Config, cat *content.Catalogue) view {
 	}
 
 	addPartyTokens(v.tokens, st)
-	// The range has no rounds, so whatever the score fields still hold there
-	// is left over from the last real match.
-	if cfg.Display.Default.ShowStats && !st.IsRange() {
+	// Only in a match. Riot keeps publishing the last match's score through
+	// the menus, and the range has no rounds of its own either.
+	if cfg.Display.Default.ShowStats && st.PhaseContext() == types.ContextInMatch && !st.IsRange() {
 		addScoreTokens(v.tokens, st, cfg.Display.Default.ShowKills)
 	}
 	return v
@@ -158,17 +165,9 @@ func addPartyTokens(tokens map[string]string, st *state.State) {
 	tokens["party"] = fmt.Sprintf("(%d/%d)", st.PartySize, st.MaxPartySize)
 }
 
-// addScoreTokens fills the score, but only once something has been scored.
-// Riot reports 0-0 all through the menus, and that is not a score.
-//
-// A deathmatch scores in points, where the ally field is the player's own
-// kills and the enemy field is whoever is leading. Someone else's lead is
-// not worth a presence line, so score renders the kills alone there.
+// addScoreTokens fills the score, 0-0 included. Callers gate it on being in
+// a match, where a score of zero is a real score rather than a missing one.
 func addScoreTokens(tokens map[string]string, st *state.State, showKills bool) {
-	if st.ScoreAlly <= 0 && st.ScoreEnemy <= 0 {
-		return
-	}
-
 	// Deathmatch is the one mode with no teams, so its ally score is the
 	// player's own kills. It is off by default: Riot republishes the presence
 	// every 60 to 90 seconds, measured, which is three updates across a whole
@@ -199,6 +198,10 @@ func pluralKills(kills int) string {
 
 func buildInClient(v view) *RPCData {
 	return v.render(template.ContextInClient, v.cardImage(), v.tokens["riot_id"])
+}
+
+func buildInLobby(v view) *RPCData {
+	return v.render(template.ContextInLobby, v.cardImage(), v.tokens["riot_id"])
 }
 
 func buildInQueue(v view) *RPCData {
@@ -256,11 +259,12 @@ func (v view) smallIcon() (image, text string) {
 	return valorantLogoBorderlessURL, constants.SmallText
 }
 
-// isRanked reports the competitive queue, the only one with a rank worth
-// showing next to the presence. A custom game is excluded outright: its
-// lobby keeps whatever queue was selected before it, so competitive leaks
-// in there and only clears once the game provisions.
+// isRanked reports a competitive queue the player actually chose. In client
+// and in a custom game the queue is left over, so the emblem is not theirs.
 func (v view) isRanked() bool {
+	if v.st.PhaseContext() == types.ContextInClient {
+		return false
+	}
 	return string(v.st.QueueID) == competitiveQueue && !v.st.IsCustomGame()
 }
 

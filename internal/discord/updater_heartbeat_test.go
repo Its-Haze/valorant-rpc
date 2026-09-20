@@ -223,23 +223,6 @@ func TestUpdater_NoHeartbeatWhileDisconnected(t *testing.T) {
 	waitForHeartbeat(t, time.Second, func() bool { return sender.sendCount() == 2 })
 }
 
-func TestUpdater_NoHeartbeatWhileShowingPlaceholder(t *testing.T) {
-	sender := newFakePresenceSender()
-	u, clock := newHeartbeatTestUpdater(t, sender)
-	ticker := <-clock.created
-
-	u.UpdatePlaceholder(BuildLaunchingPresence(0, nil))
-	if got := sender.sendCount(); got != 1 {
-		t.Fatalf("expected 1 send after UpdatePlaceholder, got %d", got)
-	}
-
-	ticker.tick()
-	time.Sleep(20 * time.Millisecond)
-	if got := sender.sendCount(); got != 1 {
-		t.Fatalf("expected no heartbeat resend of the placeholder, got %d", got)
-	}
-}
-
 func TestUpdater_ReclaimBurstThenSettlesBackToHeartbeatCadence(t *testing.T) {
 	sender := newFakePresenceSender()
 	u, clock := newHeartbeatTestUpdater(t, sender)

@@ -3,7 +3,6 @@ import { DefaultConfig } from "./testFixtures";
 import {
   withCloseAction,
   withLaunchAtStartup,
-  withShowPlaceholderPresence,
 } from "./behaviorPatch";
 
 describe("withLaunchAtStartup", () => {
@@ -19,13 +18,5 @@ describe("withCloseAction", () => {
     const cfg = DefaultConfig();
     const patch = withCloseAction(cfg, "quit");
     expect(patch.behavior).toEqual({ ...cfg.behavior, close_action: "quit" });
-  });
-});
-
-describe("withShowPlaceholderPresence", () => {
-  it("sets the flag and keeps sibling behavior fields", () => {
-    const cfg = DefaultConfig();
-    const patch = withShowPlaceholderPresence(cfg, true);
-    expect(patch.behavior).toEqual({ ...cfg.behavior, show_placeholder_presence: true });
   });
 });

@@ -14,7 +14,8 @@ export function DefaultConfig(): Config {
     presence: {
       show_in_client: true,
       templates: {
-        "in-client": { details: "{mode}", state: "In lobby · {party} · {idle}" },
+        "in-client": { details: "{availability}", state: "In client" },
+        "in-lobby": { details: "{mode}", state: "In lobby · {party} · {idle}" },
         "in-queue": { details: "{mode}", state: "In queue · {party} · {idle}" },
         "custom-game": { details: "{mode}", state: "In lobby · {party} · {idle}" },
         "agent-select": { details: "{mode} · {map}", state: "Agent select · {party}" },
@@ -25,7 +26,6 @@ export function DefaultConfig(): Config {
       launch_at_startup: false,
       close_action: "ask",
       notify_updates: true,
-      show_placeholder_presence: false,
     },
     advanced: {
       update_interval: 1500,

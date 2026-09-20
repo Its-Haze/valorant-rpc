@@ -118,12 +118,6 @@ func contains(s, sub string) bool {
 	return false
 }
 
-func TestDefaultConfig_ShowsTheLaunchingPlaceholder(t *testing.T) {
-	if !DefaultConfig().Behavior.ShowPlaceholderPresence {
-		t.Error("ShowPlaceholderPresence = false, want true")
-	}
-}
-
 // Every config written before the agent lookup shipped has no match_image,
 // and an empty enum must land on the default rather than on no art at all.
 func TestClamp_RepairsTheMatchImageSetting(t *testing.T) {

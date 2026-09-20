@@ -21,11 +21,8 @@ const (
 	DefaultProcessPollInterval = 5 * time.Second
 )
 
-// Default cadences for Daemon's own presence-mode loop.
-const (
-	DefaultPresencePollInterval = 3 * time.Second
-	DefaultPlaceholderInterval  = 5 * time.Second
-)
+// DefaultPresencePollInterval is the cadence of Daemon's own presence-mode loop.
+const DefaultPresencePollInterval = 3 * time.Second
 
 // discordGate is a Gate that waits for Valorant and Discord to both be
 // running before allowing a connect attempt. See ADR-0003.
