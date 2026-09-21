@@ -28,6 +28,8 @@
 Valorant RPC replaces the presence Valorant gives Discord with one that actually says something:
 your agent, your rank, the map, the round score. Every line of it is a template you can rewrite.
 
+> **Also playing League?** [League RPC](https://github.com/Its-Haze/league-rpc) came first, and this is built on the same foundations.
+
 ---
 
 ## Showcase
@@ -125,8 +127,6 @@ Got questions? Join the [Discord Server](https://discord.haze.sh)
 Feel free to open up Help tickets, or contact me directly on Discord (@haze.dev).
 
 For issues related to the code, or project as a whole, please open an [issue on GitHub](https://github.com/Its-Haze/valorant-rpc/issues). Before you do, hit **Copy diagnostics** on the app's Help screen and paste the result in. It gathers most of what I'd otherwise have to ask you for.
-
-⭐ If you enjoy it, don't forget to star this project! ⭐
 
 ## Star History
 
