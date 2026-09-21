@@ -28,7 +28,7 @@
 Valorant RPC replaces the presence Valorant gives Discord with one that actually says something:
 your agent, your rank, the map, the round score. Every line of it is a template you can rewrite.
 
-> **Also playing League?** [League RPC](https://github.com/Its-Haze/league-rpc) came first, and this is built on the same foundations.
+> **Also playing League?** [League RPC](https://github.com/Its-Haze/league-rpc) is the most popular rich presence app for League of Legends, and this is built on the same foundations.
 
 ---
 
